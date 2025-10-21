@@ -1,4 +1,4 @@
-import { authToken, endpoint } from "../endpoint";
+import { endpoint } from "../endpoint";
 
 export const getMediaLibrary = async (token) => {
   const url = endpoint.media_library;

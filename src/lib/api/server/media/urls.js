@@ -1,13 +1,13 @@
 import { authToken, endpoint } from "../endpoint";
 
-export const getMediaLibrary = async () => {
+export const getMediaLibrary = async (token) => {
   const url = endpoint.media_library;
 
   const res = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: authToken,
+      Authorization: `Bearer ${token}`,
     },
     next: { tags: ["media-library"] }, // Add cache tag for revalidation
   });

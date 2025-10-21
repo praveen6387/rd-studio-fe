@@ -18,7 +18,7 @@ export function useStepper() {
     throw new Error("useStepper must be used within a StepperProvider");
   }
 
-  const { children, className, setStep, ...rest } = context; // Changed to setStep
+  const { setStep, ...rest } = context; // Changed to setStep
 
   const isLastStep = context.activeStep === context.steps.length - 1;
   const hasCompletedAllSteps = context.activeStep === context.steps.length;

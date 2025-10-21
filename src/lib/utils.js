@@ -7,14 +7,14 @@ export function cn(...inputs) {
 
 export const convertTime = (utcTimestamp) => {
   const utcDate = new Date(utcTimestamp);
-  const options = {
-    timeZone: "Asia/Kolkata",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
+  // const options = {
+  //   timeZone: "Asia/Kolkata",
+  //   day: "2-digit", 
+  //   month: "short",
+  //   year: "numeric",
+  //   hour: "2-digit",
+  //   minute: "2-digit",
+  // };
 
   // Get individual date components
   const day = utcDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit" });

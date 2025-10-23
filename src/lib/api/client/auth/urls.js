@@ -4,6 +4,9 @@ export const userLogin = async (data) => {
   const url = endpoint.login;
   const res = await fetch(url, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(data),
   });
 

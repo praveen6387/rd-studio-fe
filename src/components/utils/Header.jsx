@@ -1,14 +1,51 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/contexts/UserContext';
 import LoginModal from './LoginModal';
 
+// Function to decode JWT token
+function decodeJWT(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    return null;
+  }
+}
+
 export default function Header() {
   const { user, logout, login } = useUser();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin by decoding JWT token
+  useEffect(() => {
+    const checkAdminStatus = () => {
+      if (user) {
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+          const tokenPayload = decodeJWT(accessToken);
+          setIsAdmin(tokenPayload?.is_admin || false);
+        } else {
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -96,11 +133,11 @@ export default function Header() {
                     className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
                   >
                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-600">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                      <span className="text-sm font-medium text-gray-600 uppercase">
+                        {user && user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U'} 
                       </span>
                     </div>
-                    <span className="hidden sm:block text-sm font-medium">{user.name}</span>
+                    <span className="hidden sm:block text-sm font-medium capitalize">{user.name}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -110,13 +147,13 @@ export default function Header() {
                   {isMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                       <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                        <p className="text-sm font-medium text-gray-900 capitalize">{user.name}</p>
                         <p className="text-xs text-gray-500">{user.email}</p>
                         <p className="text-xs text-gray-500 capitalize">{user.type}</p>
                       </div>
                       
                       {/* Dashboard Links based on user type */}
-                      {/* {user.type === 'customer' && (
+                      {user.type === 'customer' && (
                         <Link
                           href="/my-gallery"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -124,9 +161,9 @@ export default function Header() {
                         >
                           My Gallery
                         </Link>
-                      )} */}
+                      )}
                       
-                      {(user.type === 'admin' || user.type === 'operation') && (
+                      {isAdmin && (
                         <>
                           <Link
                             href="/dashboard"
@@ -228,14 +265,14 @@ export default function Header() {
               </Link>
             )}
             
-            {user && (user.type === 'admin' || user.type === 'operation') && (
+            {user && isAdmin && (
               <>
                 <Link
                   href="/dashboard"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {user.type === 'operation' ? 'Operation Dashboard' : 'Admin Dashboard'}
+                  Dashboard
                 </Link>
                 <Link
                   href="/dashboard/my-photos"

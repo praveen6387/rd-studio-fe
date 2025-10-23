@@ -1,5 +1,10 @@
 import DashboardIndex from '@/components/dashboard';
+import ProtectedRoute from '@/components/utils/ProtectedRoute';
 
 export default function page() {
-  return <DashboardIndex />;
+  return (
+    <ProtectedRoute requireAdmin={true}>
+      <DashboardIndex />
+    </ProtectedRoute>
+  );
 } 

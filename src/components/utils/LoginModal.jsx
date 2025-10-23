@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { authenticateUser } from '@/data/users';
+import { userLogin } from '@/lib/api/client/auth/urls';
 
 export default function LoginModal({ isOpen, onClose, onLogin }) {
   const [formData, setFormData] = useState({
@@ -16,22 +16,17 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     setError('');
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Authenticate user using the new system
-      const user = authenticateUser(formData.email, formData.password);
-      
-      if (user) {
-        // Remove password from user object before storing
-        const { password, ...userWithoutPassword } = user;
-        onLogin(userWithoutPassword);
-        onClose();
-      } else {
-        setError('Invalid email or password. Please try again.');
-      }
+      // Send login request to API
+      const response = await userLogin({
+        email: formData.email,
+        password: formData.password
+      });
+      console.log(response);
+      // On successful login, call onLogin with the user data
+      onLogin(response);
+      onClose();
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

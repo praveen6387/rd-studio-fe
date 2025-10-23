@@ -13,17 +13,47 @@ export function UserProvider({ children }) {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    
+    // Clean up old token from previous system
+    localStorage.removeItem('token');
+    
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = (response) => {
+    // Extract user data and tokens from response
+    const { user: userData, access, refresh } = response;
+    
+    // Map backend role to frontend type
+    const roleToType = {
+      0: 'customer',
+      1: 'admin',
+      2: 'operation',
+      3: 'admin' // super admin maps to admin
+    };
+    
+    // Add type and name fields to user data
+    const enhancedUserData = {
+      ...userData,
+      type: roleToType[userData.role] || 'customer',
+      name: `${userData.first_name} ${userData.last_name}`.trim()
+    };
+    
+    // Store user data
+    setUser(enhancedUserData);
+    localStorage.setItem('user', JSON.stringify(enhancedUserData));
+    
+    // Store tokens separately
+    if (access) localStorage.setItem('accessToken', access);
+    if (refresh) localStorage.setItem('refreshToken', refresh);
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('token'); // Clean up old token if exists
   };
 
   const value = {

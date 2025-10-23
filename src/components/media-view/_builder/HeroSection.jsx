@@ -6,8 +6,8 @@ const HeroSection = ({ mediaData }) => {
     <section className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-16">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h1 className="text-5xl font-bold mb-4">{mediaData?.media_title || "Media Gallery"}</h1>
-          <p className="text-xl text-teal-50 mb-6 max-w-3xl mx-auto">
+          <h1 className="text-5xl font-bold mb-4 capitalize">{mediaData?.media_title || "Media Gallery"}</h1>
+          <p className="text-xl text-teal-50 mb-6 max-w-3xl mx-auto capitalize">
             {mediaData?.media_description || "View and explore your media collection"}
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">

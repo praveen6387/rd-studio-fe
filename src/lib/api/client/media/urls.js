@@ -1,4 +1,4 @@
-import { authToken, endpoint } from "@/lib/api/client/endpoint";
+import { getAuthToken, endpoint } from "@/lib/api/client/endpoint";
 
 export const getMediaLibrary = async () => {
   const url = endpoint.media_library;
@@ -14,7 +14,7 @@ export const createMedia = async (formData) => {
   const res = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: authToken,
+      Authorization: getAuthToken(),
     },
     body: formData,
   });

@@ -46,7 +46,7 @@ const MediaIndex = ({ mediaLibrary }) => {
       cell: ({ row }) => {
         const media_library_items = row.original.media_library_items?.[0];
         return (
-          <div className="h-8 flex items-center">
+          <div className="">
             <div className="text-ellipsis overflow-hidden w-[200px] whitespace-nowrap">
               {row.original.media_title || media_library_items?.media_item_title || "-"}
             </div>
@@ -60,7 +60,7 @@ const MediaIndex = ({ mediaLibrary }) => {
       cell: ({ row }) => {
         const media_library_items = row.original.media_library_items?.[0];
         return (
-          <div className="h-8 flex items-center">
+          <div className="">
             <div className="text-ellipsis overflow-hidden w-[250px] whitespace-nowrap">
               {row.original.media_description || media_library_items?.media_item_description || "-"}
             </div>
@@ -72,20 +72,14 @@ const MediaIndex = ({ mediaLibrary }) => {
       header: "Media Type",
       accessorKey: "media_type_name",
       cell: ({ row }) => {
-        return (
-          <div className="h-8 flex items-center">
-            <Badge variant="secondary">{row.original.media_type_name}</Badge>
-          </div>
-        );
+        return <Badge variant="secondary">{row.original.media_type_name}</Badge>;
       },
     },
     {
       header: "Created At",
       accessorKey: "created_at",
       cell: ({ row }) => {
-        return (
-          <div className="h-8 flex items-center text-sm text-gray-600">{convertTime(row.original.created_at)}</div>
-        );
+        return <div className=" text-sm text-gray-600">{convertTime(row.original.created_at)}</div>;
       },
     },
     {
@@ -93,7 +87,7 @@ const MediaIndex = ({ mediaLibrary }) => {
       accessorKey: "actions",
       cell: ({ row }) => {
         return (
-          <div className="flex items-center gap-2 h-8">
+          <div className="gap-2">
             <Button
               variant="outline"
               size="sm"

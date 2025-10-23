@@ -48,15 +48,18 @@ const AddColumnFilter = ({
               Add Filters
             </Button>
           ) : (
-            <Button variant="outline" className="border-dashed flex items-center gap-1.5 text-slate-600">
+            <Button
+              variant="outline"
+              className="border-slate-300 hover:border-slate-400 flex items-center gap-2 text-slate-700 hover:text-slate-900"
+            >
               Filter
-              <FilterIcon width={15} height={15} />
+              <FilterIcon width={16} height={16} />
             </Button>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Columns</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent className="w-56 shadow-lg border-slate-200">
+          <DropdownMenuLabel className="text-slate-800 font-medium">Columns</DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-slate-200" />
           {columns.map((col) => (
             <DropdownMenuCheckboxItem
               key={col.id}
@@ -184,13 +187,13 @@ const ColumnFilter = ({ column, setAddedFilters, openFilterDropdown, setOpenFilt
           <Button
             size="sm"
             variant="outline"
-            className="border-dashed flex items-center gap-2 md:max-w-[calc(100vw-270px)] max-w-[calc(100vw-70px)]"
+            className="border-slate-300 hover:border-slate-400 flex items-center gap-2 md:max-w-[calc(100vw-270px)] max-w-[calc(100vw-70px)] text-slate-700 hover:text-slate-900"
             onClick={() => setOpenFilterDropdown(column.id)}
           >
             <span className="text-ellipsis whitespace-nowrap overflow-hidden">
               {column.columnDef.header}: {getFilterDisplayText()}
             </span>
-            <X width={14} height={14} className="invisible flex-shrink-0" />
+            <X width={14} height={14} className="invisible shrink-0" />
           </Button>
         </DropdownMenuTrigger>
 
@@ -206,7 +209,11 @@ const ColumnFilter = ({ column, setAddedFilters, openFilterDropdown, setOpenFilt
         />
       </div>
 
-      <DropdownMenuContent align="start" className="w-56" onCloseAutoFocus={(e) => e.preventDefault()}>
+      <DropdownMenuContent
+        align="start"
+        className="w-56 shadow-lg border-slate-200"
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <div className="max-h-[300px] overflow-y-auto">
           {sortedUniqueValues.map(
             (value) =>
@@ -445,89 +452,78 @@ const DataTable = ({
 
   return (
     <>
-      <div className="flex items-end justify-between gap-2 pb-4 flex-wrap">
-        <div className="flex flex-col gap-4 w-[500px]">
-          <div className="flex items-center gap-4">
-            {showFilter && <Filter table={table} disabled={loading} placeholder="Search..." showSearchIcon={true} />}
+      <div className="flex items-center justify-between gap-4 pb-6">
+        <div className="flex items-center gap-4">
+          {showFilter && <Filter table={table} disabled={loading} placeholder="Search..." showSearchIcon={true} />}
+          <AddColumnFilter
+            columns={filterableColumns}
+            addedFilters={addedFilters}
+            setAddedFilters={setAddedFilters}
+            setOpenFilterDropdown={setOpenFilterDropdown}
+          />
+        </div>
+
+        {addedFilters.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {addedFilters.map((col) => (
+              <ColumnFilter
+                key={col.id}
+                column={col}
+                setAddedFilters={setAddedFilters}
+                openFilterDropdown={openFilterDropdown}
+                setOpenFilterDropdown={setOpenFilterDropdown}
+                urlState={urlState}
+              />
+            ))}
+
             <AddColumnFilter
-              columns={filterableColumns}
+              columns={customSelectColumns}
               addedFilters={addedFilters}
               setAddedFilters={setAddedFilters}
               setOpenFilterDropdown={setOpenFilterDropdown}
+              inline={true}
             />
+
+            <Button size="sm" variant="outline" className="text-slate-600 hover:text-slate-800" onClick={resetFilters}>
+              Clear Filters
+            </Button>
           </div>
+        )}
 
-          {addedFilters.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              {addedFilters.map((col) => (
-                <ColumnFilter
-                  key={col.id}
-                  column={col}
-                  setAddedFilters={setAddedFilters}
-                  openFilterDropdown={openFilterDropdown}
-                  setOpenFilterDropdown={setOpenFilterDropdown}
-                  urlState={urlState}
-                />
-              ))}
-
-              <AddColumnFilter
-                columns={customSelectColumns}
-                addedFilters={addedFilters}
-                setAddedFilters={setAddedFilters}
-                setOpenFilterDropdown={setOpenFilterDropdown}
-                inline={true}
-              />
-
-              <Button
-                size="sm"
-                variant="link"
-                className="ml-2 px-0 text-slate-700 outline-none underline"
-                onClick={resetFilters}
-              >
-                Clear Filters
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">{customAction}</div>
+        {customAction && <div className="flex items-center gap-2">{customAction}</div>}
       </div>
 
-      <div className="rounded-md border w-full relative overflow-hidden">
+      <div className="rounded-lg border border-slate-200 w-full relative overflow-hidden bg-white shadow-sm">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => {
-                  const isLastColumn = index === headerGroup.headers.length - 1;
-                  return (
-                    <TableHead key={header.id} colSpan={header.colSpan} className="bg-slate-50 p-0 h-8">
-                      {header.isPlaceholder ? null : (
-                        <div className="h-full">
-                          <div
-                            className={cn(
-                              "flex items-center justify-between mt-6 pl-2 pr-4 gap-4",
-                              !isLastColumn && "border-r",
-                              header.column.getCanSort() ? "cursor-pointer select-none" : ""
+              <TableRow key={headerGroup.id} className="border-b border-slate-200">
+                {headerGroup.headers.map((header, index) => (
+                  <TableHead key={header.id} colSpan={header.colSpan} className="bg-slate-50/50 px-4 py-3 text-left">
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn(
+                          "flex items-center gap-2 font-medium text-slate-700",
+                          index > 0 && "border-l-2 border-slate-300 pl-3",
+                          header.column.getCanSort() ? "cursor-pointer select-none hover:text-slate-900" : ""
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort() && (
+                          <>
+                            {{
+                              asc: <ChevronUp width={16} height={16} className="text-slate-500" />,
+                              desc: <ChevronDown width={16} height={16} className="text-slate-500" />,
+                            }[header.column.getIsSorted()] ?? (
+                              <ChevronsUpDown width={16} height={16} className="text-slate-400" />
                             )}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-
-                            {header.column.getCanSort() && (
-                              <>
-                                {{
-                                  asc: <ChevronUp width={13} height={13} />,
-                                  desc: <ChevronDown width={13} height={13} />,
-                                }[header.column.getIsSorted()] ?? <ChevronsUpDown width={13} height={13} />}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </TableHead>
-                  );
-                })}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -535,9 +531,9 @@ const DataTable = ({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-transparent border-b border-slate-200">
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="p-3 align-top">
+                <TableRow key={row.id} className="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">
+                  {row.getVisibleCells().map((cell, index) => (
+                    <TableCell key={cell.id} className={cn("px-4 py-3 text-slate-700", index > 0 && "pl-8")}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -545,18 +541,18 @@ const DataTable = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24 text-center text-slate-500">
+                  No results found.
                 </TableCell>
               </TableRow>
             )}
             {footer && showFooterWhenFiltered && (urlState.search || columnFilters.length > 0) && (
-              <TableRow className="bg-slate-50 font-medium border-t-2">
+              <TableRow className="bg-slate-50 font-medium border-t border-slate-200">
                 {(typeof footer === "function"
                   ? footer(table.getRowModel().rows.map((row) => row.original))
                   : footer
                 )?.map((cell, index) => (
-                  <TableCell key={index} className="p-3 align-top">
+                  <TableCell key={index} className={cn("px-4 py-3", index > 0 && "pl-8")}>
                     {cell}
                   </TableCell>
                 ))}
@@ -565,23 +561,14 @@ const DataTable = ({
           </TableBody>
         </Table>
 
-        {/* Backdrop blur overlay for table only */}
-        <div
-          className={cn(
-            "absolute inset-0 backdrop-blur-[2px] transition-opacity duration-300 pointer-events-none",
-            loading ? "opacity-100" : "opacity-0"
-          )}
-        />
-
-        {/* Loader centered in viewport */}
-        <div
-          className={cn(
-            "fixed inset-0 flex justify-center items-center transition-opacity duration-300 pointer-events-none z-50",
-            loading ? "opacity-100" : "opacity-0"
-          )}
-        >
-          <Loader2 className="w-10 h-10 text-slate-400 animate-spin" />
-        </div>
+        {loading && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+            <div className="flex items-center gap-2 text-slate-600">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="text-sm">Loading...</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <Pagination table={table} />

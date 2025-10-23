@@ -2,22 +2,28 @@ import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
 
 const QRModal = ({ isOpen, onClose, mediaData }) => {
   if (!mediaData) return null;
 
   const baseUrl =
-    typeof window !== "undefined"
-      ? `${window.location.protocol}//${window.location.host}`
-      : "http://127.0.0.1:3000";
+    typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host}` : "http://127.0.0.1:3000";
   const mediaUrl = `${baseUrl}/media-view/${mediaData.media_unique_id}`;
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(mediaUrl);
     toast.success("URL copied to clipboard!", {
       duration: 3000,
+      position: "bottom-right",
+    });
+  };
+
+  const handleOpenUrl = () => {
+    window.open(mediaUrl, "_blank", "noopener,noreferrer");
+    toast.success("Opening media in new tab...", {
+      duration: 2000,
       position: "bottom-right",
     });
   };
@@ -83,8 +89,11 @@ const QRModal = ({ isOpen, onClose, mediaData }) => {
                 readOnly
                 className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-700"
               />
-              <Button variant="outline" size="sm" onClick={handleCopyUrl}>
+              <Button variant="outline" size="sm" onClick={handleCopyUrl} title="Copy URL">
                 <Copy className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleOpenUrl} title="Open in new tab">
+                <ExternalLink className="h-4 w-4" />
               </Button>
             </div>
           </div>

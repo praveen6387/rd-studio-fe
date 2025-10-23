@@ -1,5 +1,6 @@
-'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
+"use client";
+import { createContext, useContext, useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 const UserContext = createContext();
 
@@ -9,71 +10,71 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     // Check if user is logged in from localStorage
-    const savedUser = localStorage.getItem('user');
+    const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    
+
     // Clean up old token from previous system
-    localStorage.removeItem('token');
-    
+    localStorage.removeItem("token");
+
     setLoading(false);
   }, []);
 
   const login = (response) => {
     // Extract user data and tokens from response
     const { user: userData, access, refresh } = response;
-    
+
     // Map backend role to frontend type
     const roleToType = {
-      0: 'customer',
-      1: 'admin',
-      2: 'operation',
-      3: 'admin' // super admin maps to admin
+      0: "customer",
+      1: "admin",
+      2: "operation",
+      3: "admin", // super admin maps to admin
     };
-    
+
     // Add type and name fields to user data
     const enhancedUserData = {
       ...userData,
-      type: roleToType[userData.role] || 'customer',
-      name: `${userData.first_name} ${userData.last_name}`.trim()
+      type: roleToType[userData.role] || "customer",
+      name: `${userData.first_name} ${userData.last_name}`.trim(),
     };
-    
+
     // Store user data
     setUser(enhancedUserData);
-    localStorage.setItem('user', JSON.stringify(enhancedUserData));
-    
+    localStorage.setItem("user", JSON.stringify(enhancedUserData));
+
     // Store tokens separately
-    if (access) localStorage.setItem('accessToken', access);
-    if (refresh) localStorage.setItem('refreshToken', refresh);
+    if (access) localStorage.setItem("accessToken", access);
+    if (refresh) localStorage.setItem("refreshToken", refresh);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('token'); // Clean up old token if exists
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("token"); // Clean up old token if exists
+
+    // Remove tokens from cookies
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
   };
 
   const value = {
     user,
     login,
     logout,
-    loading
+    loading,
   };
 
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
 export function useUser() {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
-} 
+}

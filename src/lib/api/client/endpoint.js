@@ -3,8 +3,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://192.168.16.40:9000"
 
 export const getAuthToken = () => {
   let authToken = "";
-  if (Cookies.get("dashboard_access_token")) {
-    authToken = `Bearer ${Cookies.get("dashboard_access_token")}`;
+  if (Cookies.get("access_token")) {
+    authToken = `Bearer ${Cookies.get("access_token")}`;
   }
 
   return authToken;

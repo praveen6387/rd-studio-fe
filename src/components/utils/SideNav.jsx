@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
+import LoadingLink from "@/components/ui/loading-link";
 import {
   FaTachometerAlt,
   FaImages,
@@ -69,7 +70,7 @@ export default function Sidenav() {
           <ul className={`p-4 space-y-2 ${isCollapsed ? "px-2" : ""}`}>
             {navItems.map((item) => (
               <li key={item.href}>
-                <Link
+                <LoadingLink
                   href={item.href}
                   className={`flex items-center p-3 rounded-lg transition-colors group ${
                     isActive(item.href) ? "bg-gray-700 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"
@@ -85,7 +86,7 @@ export default function Sidenav() {
                       {item.label}
                     </div>
                   )}
-                </Link>
+                </LoadingLink>
               </li>
             ))}
           </ul>

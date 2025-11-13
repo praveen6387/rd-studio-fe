@@ -27,7 +27,8 @@ body {
 
 /* Hero Section Animations */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
     opacity: 0.7;
   }
@@ -49,7 +50,8 @@ body {
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
   }
   50% {
@@ -88,4 +90,31 @@ body {
 /* Hide any Next.js development overlays */
 [data-nextjs-scroll-focus-boundary] {
   display: none !important;
+}
+
+/* Loading Page Animations */
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-progress {
+  animation: progress 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

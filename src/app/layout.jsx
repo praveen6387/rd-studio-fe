@@ -4,6 +4,7 @@ import { UserProvider } from "@/contexts/UserContext";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "react-hot-toast";
+import RouteLoadingBar from "@/components/ui/route-loading-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
         <NuqsAdapter>
           <UserProvider>
             <SidebarProvider>
+              <RouteLoadingBar />
               {children}
               <Toaster
                 position="bottom-right"

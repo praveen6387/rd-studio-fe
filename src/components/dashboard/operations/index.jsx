@@ -5,31 +5,27 @@ import { useState, useRef } from "react";
 import { getAllCustomers } from "@/data/users";
 import { photoCollections } from "@/data/photoCollections";
 import {
-  FaUpload,
-  FaEdit,
-  FaSave,
-  FaTrash,
-  FaDownload,
-  FaEye,
-  FaEyeSlash,
-  FaCrop,
-  FaAdjust,
-  FaFilter,
-  FaUndo,
-  FaRedo,
-  FaCheck,
-  FaTimes,
-  FaImage,
-  FaFolderOpen,
-  FaUser,
-  FaPlus,
-  FaChevronDown,
-  FaChevronUp,
-  FaUsers,
-  FaVideo,
-  FaBook,
-  FaSearch,
-} from "react-icons/fa";
+  Upload,
+  Pencil,
+  Save,
+  Trash2,
+  Download,
+  Eye,
+  EyeOff,
+  Crop,
+  SlidersHorizontal,
+  Filter,
+  RotateCw,
+  X,
+  Image,
+  FolderOpen,
+  User,
+  Plus,
+  Users,
+  Video,
+  BookOpen,
+  Search,
+} from "lucide-react";
 
 const OperationsIndex = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -379,7 +375,7 @@ const OperationsIndex = () => {
               {/* Existing Customers */}
               <div>
                 <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                  <FaUsers className="text-blue-600" />
+                  <Users className="text-blue-600" />
                   Existing Customers
                 </h3>
                 <div className="space-y-2">
@@ -391,7 +387,7 @@ const OperationsIndex = () => {
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <FaUser className="text-blue-600" />
+                          <User className="text-blue-600" />
                         </div>
                         <div>
                           <h4 className="font-medium">{customer.name}</h4>
@@ -407,7 +403,7 @@ const OperationsIndex = () => {
               {/* Create New Customer */}
               <div>
                 <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                  <FaPlus className="text-green-600" />
+                  <Plus className="text-green-600" />
                   Create New Customer
                 </h3>
                 <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
@@ -432,7 +428,7 @@ const OperationsIndex = () => {
                       }}
                       className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                     >
-                      <FaPlus /> Create Customer
+                      <Plus /> Create Customer
                     </button>
                   </div>
                 </div>
@@ -447,7 +443,7 @@ const OperationsIndex = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <FaUser className="text-blue-600 text-xl" />
+                  <User className="text-blue-600 text-xl" />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold">{selectedCustomer.name}</h2>
@@ -458,15 +454,15 @@ const OperationsIndex = () => {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <span className="flex items-center gap-1">
-                    <FaImage className="text-blue-600" />
+                    <Image className="text-blue-600" />
                     {customerImages.length} photos
                   </span>
                   <span className="flex items-center gap-1">
-                    <FaVideo className="text-green-600" />
+                    <Video className="text-green-600" />
                     {customerVideos.length} videos
                   </span>
                   <span className="flex items-center gap-1">
-                    <FaBook className="text-purple-600" />
+                    <BookOpen className="text-purple-600" />
                     {customerFlipbooks.length} flipbooks
                   </span>
                 </div>
@@ -474,7 +470,7 @@ const OperationsIndex = () => {
                   onClick={handleBackToCustomerSelection}
                   className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
-                  <FaTimes /> Change Customer
+                  <X /> Change Customer
                 </button>
               </div>
             </div>
@@ -485,7 +481,7 @@ const OperationsIndex = () => {
         {selectedCustomer && !showCustomerSelection && (
           <section className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow p-8 mb-6">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-blue-900">
-              <FaFolderOpen className="text-blue-600" />
+              <FolderOpen className="text-blue-600" />
               {selectedCustomer.name}'s Collections
             </h2>
             {getCustomerCollections(selectedCustomer.id).length > 0 ? (
@@ -520,11 +516,11 @@ const OperationsIndex = () => {
                       </div>
                       <div className="flex items-center gap-3 mt-2">
                         <span className="flex items-center gap-1 text-blue-600">
-                          <FaImage />
+                          <Image />
                           {collection.totalPhotos}
                         </span>
                         <span className="flex items-center gap-1 text-green-600">
-                          <FaVideo />
+                          <Video />
                           {collection.totalVideos}
                         </span>
                       </div>
@@ -542,22 +538,22 @@ const OperationsIndex = () => {
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                             />
                           ) : media.type === "video" ? (
-                            <div className="relative w-full h-full bg-gray-200 flex items-center justify-center">
+                            <div className="relative w-full h-full bg-gray-200 flex items-center justify_center">
                               <img
                                 src={media.thumbnail || media.url}
                                 alt={media.title}
                                 className="w-full h-full object-cover opacity-80"
                               />
-                              <FaVideo className="absolute text-white text-lg left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                              <Video className="absolute text-white text-lg left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
                             </div>
                           ) : (
-                            <div className="relative w-full h-full bg-gray-200 flex items-center justify-center">
+                            <div className="relative w-full h-full bg-gray-200 flex items-center justify_center">
                               <img
                                 src={media.url}
                                 alt={media.title}
                                 className="w-full h-full object-cover opacity-80"
                               />
-                              <FaBook className="absolute text-white text-lg left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                              <BookOpen className="absolute text-white text-lg left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
                             </div>
                           )}
                           {media.isFavorite && (
@@ -585,7 +581,7 @@ const OperationsIndex = () => {
               </div>
             ) : (
               <div className="text-center py-8 text-gray-400">
-                <FaFolderOpen className="mx-auto text-4xl mb-4" />
+                <FolderOpen className="mx-auto text-4xl mb-4" />
                 <p>No collections found for this customer.</p>
                 <p className="text-sm">Upload new media to create collections.</p>
               </div>
@@ -597,11 +593,11 @@ const OperationsIndex = () => {
         {selectedCustomer && !showCustomerSelection && (
           <section className="bg-white rounded-xl shadow-lg p-8 mb-6 flex flex-col items-center">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-900">
-              <FaUpload className="text-blue-600" /> Upload New Media
+              <Upload className="text-blue-600" /> Upload New Media
             </h2>
             {!showUploadForm ? (
               <div className="border-2 border-dashed border-blue-200 rounded-xl p-8 text-center w-full max-w-xl bg-blue-50">
-                <FaUpload className="mx-auto text-5xl text-blue-300 mb-4" />
+                <Upload className="mx-auto text-5xl text-blue-300 mb-4" />
                 <p className="text-blue-700 mb-4 font-medium">Drag and drop images here or click to browse</p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -741,13 +737,13 @@ const OperationsIndex = () => {
                       onClick={handleUploadSubmit}
                       className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-md hover:from-blue-600 hover:to-blue-800 font-semibold shadow"
                     >
-                      <FaUpload /> Upload
+                      <Upload /> Upload
                     </button>
                     <button
                       onClick={handleCancelUpload}
                       className="flex items-center gap-2 px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 font-semibold shadow"
                     >
-                      <FaTimes /> Cancel
+                      <X /> Cancel
                     </button>
                   </div>
                 </div>
@@ -768,7 +764,7 @@ const OperationsIndex = () => {
                     }`}
                     onClick={() => setMediaTab("photo")}
                   >
-                    <FaImage /> Photos
+                    <Image /> Photos
                   </button>
                   <button
                     className={`px-4 py-2 rounded-t-lg font-semibold flex items-center gap-2 transition-colors ${
@@ -778,7 +774,7 @@ const OperationsIndex = () => {
                     }`}
                     onClick={() => setMediaTab("video")}
                   >
-                    <FaVideo /> Videos
+                    <Video /> Videos
                   </button>
                   <button
                     className={`px-4 py-2 rounded-t-lg font-semibold flex items-center gap-2 transition-colors ${
@@ -788,11 +784,11 @@ const OperationsIndex = () => {
                     }`}
                     onClick={() => setMediaTab("flipbook")}
                   >
-                    <FaBook /> Flipbooks
+                    <BookOpen /> Flipbooks
                   </button>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-50 rounded px-3 py-1">
-                  <FaSearch className="text-gray-400" />
+                  <Search className="text-gray-400" />
                   <input
                     type="text"
                     value={mediaSearch}
@@ -837,7 +833,7 @@ const OperationsIndex = () => {
                               className="p-1 bg-white rounded shadow hover:bg-gray-50"
                               title="Edit"
                             >
-                              <FaEdit className="w-4 h-4 text-gray-600" />
+                              <Pencil className="w-4 h-4 text-gray-600" />
                             </button>
                             <button
                               onClick={() => handleToggleCollapse(image.id)}
@@ -845,9 +841,9 @@ const OperationsIndex = () => {
                               title={collapsedImages.has(image.id) ? "Show Details" : "Hide Details"}
                             >
                               {collapsedImages.has(image.id) ? (
-                                <FaEyeSlash className="w-4 h-4 text-gray-600" />
+                                <EyeOff className="w-4 h-4 text-gray-600" />
                               ) : (
-                                <FaEye className="w-4 h-4 text-gray-600" />
+                                <Eye className="w-4 h-4 text-gray-600" />
                               )}
                             </button>
                           </div>
@@ -899,7 +895,7 @@ const OperationsIndex = () => {
                               alt={video.title}
                               className="w-full h-full object-cover opacity-80"
                             />
-                            <FaVideo className="absolute text-white text-3xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                            <Video className="absolute text-white text-3xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
                           </div>
                           <div className="absolute top-2 left-2 flex gap-1">
                             <input
@@ -916,7 +912,7 @@ const OperationsIndex = () => {
                               className="p-1 bg-white rounded shadow hover:bg-gray-50"
                               title="Edit"
                             >
-                              <FaEdit className="w-4 h-4 text-gray-600" />
+                              <Pencil className="w-4 h-4 text-gray-600" />
                             </button>
                             <button
                               onClick={() => handleToggleCollapse(video.id)}
@@ -924,9 +920,9 @@ const OperationsIndex = () => {
                               title={collapsedImages.has(video.id) ? "Show Details" : "Hide Details"}
                             >
                               {collapsedImages.has(video.id) ? (
-                                <FaEyeSlash className="w-4 h-4 text-gray-600" />
+                                <EyeOff className="w-4 h-4 text-gray-600" />
                               ) : (
-                                <FaEye className="w-4 h-4 text-gray-600" />
+                                <Eye className="w-4 h-4 text-gray-600" />
                               )}
                             </button>
                           </div>
@@ -978,7 +974,7 @@ const OperationsIndex = () => {
                               alt={flipbook.title}
                               className="w-full h-full object-cover opacity-80"
                             />
-                            <FaBook className="absolute text-white text-3xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                            <BookOpen className="absolute text-white text-3xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
                           </div>
                           <div className="absolute top-2 left-2 flex gap-1">
                             <input
@@ -995,7 +991,7 @@ const OperationsIndex = () => {
                               className="p-1 bg-white rounded shadow hover:bg-gray-50"
                               title="Edit"
                             >
-                              <FaEdit className="w-4 h-4 text-gray-600" />
+                              <Pencil className="w-4 h-4 text-gray-600" />
                             </button>
                             <button
                               onClick={() => handleToggleCollapse(flipbook.id)}
@@ -1003,9 +999,9 @@ const OperationsIndex = () => {
                               title={collapsedImages.has(flipbook.id) ? "Show Details" : "Hide Details"}
                             >
                               {collapsedImages.has(flipbook.id) ? (
-                                <FaEyeSlash className="w-4 h-4 text-gray-600" />
+                                <EyeOff className="w-4 h-4 text-gray-600" />
                               ) : (
-                                <FaEye className="w-4 h-4 text-gray-600" />
+                                <Eye className="w-4 h-4 text-gray-600" />
                               )}
                             </button>
                           </div>
@@ -1066,13 +1062,13 @@ const OperationsIndex = () => {
                     onClick={() => setViewMode("grid")}
                     className={`p-2 rounded ${viewMode === "grid" ? "bg-blue-100 text-blue-600" : "text-gray-600"}`}
                   >
-                    <FaImage />
+                    <Image />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
                     className={`p-2 rounded ${viewMode === "list" ? "bg-blue-100 text-blue-600" : "text-gray-600"}`}
                   >
-                    <FaFolderOpen />
+                    <FolderOpen />
                   </button>
                 </div>
 
@@ -1082,13 +1078,13 @@ const OperationsIndex = () => {
                       onClick={handleDownloadImages}
                       className="flex items-center gap-2 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
                     >
-                      <FaDownload /> Download
+                      <Download /> Download
                     </button>
                     <button
                       onClick={handleDeleteImages}
                       className="flex items-center gap-2 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
                     >
-                      <FaTrash /> Delete
+                      <Trash2 /> Delete
                     </button>
                   </div>
                 )}
@@ -1103,7 +1099,7 @@ const OperationsIndex = () => {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Edit Image: {currentEditImage.name}</h2>
                 <button onClick={handleCancelEdits} className="text-gray-500 hover:text-gray-700">
-                  <FaTimes />
+                  <X />
                 </button>
               </div>
 
@@ -1122,25 +1118,25 @@ const OperationsIndex = () => {
                         onClick={() => handleEditOperation("crop", "auto")}
                         className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50"
                       >
-                        <FaCrop /> Crop
+                        <Crop /> Crop
                       </button>
                       <button
                         onClick={() => handleEditOperation("adjust", "brightness")}
                         className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50"
                       >
-                        <FaAdjust /> Brightness
+                        <SlidersHorizontal /> Brightness
                       </button>
                       <button
                         onClick={() => handleEditOperation("filter", "grayscale")}
                         className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50"
                       >
-                        <FaFilter /> Filter
+                        <Filter /> Filter
                       </button>
                       <button
                         onClick={() => handleEditOperation("rotate", 90)}
                         className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50"
                       >
-                        <FaRedo /> Rotate
+                        <RotateCw /> Rotate
                       </button>
                     </div>
                   </div>
@@ -1168,13 +1164,13 @@ const OperationsIndex = () => {
                       onClick={handleSaveEdits}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
-                      <FaSave /> Save Changes
+                      <Save /> Save Changes
                     </button>
                     <button
                       onClick={handleCancelEdits}
                       className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                     >
-                      <FaTimes /> Cancel
+                      <X /> Cancel
                     </button>
                   </div>
                 </div>

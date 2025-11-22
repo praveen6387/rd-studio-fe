@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import FlipBookModal from "./FlipBookModal";
 
 const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
@@ -48,7 +48,7 @@ const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
           className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors z-50"
           onClick={onClose}
         >
-          <FaTimes className="w-8 h-8" />
+          <X className="w-8 h-8" />
         </button>
 
         {/* Previous button */}
@@ -57,7 +57,7 @@ const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
             className="absolute left-5 text-white/70 hover:text-white transition-colors z-50 p-3 bg-black/20 rounded-full"
             onClick={handlePrev}
           >
-            <FaChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-6 h-6" />
           </button>
         )}
 
@@ -89,7 +89,7 @@ const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
             className="absolute right-5 text-white/70 hover:text-white transition-colors z-50 p-3 bg-black/20 rounded-full"
             onClick={handleNext}
           >
-            <FaChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-6 h-6" />
           </button>
         )}
       </div>

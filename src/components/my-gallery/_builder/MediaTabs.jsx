@@ -1,36 +1,25 @@
 import React, { useState } from "react";
-import {
-  FaImages,
-  FaVideo,
-  FaMusic,
-  FaFile,
-  FaDownload,
-  FaCheckCircle,
-  FaClock,
-  FaBook,
-  FaList,
-  FaChevronDown,
-} from "react-icons/fa";
+import { Image, Video, Music2, File, BookOpen, List, ChevronDown } from "lucide-react";
 import MediaViewerModal from "./MediaViewerModal";
 
 const TABS = [
-  { id: "all", label: "All", icon: FaFile, count: 0 },
-  { id: "photos", label: "Photos", icon: FaImages, count: 0 },
-  { id: "videos", label: "Videos", icon: FaVideo, count: 0 },
-  { id: "flipBook", label: "Flip Book", icon: FaBook, count: 0 },
-  { id: "audios", label: "Audio", icon: FaMusic, count: 0 },
+  { id: "all", label: "All", icon: File, count: 0 },
+  { id: "photos", label: "Photos", icon: Image, count: 0 },
+  { id: "videos", label: "Videos", icon: Video, count: 0 },
+  { id: "flipBook", label: "Flip Book", icon: BookOpen, count: 0 },
+  { id: "audios", label: "Audio", icon: Music2, count: 0 },
 ];
 
 const MEDIA_VIEW_TYPES = [
-  { id: "grid_1*2", label: "Grid 1*2", icon: FaImages },
-  { id: "grid_2*2", label: "Grid 2*2", icon: FaImages },
-  { id: "grid_3*2", label: "Grid 3*2", icon: FaImages },
-  { id: "grid_4*2", label: "Grid 4*2", icon: FaImages },
-  { id: "grid_5*2", label: "Grid 5*2", icon: FaImages },
-  { id: "grid_6*2", label: "Grid 6*2", icon: FaImages },
-  { id: "grid_7*2", label: "Grid 7*2", icon: FaImages },
-  { id: "grid_8*2", label: "Grid 8*2", icon: FaImages },
-  { id: "list", label: "List", icon: FaList },
+  { id: "grid_1*2", label: "Grid 1*2", icon: Image },
+  { id: "grid_2*2", label: "Grid 2*2", icon: Image },
+  { id: "grid_3*2", label: "Grid 3*2", icon: Image },
+  { id: "grid_4*2", label: "Grid 4*2", icon: Image },
+  { id: "grid_5*2", label: "Grid 5*2", icon: Image },
+  { id: "grid_6*2", label: "Grid 6*2", icon: Image },
+  { id: "grid_7*2", label: "Grid 7*2", icon: Image },
+  { id: "grid_8*2", label: "Grid 8*2", icon: Image },
+  { id: "list", label: "List", icon: List },
 ];
 
 const MediaTabs = ({ mediaData }) => {
@@ -112,7 +101,7 @@ const MediaTabs = ({ mediaData }) => {
             >
               <selectedViewType.icon className="w-4 h-4" />
               <span>{selectedViewType.label}</span>
-              <FaChevronDown className={`w-3 h-3 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
+              <ChevronDown className={`w-3 h-3 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
             {isDropdownOpen && (

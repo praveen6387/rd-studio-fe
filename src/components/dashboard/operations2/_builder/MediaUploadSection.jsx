@@ -1,32 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import {
-  FaUpload,
-  FaEdit,
-  FaSave,
-  FaTrash,
-  FaDownload,
-  FaEye,
-  FaEyeSlash,
-  FaCrop,
-  FaAdjust,
-  FaFilter,
-  FaUndo,
-  FaRedo,
-  FaCheck,
-  FaTimes,
-  FaImage,
-  FaFolderOpen,
-  FaUser,
-  FaPlus,
-  FaChevronDown,
-  FaChevronUp,
-  FaUsers,
-  FaVideo,
-  FaBook,
-  FaSearch,
-} from "react-icons/fa";
+import { Upload, X } from "lucide-react";
 
 const MediaUploadSection = ({ selectedCustomer }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -99,12 +74,12 @@ const MediaUploadSection = ({ selectedCustomer }) => {
     <section className="bg-white rounded-xl shadow-lg p-8 mb-6 mt-2">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold flex items-center gap-2 text-blue-900">
-          <FaUpload className="text-blue-600" /> Upload New Media
+          <Upload className="text-blue-600" /> Upload New Media
         </h2>
       </div>
       {!showUploadForm ? (
         <div className="border-2 border-dashed border-blue-200 rounded-xl p-12 text-center bg-blue-50">
-          <FaUpload className="mx-auto text-6xl text-blue-300 mb-6" />
+          <Upload className="mx-auto text-6xl text-blue-300 mb-6" />
           <p className="text-blue-700 mb-6 font-medium text-lg">Drag and drop images here or click to browse</p>
           <button
             onClick={() => fileInputRef.current?.click()}
@@ -248,13 +223,13 @@ const MediaUploadSection = ({ selectedCustomer }) => {
                 onClick={handleUploadSubmit}
                 className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-md hover:from-blue-600 hover:to-blue-800 font-semibold shadow"
               >
-                <FaUpload /> Upload
+                <Upload /> Upload
               </button>
               <button
                 onClick={handleCancelUpload}
                 className="flex items-center gap-2 px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 font-semibold shadow"
               >
-                <FaTimes /> Cancel
+                <X /> Cancel
               </button>
             </div>
           </div>

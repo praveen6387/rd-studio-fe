@@ -1,5 +1,5 @@
 import React from "react";
-import { FaCalendar, FaMapMarkerAlt, FaUsers, FaClock, FaCheckCircle, FaSpinner, FaTimes } from "react-icons/fa";
+import { Calendar, MapPin, Users, Clock, CheckCircle2, Loader2, X } from "lucide-react";
 
 const BookingSheet = ({ bookings, isOpen, onClose }) => {
   const getStatusColor = (status) => {
@@ -20,13 +20,13 @@ const BookingSheet = ({ bookings, isOpen, onClose }) => {
   const getStatusIcon = (status) => {
     switch (status) {
       case "completed":
-        return FaCheckCircle;
+        return CheckCircle2;
       case "in-progress":
-        return FaSpinner;
+        return Loader2;
       case "upcoming":
-        return FaClock;
+        return Clock;
       default:
-        return FaClock;
+        return Clock;
     }
   };
 
@@ -51,7 +51,7 @@ const BookingSheet = ({ bookings, isOpen, onClose }) => {
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">All Bookings</h3>
             <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
-              <FaTimes className="w-5 h-5" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
@@ -78,19 +78,19 @@ const BookingSheet = ({ bookings, isOpen, onClose }) => {
 
                   <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-4">
                     <div className="flex items-center space-x-2">
-                      <FaCalendar className="w-4 h-4 text-gray-400" />
+                      <Calendar className="w-4 h-4 text-gray-400" />
                       <span>{booking.date}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaClock className="w-4 h-4 text-gray-400" />
+                      <Clock className="w-4 h-4 text-gray-400" />
                       <span>{booking.time}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaUsers className="w-4 h-4 text-gray-400" />
+                      <Users className="w-4 h-4 text-gray-400" />
                       <span>{booking.guests} guests</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <FaMapMarkerAlt className="w-4 h-4 text-gray-400" />
+                      <MapPin className="w-4 h-4 text-gray-400" />
                       <span>{booking.location}</span>
                     </div>
                   </div>
@@ -116,7 +116,7 @@ const BookingSheet = ({ bookings, isOpen, onClose }) => {
             })}
             {(!bookings || bookings.length === 0) && (
               <div className="text-center py-8">
-                <FaCalendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
                 <p className="text-gray-500 text-sm">No bookings found</p>
               </div>
             )}

@@ -1,21 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import LoadingLink from "@/components/ui/loading-link";
-import {
-  FaTachometerAlt,
-  FaImages,
-  FaUser,
-  FaCog,
-  FaHome,
-  FaInfoCircle,
-  FaEnvelope,
-  FaSignOutAlt,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+import { Gauge, Settings, LogOut, Menu, X } from "lucide-react";
 
 export default function Sidenav() {
   const pathname = usePathname();
@@ -26,10 +14,10 @@ export default function Sidenav() {
   };
 
   const navItems = [
-    { href: "/dashboard", icon: <FaTachometerAlt />, label: "Dashboard" },
-    { href: "/dashboard/operations", icon: <FaTachometerAlt />, label: "Operations" },
-    { href: "/dashboard/operations2", icon: <FaTachometerAlt />, label: "Operations2" },
-    { href: "/dashboard/media", icon: <FaTachometerAlt />, label: "Media" },
+    { href: "/dashboard", icon: <Gauge />, label: "Dashboard" },
+    { href: "/dashboard/operations", icon: <Gauge />, label: "Operations" },
+    { href: "/dashboard/operations2", icon: <Gauge />, label: "Operations2" },
+    { href: "/dashboard/media", icon: <Gauge />, label: "Media" },
   ];
 
   return (
@@ -48,7 +36,7 @@ export default function Sidenav() {
           onClick={toggleSidebar}
           className="absolute -right-3 top-20 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-40"
         >
-          {isCollapsed ? <FaBars size={16} /> : <FaTimes size={16} />}
+          {isCollapsed ? <Menu size={16} /> : <X size={16} />}
         </button>
 
         {/* Logo/Brand */}
@@ -100,7 +88,7 @@ export default function Sidenav() {
             }`}
             title={isCollapsed ? "Settings" : ""}
           >
-            <FaCog className={`${isCollapsed ? "" : "mr-3"}`} />
+            <Settings className={`${isCollapsed ? "" : "mr-3"}`} size={16} />
             {!isCollapsed && "Settings"}
 
             {/* Tooltip for collapsed state */}
@@ -116,7 +104,7 @@ export default function Sidenav() {
             }`}
             title={isCollapsed ? "Logout" : ""}
           >
-            <FaSignOutAlt className={`${isCollapsed ? "" : "mr-3"}`} />
+            <LogOut className={`${isCollapsed ? "" : "mr-3"}`} size={16} />
             {!isCollapsed && "Logout"}
 
             {/* Tooltip for collapsed state */}

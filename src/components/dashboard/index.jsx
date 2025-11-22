@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  FaUsers,
-  FaCamera,
-  FaCalendarAlt,
-  FaDollarSign,
-  FaChartLine,
-  FaClock,
-  FaCheckCircle,
-  FaExclamationTriangle,
-} from "react-icons/fa";
+import { Users, Camera, CalendarDays, DollarSign, CheckCircle2 } from "lucide-react";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 
 const StatCard = ({ icon, label, value, change }) => (
@@ -106,25 +97,25 @@ const PerformanceMetric = ({ label, value, target, status }) => (
 const DashboardIndex = () => {
   const recentActivities = [
     {
-      icon: <FaCamera />,
+      icon: <Camera />,
       title: "Wedding Session Completed",
       description: "Sarah & John wedding photos uploaded",
       time: "2 hours ago",
     },
     {
-      icon: <FaUsers />,
+      icon: <Users />,
       title: "New Client Registration",
       description: "Mike Johnson booked portrait session",
       time: "4 hours ago",
     },
     {
-      icon: <FaCheckCircle />,
+      icon: <CheckCircle2 />,
       title: "Photo Editing Complete",
       description: "Corporate event photos ready for delivery",
       time: "6 hours ago",
     },
     {
-      icon: <FaCalendarAlt />,
+      icon: <CalendarDays />,
       title: "Session Scheduled",
       description: "Family portrait session confirmed for Friday",
       time: "1 day ago",
@@ -156,10 +147,10 @@ const DashboardIndex = () => {
     <DashboardPageLayout title="Dashboard" description="Overview of your photography business">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard icon={<FaUsers />} label="Total Clients" value="1,247" change={12} />
-        <StatCard icon={<FaCamera />} label="Sessions This Month" value="34" change={8} />
-        <StatCard icon={<FaDollarSign />} label="Revenue" value="$12,450" change={-3} />
-        <StatCard icon={<FaCalendarAlt />} label="Upcoming Sessions" value="8" change={0} />
+        <StatCard icon={<Users />} label="Total Clients" value="1,247" change={12} />
+        <StatCard icon={<Camera />} label="Sessions This Month" value="34" change={8} />
+        <StatCard icon={<DollarSign />} label="Revenue" value="$12,450" change={-3} />
+        <StatCard icon={<CalendarDays />} label="Upcoming Sessions" value="8" change={0} />
       </div>
 
       {/* Main Content Grid */}

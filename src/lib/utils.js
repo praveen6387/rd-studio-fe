@@ -9,7 +9,7 @@ export const convertTime = (utcTimestamp) => {
   const utcDate = new Date(utcTimestamp);
   // const options = {
   //   timeZone: "Asia/Kolkata",
-  //   day: "2-digit", 
+  //   day: "2-digit",
   //   month: "short",
   //   year: "numeric",
   //   hour: "2-digit",

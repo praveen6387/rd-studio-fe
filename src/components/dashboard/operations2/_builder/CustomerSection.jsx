@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { getAllCustomers } from "../../../../data/users";
-import { FaImage, FaVideo, FaBook, FaTimes, FaUser } from "react-icons/fa";
+import { Image, Video, BookOpen, User } from "lucide-react";
 
-const CustomerSection = ({selectedCustomer, setSelectedCustomer}) => {
+const CustomerSection = ({ selectedCustomer, setSelectedCustomer }) => {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -90,7 +90,7 @@ const CustomerSection = ({selectedCustomer, setSelectedCustomer}) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <FaUser className="text-blue-600 text-xl" />
+                <User className="text-blue-600 text-xl" />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">{selectedCustomer.name}</h2>
@@ -103,15 +103,15 @@ const CustomerSection = ({selectedCustomer, setSelectedCustomer}) => {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
-                  <FaImage className="text-blue-600" />
+                  <Image className="text-blue-600" />
                   {0} photos
                 </span>
                 <span className="flex items-center gap-1">
-                  <FaVideo className="text-green-600" />
+                  <Video className="text-green-600" />
                   {0} videos
                 </span>
                 <span className="flex items-center gap-1">
-                  <FaBook className="text-purple-600" />
+                  <BookOpen className="text-purple-600" />
                   {0} flipbooks
                 </span>
               </div>

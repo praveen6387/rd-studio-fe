@@ -139,7 +139,7 @@ const CreateNewMedia = () => {
           <Plus /> Create new Media
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-l-2 border-gray-200 !w-[500px] sm:!w-[600px] !max-w-[600px]">
+      <SheetContent className="border-l-2 border-gray-200 !w-[500px] sm:!w-[600px] !max-w-[600px] overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-gray-900">Create New Media</SheetTitle>
           <SheetDescription className="text-gray-600">

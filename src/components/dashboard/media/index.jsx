@@ -35,78 +35,80 @@ const MediaIndex = ({ mediaLibrary }) => {
     setIsQRModalOpen(false);
     setQrMediaData(null);
   };
+
   const columns = [
     {
-      header: "ID",
-      accessorKey: "media_unique_id",
-    },
-    {
-      header: "Media Title",
-      accessorKey: "media_item_title",
+      header: "Media",
+      accessorKey: "media_title",
       cell: ({ row }) => {
-        const media_library_items = row.original.media_library_items?.[0];
+        const mediaLibraryItem = row.original.media_library_items?.[0];
+        const title = row.original.media_title || mediaLibraryItem?.media_item_title || "-";
+        const description = row.original.media_description || mediaLibraryItem?.media_item_description;
+
         return (
-          <div className="">
-            <div className="text-ellipsis overflow-hidden w-[200px] whitespace-nowrap">
-              {row.original.media_title || media_library_items?.media_item_title || "-"}
-            </div>
+          <div className="space-y-1">
+            <p className="font-medium text-sm text-slate-900 line-clamp-1">{title}</p>
+            {description && <p className="text-xs text-slate-500 line-clamp-2">{description}</p>}
           </div>
         );
       },
     },
     {
-      header: "Media Description",
-      accessorKey: "media_item_description",
-      cell: ({ row }) => {
-        const media_library_items = row.original.media_library_items?.[0];
-        return (
-          <div className="">
-            <div className="text-ellipsis overflow-hidden w-[250px] whitespace-nowrap">
-              {row.original.media_description || media_library_items?.media_item_description || "-"}
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      header: "Media Type",
+      header: "Type / ID",
       accessorKey: "media_type_name",
-      cell: ({ row }) => {
-        return <Badge variant="secondary">{row.original.media_type_name}</Badge>;
+      meta: {
+        filterVariant: "custom-select",
       },
+      cell: ({ row }) => (
+        <div className="space-y-1">
+          <Badge variant="success" className="text-[11px] px-2 py-0.5 rounded-full">
+            {row.original.media_type_name || "Unknown"}
+          </Badge>
+          <p className="text-[11px] font-mono text-slate-500 break-all">{row.original.media_unique_id}</p>
+        </div>
+      ),
     },
     {
-      header: "Created At",
+      header: "Created",
       accessorKey: "created_at",
+      meta: {
+        filterVariant: "date-range",
+      },
       cell: ({ row }) => {
-        return <div className=" text-sm text-gray-600">{convertTime(row.original.created_at)}</div>;
+        const createdBy = row.original.created_by_name || row.original.created_by || "Ankit Maurya";
+
+        return (
+          <div className="space-y-1">
+            {createdBy && <p className="font-medium text-sm text-slate-900 line-clamp-1">{createdBy}</p>}
+            <p className="text-xs text-slate-500">{convertTime(row.original.created_at)}</p>
+          </div>
+        );
       },
     },
     {
       header: "Actions",
       accessorKey: "actions",
-      cell: ({ row }) => {
-        return (
-          <div className="gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-3 text-xs"
-              onClick={() => handleViewMedia(row.original)}
-            >
-              View
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-3 text-xs"
-              onClick={() => handleOpenQRModal(row.original)}
-            >
-              QR
-            </Button>
-          </div>
-        );
-      },
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-3 text-xs"
+            onClick={() => handleViewMedia(row.original)}
+          >
+            View
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-3 text-xs"
+            onClick={() => handleOpenQRModal(row.original)}
+          >
+            QR
+          </Button>
+        </div>
+      ),
     },
   ];
 

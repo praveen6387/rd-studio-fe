@@ -12,6 +12,7 @@ export const getMediaLibrary = async (token) => {
     next: { tags: ["media-library"] }, // Add cache tag for revalidation
   });
   if (!res.ok) {
+    return null;
     throw new Error("Failed to get media library");
   }
   return res.json();

@@ -364,6 +364,8 @@ const OperationsIndex = () => {
   const customerVideos = getCustomerVideos();
   const customerFlipbooks = getCustomerFlipbooks();
 
+  return null;
+
   return (
     <DashboardPageLayout title="Photo Operations" description="Manage and edit your photography files">
       <div className="space-y-6">

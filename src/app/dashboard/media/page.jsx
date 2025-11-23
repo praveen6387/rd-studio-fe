@@ -7,6 +7,7 @@ const MediaPage = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get("access_token");
   const mediaLibrary = await getMediaLibrary(token?.value);
+  console.log(mediaLibrary);
 
   return (
     <ProtectedRoute requireAdmin={true}>

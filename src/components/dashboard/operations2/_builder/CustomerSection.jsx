@@ -34,6 +34,8 @@ const CustomerSection = ({ selectedCustomer, setSelectedCustomer }) => {
       customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  return nul;
+
   return (
     <div className="p-0">
       {/* Search Section */}

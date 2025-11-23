@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import MediaViewerModal from "./MediaViewerModal";
+import { useState } from "react";
+import MediaViewModal from "@/components/utils/mediaViewModal";
+import { useSearchParams } from "next/navigation";
 
 const MediaViewer = ({ mediaData }) => {
-  const [isModalOpen, setIsModalOpen] = useState(true); // Open by default
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const searchParams = useSearchParams();
+  const is_open = searchParams.get("is_open");
+  const [isModalOpen, setIsModalOpen] = useState(is_open === "true" ? true : false); // Open by default
 
   if (!mediaData) return null;
 
@@ -23,13 +25,11 @@ const MediaViewer = ({ mediaData }) => {
   }));
 
   const handleMediaClick = (index) => {
-    setCurrentMediaIndex(index);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setCurrentMediaIndex(0);
   };
 
   // For single media (Image/Video), show large centered view
@@ -58,11 +58,9 @@ const MediaViewer = ({ mediaData }) => {
 
         {/* Media Viewer Modal */}
         {isModalOpen && (
-          <MediaViewerModal
-            mediaItems={transformedMediaData}
-            currentIndex={currentMediaIndex}
-            onClose={handleCloseModal}
-          />
+          <>
+            <MediaViewModal data={mediaData} open={isModalOpen} onOpenChange={handleCloseModal} />
+          </>
         )}
       </div>
     );
@@ -94,11 +92,9 @@ const MediaViewer = ({ mediaData }) => {
 
       {/* Media Viewer Modal */}
       {isModalOpen && (
-        <MediaViewerModal
-          mediaItems={transformedMediaData}
-          currentIndex={currentMediaIndex}
-          onClose={handleCloseModal}
-        />
+        <>
+          <MediaViewModal data={mediaData} open={isModalOpen} onOpenChange={handleCloseModal} />
+        </>
       )}
     </div>
   );

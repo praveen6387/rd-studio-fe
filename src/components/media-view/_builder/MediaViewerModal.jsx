@@ -2,7 +2,8 @@ import React, { useEffect, useCallback } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import FlipBookModal from "./FlipBookModal";
 
-const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
+// #TODO not use as of now
+const MediaViewerModal = ({ mediaItems, currentIndex, onClose, mediaTitle = "", mediaDescription = "" }) => {
   const [localIndex, setLocalIndex] = React.useState(currentIndex);
 
   const handleNext = useCallback(() => {
@@ -52,14 +53,14 @@ const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
         </button>
 
         {/* Previous button */}
-        {localIndex > 0 && (
+        {/* {localIndex > 0 && (
           <button
             className="absolute left-5 text-white/70 hover:text-white transition-colors z-50 p-3 bg-black/20 rounded-full"
             onClick={handlePrev}
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
-        )}
+        )} */}
 
         {/* Media content */}
         <div className="max-w-screen-lg max-h-[90vh] w-auto h-auto flex flex-col items-center justify-center">
@@ -78,20 +79,20 @@ const MediaViewerModal = ({ mediaItems, currentIndex, onClose }) => {
           )}
           {/* Media title and description */}
           <div className="text-white mt-4 text-center p-4 bg-black/20 rounded-b-lg max-w-2xl">
-            <h3 className="text-lg font-semibold">{currentItem.title}</h3>
-            <p className="text-sm text-gray-300">{currentItem.description}</p>
+            <h3 className="text-lg font-semibold">{mediaTitle || currentItem.title}</h3>
+            <p className="text-sm text-gray-300">{mediaDescription || currentItem.description}</p>
           </div>
         </div>
 
         {/* Next button */}
-        {localIndex < mediaItems.length - 1 && (
+        {/* {localIndex < mediaItems.length - 1 && (
           <button
             className="absolute right-5 text-white/70 hover:text-white transition-colors z-50 p-3 bg-black/20 rounded-full"
             onClick={handleNext}
           >
             <ChevronRight className="w-6 h-6" />
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

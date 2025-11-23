@@ -10,7 +10,7 @@ const QRModal = ({ isOpen, onClose, mediaData }) => {
 
   const baseUrl =
     typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host}` : "http://127.0.0.1:3000";
-  const mediaUrl = `${baseUrl}/media-view/${mediaData.media_unique_id}`;
+  const mediaUrl = `${baseUrl}/media-view/${mediaData.media_unique_id}?is_open=true`;
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(mediaUrl);

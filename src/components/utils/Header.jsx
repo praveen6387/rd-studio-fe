@@ -1,20 +1,20 @@
-'use client';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useUser } from '@/contexts/UserContext';
-import LoginModal from './LoginModal';
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useUser } from "@/contexts/UserContext";
+import LoginModal from "./LoginModal";
 
 // Function to decode JWT token
 function decodeJWT(token) {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
     );
     return JSON.parse(jsonPayload);
   } catch (error) {
@@ -32,7 +32,7 @@ export default function Header() {
   useEffect(() => {
     const checkAdminStatus = () => {
       if (user) {
-        const accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem("accessToken");
         if (accessToken) {
           const tokenPayload = decodeJWT(accessToken);
           setIsAdmin(tokenPayload?.is_admin || false);
@@ -58,11 +58,11 @@ export default function Header() {
 
   const getDashboardLink = () => {
     if (!user) return null;
-    
-    if (user.type === 'customer') {
-      return '/my-gallery';
-    } else if (user.type === 'admin' || user.type === 'operation') {
-      return '/my-gallery';
+
+    if (user.type === "customer") {
+      return "/my-gallery";
+    } else if (user.type === "admin" || user.type === "operation") {
+      return "/my-gallery";
     }
     return null;
   };
@@ -75,16 +75,8 @@ export default function Header() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-2">
-                <Image
-                  src="/next.svg"
-                  alt="Logo"
-                  width={32}
-                  height={32}
-                  className="dark:invert"
-                />
-                <span className="text-xl font-bold text-gray-900 dark:text-white">
-                  RD Photo
-                </span>
+                <Image src="/next.svg" alt="Logo" width={32} height={32} className="dark:invert" />
+                <span className="text-xl font-bold text-gray-900 dark:text-white">RD Photo</span>
               </Link>
             </div>
 
@@ -119,7 +111,7 @@ export default function Header() {
                   href={getDashboardLink()}
                   className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  {user.type === 'customer' ? 'My Gallery' : 'My Gallery'}
+                  {user.type === "customer" ? "My Gallery" : "My Gallery"}
                 </Link>
               )}
             </nav>
@@ -134,7 +126,12 @@ export default function Header() {
                   >
                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-gray-600 uppercase">
-                        {user && user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U'} 
+                        {user && user.name
+                          ? user.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                          : "U"}
                       </span>
                     </div>
                     <span className="hidden sm:block text-sm font-medium capitalize">{user.name}</span>
@@ -151,9 +148,9 @@ export default function Header() {
                         <p className="text-xs text-gray-500">{user.email}</p>
                         <p className="text-xs text-gray-500 capitalize">{user.type}</p>
                       </div>
-                      
+
                       {/* Dashboard Links based on user type */}
-                      {user.type === 'customer' && (
+                      {user.type === "customer" && (
                         <Link
                           href="/my-gallery"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -162,7 +159,7 @@ export default function Header() {
                           My Gallery
                         </Link>
                       )}
-                      
+
                       {isAdmin && (
                         <>
                           <Link
@@ -174,7 +171,7 @@ export default function Header() {
                           </Link>
                         </>
                       )}
-                      
+
                       {/* logout button */}
                       <button
                         onClick={handleLogout}
@@ -201,18 +198,8 @@ export default function Header() {
                   className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white p-2 rounded-md"
                   aria-label="Toggle menu"
                 >
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
               </div>
@@ -253,9 +240,9 @@ export default function Header() {
             >
               Contact
             </Link>
-            
+
             {/* Mobile Dashboard Links */}
-            {user && user.type === 'customer' && (
+            {user && user.type === "customer" && (
               <Link
                 href="/my-gallery"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
@@ -264,7 +251,7 @@ export default function Header() {
                 My Gallery
               </Link>
             )}
-            
+
             {user && isAdmin && (
               <>
                 <Link
@@ -294,11 +281,7 @@ export default function Header() {
         </div>
       )}
 
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLogin={handleLogin}
-      />
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} onLogin={handleLogin} />
     </>
   );
-} 
+}

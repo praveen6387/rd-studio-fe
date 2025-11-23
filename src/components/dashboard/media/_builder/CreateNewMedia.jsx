@@ -136,7 +136,7 @@ const CreateNewMedia = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button className="flex items-center gap-2 cursor-pointer">
-          <Plus /> Create new Media
+          <Plus /> Add Media
         </Button>
       </SheetTrigger>
       <SheetContent className="border-l-2 border-gray-200 !w-[500px] sm:!w-[600px] !max-w-[600px] overflow-y-auto">

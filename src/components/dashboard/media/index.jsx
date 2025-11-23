@@ -4,10 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 import React, { useState } from "react";
 import CreateNewMedia from "./_builder/CreateNewMedia";
-import ViewMediaModal from "./_builder/ViewMediaModal";
 import QRModal from "./_builder/QRModal";
 import { convertTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import ViewMediaModalV2 from "./_builder/ViewMediaModalV2";
 
 const MediaIndex = ({ mediaLibrary }) => {
   const data = mediaLibrary?.data;
@@ -115,7 +115,7 @@ const MediaIndex = ({ mediaLibrary }) => {
   return (
     <DashboardPageLayout title="Media" description="Manage your media" button={<CreateNewMedia />}>
       <DataTable data={data} columns={columns} />
-      <ViewMediaModal isOpen={isModalOpen} onClose={handleCloseModal} mediaData={selectedMedia} />
+      <ViewMediaModalV2 isOpen={isModalOpen} onClose={handleCloseModal} mediaData={selectedMedia} />
       <QRModal isOpen={isQRModalOpen} onClose={handleCloseQRModal} mediaData={qrMediaData} />
     </DashboardPageLayout>
   );

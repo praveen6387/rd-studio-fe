@@ -41,7 +41,7 @@ const MyGalleryIndex = () => {
 
   return (
     <PageLayout>
-      <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100">
+      <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 z-50">
         {/* Hero Section */}
         <HeroSection user={customerData} />
 
@@ -52,7 +52,7 @@ const MyGalleryIndex = () => {
             <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl opacity-60"></div>
             <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full blur-3xl opacity-60"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 relative z-10">
             {/* Left Side - Stats */}
             <StatsCard stats={stats} onViewBookingsClick={() => setIsSheetOpen(true)} />

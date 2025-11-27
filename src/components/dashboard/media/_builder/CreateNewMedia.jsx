@@ -10,11 +10,46 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Plus, Upload, X } from "lucide-react";
 import { createMedia } from "@/lib/api/client/media/urls";
 import { revalidateAPITag } from "@/lib/actions/media";
+import imageCompression from "browser-image-compression";
+
+// Fast client-side compression using browser-image-compression (keeps dimensions)
+const compressImageFast = async (file, { maxBytes = 400 * 1024, onProgress } = {}) => {
+  if (!(file instanceof File)) return file;
+  if (!file.type?.startsWith("image/")) return file;
+  if (file.size <= maxBytes) return file;
+
+  const targetMB = Math.max(0.05, maxBytes / (1024 * 1024));
+  const options = {
+    maxSizeMB: targetMB,
+    useWebWorker: true,
+    // no resizing; we keep original width/height
+  };
+
+  const qualities = [0.85, 0.7, 0.55, 0.4, 0.3];
+  let best = null;
+  for (const q of qualities) {
+    try {
+      const out = await imageCompression(file, { ...options, initialQuality: q, onProgress });
+      if (out && out.size <= maxBytes && out.size <= file.size) return out;
+      if (out && out.size < file.size) best = out;
+    } catch {
+      // try next
+    }
+  }
+  if (best) return best;
+  try {
+    const last = await imageCompression(file, { ...options, initialQuality: 0.25, onProgress });
+    if (last && last.size <= file.size) return last;
+  } catch {}
+  return file;
+};
 
 const CreateNewMedia = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [compressionProgress, setCompressionProgress] = useState(0);
   const {
     register,
     handleSubmit,
@@ -103,19 +138,51 @@ const CreateNewMedia = () => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
     const mediaType = watch("media_type");
 
     if (mediaType === "0" || mediaType === "1") {
       // Image or Video: single file only
-      setSelectedFiles([files[0]]);
+      const first = files[0];
+      if (!first) {
+        setSelectedFiles([]);
+      } else if (mediaType === "0" && first.type.startsWith("image/")) {
+        try {
+          setIsCompressing(true);
+          setCompressionProgress(0);
+          const compressed = await compressImageFast(first, {
+            onProgress: (p) => setCompressionProgress(Math.round(p || 0)),
+          });
+          setSelectedFiles([compressed]);
+        } catch {
+          setSelectedFiles([first]);
+        } finally {
+          setIsCompressing(false);
+        }
+      } else {
+        setSelectedFiles([first]);
+      }
     } else if (mediaType === "2") {
       // FlipBook: multiple images only
       const imageFiles = files.filter(
         (file) => file.type.startsWith("image/") || file.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)
       );
-      setSelectedFiles((prev) => [...prev, ...imageFiles]);
+      if (imageFiles.length === 0) {
+        setSelectedFiles((prev) => prev);
+      } else {
+        try {
+          setIsCompressing(true);
+          setCompressionProgress(0);
+          const compressedList = await Promise.all(imageFiles.map((f) => compressImageFast(f)));
+          setSelectedFiles((prev) => [...prev, ...compressedList]);
+        } catch {
+          setSelectedFiles((prev) => [...prev, ...imageFiles]);
+        } finally {
+          setIsCompressing(false);
+          setCompressionProgress(0);
+        }
+      }
     }
     // Clear validation error when user selects files
     clearErrors("files");
@@ -139,7 +206,7 @@ const CreateNewMedia = () => {
           <Plus /> Add Media
         </Button>
       </SheetTrigger>
-      <SheetContent className="border-l-2 border-gray-200 !w-[500px] sm:!w-[600px] !max-w-[600px] overflow-y-auto">
+      <SheetContent className="border-l-2 border-gray-200 w-[500px]! sm:w-[600px]! max-w-[600px]! overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-gray-900">Create New Media</SheetTitle>
           <SheetDescription className="text-gray-600">
@@ -211,21 +278,37 @@ const CreateNewMedia = () => {
                     : "border-gray-200 bg-gray-50 opacity-60"
                 }`}
               >
-                <Upload className={`mx-auto h-12 w-12 ${watch("media_type") ? "text-gray-400" : "text-gray-300"}`} />
-                <div className="mt-4">
-                  <span className={`text-sm ${watch("media_type") ? "text-gray-600" : "text-gray-400"}`}>
-                    {watch("media_type") ? "Click to upload or drag and drop" : "Select media type first"}
-                  </span>
-                  {watch("media_type") && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {watch("media_type") === "0"
-                        ? "JPG, PNG, GIF, WebP up to 10MB"
-                        : watch("media_type") === "1"
-                        ? "MP4, AVI, MOV up to 100MB"
-                        : "JPG, PNG, GIF, WebP (multiple images for FlipBook) up to 10MB each"}
-                    </p>
-                  )}
-                </div>
+                {isCompressing ? (
+                  <>
+                    <Loader2 className="mx-auto h-12 w-12 text-gray-400 animate-spin" />
+                    <div className="mt-4">
+                      <span className="text-sm text-gray-600">
+                        Optimizing images
+                        {typeof compressionProgress === "number" ? ` (${compressionProgress}%)` : "..."}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Upload
+                      className={`mx-auto h-12 w-12 ${watch("media_type") ? "text-gray-400" : "text-gray-300"}`}
+                    />
+                    <div className="mt-4">
+                      <span className={`text-sm ${watch("media_type") ? "text-gray-600" : "text-gray-400"}`}>
+                        {watch("media_type") ? "Click to upload or drag and drop" : "Select media type first"}
+                      </span>
+                      {watch("media_type") && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {watch("media_type") === "0"
+                            ? "JPG, PNG, GIF, WebP up to 10MB"
+                            : watch("media_type") === "1"
+                            ? "MP4, AVI, MOV up to 100MB"
+                            : "JPG, PNG, GIF, WebP (multiple images for FlipBook) up to 10MB each"}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
               <Input
                 id="file-upload"
@@ -234,7 +317,7 @@ const CreateNewMedia = () => {
                 className="hidden"
                 onChange={handleFileChange}
                 accept={watch("media_type") === "0" ? "image/*" : watch("media_type") === "1" ? "video/*" : "image/*"}
-                disabled={!watch("media_type")}
+                disabled={!watch("media_type") || isCompressing}
               />
             </Label>
             {errors.files && <p className="text-xs text-red-500">{errors.files.message}</p>}
@@ -269,10 +352,10 @@ const CreateNewMedia = () => {
               Close
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
+              {isLoading || isCompressing ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Creating Media...
+                  {isCompressing ? "Optimizing..." : "Creating Media..."}
                 </>
               ) : (
                 "Create Media"

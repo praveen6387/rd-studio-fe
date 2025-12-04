@@ -1,3 +1,0 @@
-0000000000000000000000000000000000000000 222f75cd200508bf274cc75bb297372fd2fb5e91 Praveen <praveen@praveen-Nitro-AN515-43.(none)> 1761243104 +0530	clone: from github.com:praveen6387/rd-studio-fe.git
-222f75cd200508bf274cc75bb297372fd2fb5e91 348ece206e008440fef866ea7aaa1cf223697f1d Praveen <praveenmaurya.bst@gmail.com> 1761244067 +0530	commit: fix the git ignore file
-348ece206e008440fef866ea7aaa1cf223697f1d a4f9b54791bd9a9d20b1cd76be2d7909432f3bc4 Praveen <praveenmaurya.bst@gmail.com> 1761244205 +0530	commit: remove env file

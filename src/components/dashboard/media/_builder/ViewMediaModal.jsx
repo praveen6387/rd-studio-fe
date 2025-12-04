@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 // Not used as of now
 const ViewMediaModal = ({ isOpen, onClose, mediaData }) => {
   if (!mediaData || !isOpen) return null;
-  console.log(mediaData);
 
   const mediaItems = mediaData.media_library_items || [];
   const mediaType = mediaData.media_type;

@@ -3,7 +3,6 @@ import MediaViewModal from "@/components/utils/mediaViewModal";
 
 const ViewMediaModalV2 = ({ isOpen, onClose, mediaData }) => {
   if (!mediaData || !isOpen) return null;
-  console.log(mediaData);
 
   return (
     <div>

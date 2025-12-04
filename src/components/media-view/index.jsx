@@ -19,8 +19,6 @@ const MediaViewIndex = ({ mediaId, media }) => {
 
   const mediaData = media.data;
 
-  console.log(mediaData);
-
   return (
     <PageLayout>
       <div className="min-h-screen">

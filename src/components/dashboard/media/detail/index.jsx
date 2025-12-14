@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,9 +20,33 @@ const toFile = (blobOrFile, name, lastModified = Date.now()) => {
   try {
     return new File([blobOrFile], name || "upload", { type, lastModified });
   } catch {
-    // Fallback for very old browsers (unlikely in Next.js apps)
     return blobOrFile;
   }
+};
+
+const filenameFromUrl = (url) => {
+  try {
+    const u = new URL(url);
+    const last = u.pathname.split("/").filter(Boolean).pop();
+    if (!last) return "file";
+    return decodeURIComponent(last);
+  } catch {
+    try {
+      const parts = url.split("?")[0].split("/");
+      return parts[parts.length - 1] || "file";
+    } catch {
+      return "file";
+    }
+  }
+};
+
+const fetchUrlAsFile = async (url, nameHint) => {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to fetch file: " + url);
+  const blob = await res.blob();
+  const type = blob?.type || "image/jpeg";
+  const name = nameHint || filenameFromUrl(url) || "file";
+  return new File([blob], name, { type, lastModified: Date.now() });
 };
 
 const DetailMediaIndex = ({ media }) => {
@@ -36,14 +60,13 @@ const DetailMediaIndex = ({ media }) => {
   const [selectedFiles, setSelectedFiles] = useState(
     items.map((item) => ({
       id: item.id,
-      file: toFile(
-        new Blob([item.media_url], { type: item.media_type === 0 ? "image/jpeg" : "video/mp4" }),
-        item.media_item_title
-      ),
+      file: null, // existing item; do not create fake File from URL
       isImage: true,
       status: "ready",
       progress: 100,
       previewUrl: item.media_url,
+      isNew: false,
+      name: item.media_item_title || filenameFromUrl(item.media_url),
     }))
   );
   const [viewMode, setViewMode] = useState("grid");
@@ -51,67 +74,63 @@ const DetailMediaIndex = ({ media }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Fast client-side compression keeping original dimensions, targeting <= 100 KB
-  const compressImageFast = async (file, { maxBytes = 100 * 1024, onProgress } = {}) => {
+  // Hydrate existing items by fetching their URLs into real File objects once
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      // Collect targets from latest state safely
+      let targets = [];
+      setSelectedFiles((prev) => {
+        targets = prev.filter((it) => !it.isNew && !it.file && !!it.previewUrl);
+        return prev;
+      });
+      if (!targets.length) return;
+      const replacements = await Promise.all(
+        targets.map(async (it) => {
+          try {
+            const f = await fetchUrlAsFile(it.previewUrl, it?.name || undefined);
+            return { id: it.id, file: f };
+          } catch {
+            return null;
+          }
+        })
+      );
+      if (cancelled) return;
+      setSelectedFiles((prev) =>
+        prev.map((it) => {
+          const rep = replacements.find((r) => r && r.id === it.id);
+          return rep ? { ...it, file: rep.file } : it;
+        })
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Re-run if items list changes (e.g., when navigating to a different media)
+  }, [items]);
+
+  // Simple image compression helper (targets ~100KB)
+  const compressImageIfNeeded = async (file, onProgress) => {
     if (!(file instanceof File)) return file;
     if (!file.type?.startsWith("image/")) return file;
-    if (file.size <= maxBytes) return file;
-
-    const targetMB = Math.max(0.05, maxBytes / (1024 * 1024));
-    const baseOptions = {
-      maxSizeMB: targetMB,
-      useWebWorker: true,
-    };
-    const qualities = [0.85, 0.7, 0.55, 0.4, 0.3];
-    const totalAttempts = qualities.length + 1; // plus final fallback
-    let best = null;
-    for (let attemptIndex = 0; attemptIndex < qualities.length; attemptIndex++) {
-      const q = qualities[attemptIndex];
-      try {
-        const out = await imageCompression(file, {
-          ...baseOptions,
-          initialQuality: q,
-          onProgress: (p) => {
-            const normalized = Math.min(
-              100,
-              Math.round(((attemptIndex + (typeof p === "number" ? p : 0) / 100) / totalAttempts) * 100)
-            );
-            onProgress?.(normalized);
-          },
-        });
-        if (out && out.size <= maxBytes && out.size <= file.size) {
-          onProgress?.(100);
-          return out;
-        }
-        if (out && out.size < file.size) best = out;
-      } catch {
-        // try next quality
-      }
-    }
-    if (best) {
-      onProgress?.(100);
-      return best;
-    }
     try {
-      const attemptIndex = qualities.length; // final attempt
-      const last = await imageCompression(file, {
-        ...baseOptions,
-        initialQuality: 0.25,
+      const out = await imageCompression(file, {
+        maxSizeMB: 0.1, // ~100KB
+        useWebWorker: true,
+        maxWidthOrHeight: 4096,
         onProgress: (p) => {
-          const normalized = Math.min(
-            100,
-            Math.round(((attemptIndex + (typeof p === "number" ? p : 0) / 100) / totalAttempts) * 100)
-          );
-          onProgress?.(normalized);
+          if (typeof onProgress === "function") {
+            try {
+              onProgress(Math.max(0, Math.min(100, Math.round(p || 0))));
+            } catch {}
+          }
         },
       });
-      if (last && last.size <= file.size) {
-        onProgress?.(100);
-        return last;
-      }
-    } catch {}
-    onProgress?.(100);
-    return file;
+      // Always prefer the optimized output if available
+      return out || file;
+    } catch {
+      return file;
+    }
   };
 
   const resetToInitial = () => {
@@ -121,11 +140,13 @@ const DetailMediaIndex = ({ media }) => {
     setSelectedFiles(
       items.map((item) => ({
         id: item.id,
-        file: new File([], item.media_url, { type: item.media_type === 0 ? "image/jpeg" : "video/mp4" }),
+        file: null, // keep as reference; don't fabricate a File
         isImage: true,
         status: "ready",
         progress: 100,
         previewUrl: item.media_url,
+        isNew: false,
+        name: item.media_item_title || filenameFromUrl(item.media_url),
       }))
     );
   };
@@ -159,10 +180,23 @@ const DetailMediaIndex = ({ media }) => {
         formData.append("media_description", mediaDescription.trim());
       }
       // Preserve user order and ensure filename is sent (avoid default "blob")
+      console.log("selectedFiles", selectedFiles);
+      // Append ALL files in current order
       selectedFiles.forEach((item) => {
-        const filename = item?.file?.name || "upload";
+        if (!(item?.file instanceof File)) {
+          throw new Error("File missing for one or more items");
+        }
+        const filename = item.file.name || item?.name || "upload";
         formData.append("media_items", item.file, filename);
       });
+      // Optionally send ordering and existing IDs if backend supports it
+      try {
+        const orderPayload = selectedFiles.map((item, index) => ({
+          id: item.id,
+          position: index,
+        }));
+        formData.append("order", JSON.stringify(orderPayload));
+      } catch {}
       console.log(formData);
 
       await updateMedia(formData, mediaData.id);
@@ -190,105 +224,95 @@ const DetailMediaIndex = ({ media }) => {
   };
 
   const handleFileChange = async (e) => {
-    console.log("called");
     const files = Array.from(e.target.files || []);
-    console.log(files.length);
-    if (!files.length) {
-      // User canceled the dialog; keep previous selection intact
-      return;
-    }
-    console.log(mediaType);
-    if (mediaType === "0" || mediaType === "1") {
+    if (!files.length) return;
+    // Single image for mediaType "0"
+    if (mediaType === "0") {
       const first = files[0];
       if (!first) {
         setSelectedFiles([]);
         return;
       }
-      const isImage = first.type?.startsWith("image/");
       const entry = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
         file: first,
-        isImage,
-        status: isImage && mediaType === "0" ? "compressing" : "ready",
+        isImage: true,
+        status: "compressing",
         progress: 0,
-        previewUrl: isImage ? URL.createObjectURL(first) : null,
+        previewUrl: URL.createObjectURL(first),
+        isNew: true,
       };
       setSelectedFiles([entry]);
-      if (isImage && mediaType === "0") {
-        try {
-          const compressed = await compressImageFast(first, {
-            onProgress: (p) => {
-              const entryId = entry.id;
-              setSelectedFiles((prev) =>
-                prev.map((it) => (it.id === entryId ? { ...it, progress: Math.round(p || 0) } : it))
-              );
-            },
-          });
+      try {
+        const compressed = await compressImageIfNeeded(first, (p) => {
           const entryId = entry.id;
-          const compressedFile = toFile(compressed, first.name, first.lastModified || Date.now());
-          const newUrl = URL.createObjectURL(compressedFile);
+          setSelectedFiles((prev) => prev.map((it) => (it.id === entryId ? { ...it, progress: p } : it)));
+        });
+        const entryId = entry.id;
+        const finalFile = toFile(compressed, first.name, first.lastModified || Date.now());
+        const newUrl = URL.createObjectURL(finalFile);
+        setSelectedFiles((prev) =>
+          prev.map((it) => {
+            if (it.id !== entryId) return it;
+            if (it.previewUrl && it.previewUrl !== newUrl) {
+              try {
+                URL.revokeObjectURL(it.previewUrl);
+              } catch {}
+            }
+            return { ...it, file: finalFile, status: "ready", progress: 100, previewUrl: newUrl, isNew: true };
+          })
+        );
+      } catch {
+        const entryId = entry.id;
+        setSelectedFiles((prev) =>
+          prev.map((it) => (it.id === entryId ? { ...it, status: "ready", progress: 100 } : it))
+        );
+      }
+      return;
+    }
+    // Multiple images for flipbook "2"
+    if (mediaType === "2") {
+      const imageFiles = files.filter(
+        (file) => file.type.startsWith("image/") || file.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)
+      );
+      if (!imageFiles.length) return;
+      const placeholders = imageFiles.map((f) => ({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        file: f,
+        isImage: true,
+        status: "compressing",
+        progress: 0,
+        previewUrl: URL.createObjectURL(f),
+        isNew: true,
+      }));
+      setSelectedFiles((prev) => [...prev, ...placeholders]);
+      // compress in background and update each placeholder
+      placeholders.forEach(async (p, i) => {
+        const placeholderId = p.id;
+        const original = imageFiles[i];
+        try {
+          const compressed = await compressImageIfNeeded(original, (p) => {
+            setSelectedFiles((prev) => prev.map((it) => (it.id === placeholderId ? { ...it, progress: p } : it)));
+          });
+          const finalFile = toFile(compressed, original.name, original.lastModified || Date.now());
+          const newUrl = URL.createObjectURL(finalFile);
           setSelectedFiles((prev) =>
             prev.map((it) => {
-              if (it.id !== entryId) return it;
+              if (it.id !== placeholderId) return it;
               if (it.previewUrl && it.previewUrl !== newUrl) {
                 try {
                   URL.revokeObjectURL(it.previewUrl);
                 } catch {}
               }
-              return { ...it, file: compressedFile, status: "ready", progress: 100, previewUrl: newUrl };
+              return { ...it, file: finalFile, status: "ready", progress: 100, previewUrl: newUrl, isNew: true };
             })
           );
         } catch {
-          const entryId = entry.id;
-          setSelectedFiles((prev) => prev.map((it) => (it.id === entryId ? { ...it, status: "ready" } : it)));
+          setSelectedFiles((prev) =>
+            prev.map((it) => (it.id === placeholderId ? { ...it, status: "ready", progress: 100 } : it))
+          );
         }
-      }
-    } else if (mediaType === "2") {
-      const imageFiles = files.filter(
-        (file) => file.type.startsWith("image/") || file.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)
-      );
-      if (imageFiles.length) {
-        // append placeholders with preview and start compressing each
-        const placeholders = imageFiles.map((f) => ({
-          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          file: f,
-          isImage: true,
-          status: "compressing",
-          progress: 0,
-          previewUrl: URL.createObjectURL(f),
-        }));
-        // append, then compress each sequentially per item
-        setSelectedFiles((prev) => [...prev, ...placeholders]);
-        // compress in background, update each based on its absolute index
-        placeholders.forEach(async (p, i) => {
-          const placeholderId = p.id;
-          const original = imageFiles[i];
-          try {
-            const compressed = await compressImageFast(original, {
-              onProgress: (p) => {
-                setSelectedFiles((prev) =>
-                  prev.map((it) => (it.id === placeholderId ? { ...it, progress: Math.round(p || 0) } : it))
-                );
-              },
-            });
-            const compressedFile = toFile(compressed, original.name, original.lastModified || Date.now());
-            const newUrl = URL.createObjectURL(compressedFile);
-            setSelectedFiles((prev) =>
-              prev.map((it) => {
-                if (it.id !== placeholderId) return it;
-                if (it.previewUrl && it.previewUrl !== newUrl) {
-                  try {
-                    URL.revokeObjectURL(it.previewUrl);
-                  } catch {}
-                }
-                return { ...it, file: compressedFile, status: "ready", progress: 100, previewUrl: newUrl };
-              })
-            );
-          } catch {
-            setSelectedFiles((prev) => prev.map((it) => (it.id === placeholderId ? { ...it, status: "ready" } : it)));
-          }
-        });
-      }
+      });
     }
   };
 
@@ -312,13 +336,13 @@ const DetailMediaIndex = ({ media }) => {
     });
   };
 
-  const fileAccept = mediaType === "1" ? "video/*" : "image/*";
+  const fileAccept = "image/*";
   const fileMultiple = mediaType === "2";
   const isSubmitDisabled =
     !mediaTitle.trim() ||
     !mediaType ||
     selectedFiles.length === 0 ||
-    selectedFiles.some((f) => f.status === "compressing");
+    selectedFiles.some((f) => f.status === "compressing" || !(f.file instanceof File));
 
   const moveItem = (list, fromId, toId) => {
     if (!fromId || !toId || fromId === toId) return list;
@@ -470,8 +494,7 @@ const DetailMediaIndex = ({ media }) => {
               <div className="space-y-3">
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                   {selectedFiles.map((item, index) => {
-                    const isImage = item?.isImage;
-                    const url = isImage ? item?.previewUrl : null;
+                    const url = item?.previewUrl;
                     return (
                       <div
                         key={`${item?.file?.name}-${index}`}
@@ -503,29 +526,23 @@ const DetailMediaIndex = ({ media }) => {
                             <X className="h-4 w-4 text-gray-700" />
                           </button>
                         )}
-                        {isImage ? (
-                          <div className="aspect-4/3 w-full bg-white relative">
-                            {url ? (
-                              <img
-                                src={url}
-                                alt={item?.file?.name || "preview"}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : null}
-                            {item.status === "compressing" && (
-                              <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex flex-col items-center justify-center gap-2">
-                                <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
-                                <span className="text-xs text-gray-700">
-                                  Optimizing{typeof item.progress === "number" ? ` ${item.progress}%` : ""}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center h-32 text-sm text-gray-600">
-                            Video selected
-                          </div>
-                        )}
+                        <div className="aspect-4/3 w-full bg-white relative">
+                          {url ? (
+                            <img
+                              src={url}
+                              alt={item?.file?.name || "preview"}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : null}
+                          {item.status === "compressing" && (
+                            <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex flex-col items-center justify-center gap-2">
+                              <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
+                              <span className="text-xs text-gray-700">
+                                Optimizing{typeof item.progress === "number" ? ` ${item.progress}%` : ""}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <div className="p-2">
                           <p className="text-xs text-gray-700 truncate" title={item?.file?.name}>
                             {item?.file?.name}
@@ -545,12 +562,12 @@ const DetailMediaIndex = ({ media }) => {
                   data={selectedFiles.map((item) => ({
                     id: item.id,
                     name: item?.file?.name || "",
-                    type: item?.isImage ? "Image" : "Video",
+                    type: "Image",
                     sizeKB: item?.file?.size ? Math.round(item.file.size / 1024) : 0,
                     status: item.status,
                     progress: item.progress,
                     previewUrl: item?.previewUrl,
-                    isImage: item?.isImage,
+                    isImage: true,
                   }))}
                   columns={[
                     {
@@ -590,10 +607,7 @@ const DetailMediaIndex = ({ media }) => {
                       enableSorting: false,
                       cell: ({ row }) => {
                         const url = row.original.previewUrl;
-                        const isImage = row.original.isImage;
-                        const status = row.original.status;
-                        const progress = row.original.progress;
-                        return isImage ? (
+                        return (
                           <div
                             className={`h-12 w-16 bg-white border overflow-hidden rounded relative ${
                               draggingId === row.original.id ? "ring-2 ring-blue-400" : ""
@@ -614,15 +628,14 @@ const DetailMediaIndex = ({ media }) => {
                             onDragEnd={isEditMode ? () => setDraggingId("") : undefined}
                           >
                             {url ? <img src={url} alt="" className="h-full w-full object-cover" /> : null}
-                            {status === "compressing" && (
-                              <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+                            {row.original.status === "compressing" && (
+                              <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center gap-1">
                                 <Loader2 className="w-4 h-4 animate-spin text-gray-600" />
+                                <span className="text-[10px] text-gray-700">
+                                  {typeof row.original.progress === "number" ? `${row.original.progress}%` : ""}
+                                </span>
                               </div>
                             )}
-                          </div>
-                        ) : (
-                          <div className="h-12 w-16 bg-gray-100 border rounded flex items-center justify-center text-[10px]">
-                            Video
                           </div>
                         );
                       },

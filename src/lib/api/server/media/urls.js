@@ -17,3 +17,18 @@ export const getMediaLibrary = async (token) => {
   }
   return res.json();
 };
+
+export const getMediaLibraryById = async (mediaId, token) => {
+  const url = endpoint.media_library + mediaId + "/";
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to get media library by id");
+  }
+  return res.json();
+};

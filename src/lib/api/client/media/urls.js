@@ -24,6 +24,35 @@ export const createMedia = async (formData) => {
   return res.json();
 };
 
+export const updateMedia = async (formData, mediaId) => {
+  const url = endpoint.upload_media + mediaId + "/";
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: getAuthToken(),
+    },
+    body: formData,
+  });
+  if (!res.ok) {
+    throw new Error("Failed to update media");
+  }
+  return res.json();
+};
+
+export const deleteMedia = async (mediaId) => {
+  const url = endpoint.upload_media + mediaId + "/";
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete media");
+  }
+  return res.json();
+};
+
 export const getExternalMediaById = async (mediaId) => {
   const url = endpoint.external_media + mediaId + "/";
   const res = await fetch(url);

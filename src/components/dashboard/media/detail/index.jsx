@@ -1,26 +1,55 @@
 "use client";
+import React, { useMemo, useState } from "react";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Plus, Upload, X, Loader2, LayoutGrid, Table as TableIcon, GripVertical } from "lucide-react";
-import imageCompression from "browser-image-compression";
+import { Badge } from "@/components/ui/badge";
+import { LayoutGrid, Table as TableIcon, Pencil, Save, X, Upload, Loader2, GripVertical } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import DataTable from "@/components/shared/clientDataTable";
 import toast from "react-hot-toast";
-import { createMedia } from "@/lib/api/client/media/urls";
+import { updateMedia } from "@/lib/api/client/media/urls";
+import imageCompression from "browser-image-compression";
 
-const CreateMediaIndex = () => {
-  const [mediaType, setMediaType] = useState("2");
-  const [mediaTitle, setMediaTitle] = useState("");
-  const [mediaDescription, setMediaDescription] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState([]);
+const toFile = (blobOrFile, name, lastModified = Date.now()) => {
+  if (blobOrFile instanceof File) return blobOrFile;
+  const type = blobOrFile?.type || "application/octet-stream";
+  try {
+    return new File([blobOrFile], name || "upload", { type, lastModified });
+  } catch {
+    // Fallback for very old browsers (unlikely in Next.js apps)
+    return blobOrFile;
+  }
+};
+
+const DetailMediaIndex = ({ media }) => {
+  const mediaData = media?.data || {};
+  const items = mediaData?.media_library_items || [];
+  console.log(mediaData);
+
+  const [mediaType, setMediaType] = useState(String(mediaData?.media_type ?? ""));
+  const [mediaTitle, setMediaTitle] = useState(mediaData?.media_title || "");
+  const [mediaDescription, setMediaDescription] = useState(mediaData?.media_description || "");
+  const [selectedFiles, setSelectedFiles] = useState(
+    items.map((item) => ({
+      id: item.id,
+      file: toFile(
+        new Blob([item.media_url], { type: item.media_type === 0 ? "image/jpeg" : "video/mp4" }),
+        item.media_item_title
+      ),
+      isImage: true,
+      status: "ready",
+      progress: 100,
+      previewUrl: item.media_url,
+    }))
+  );
   const [viewMode, setViewMode] = useState("grid");
   const [draggingId, setDraggingId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Fast client-side compression keeping original dimensions, targeting <= 100 KB
   const compressImageFast = async (file, { maxBytes = 100 * 1024, onProgress } = {}) => {
@@ -85,19 +114,28 @@ const CreateMediaIndex = () => {
     return file;
   };
 
-  // Ensure we always have a File (with a filename) even if a Blob is returned by compressor
-  const toFile = (blobOrFile, name, lastModified = Date.now()) => {
-    if (blobOrFile instanceof File) return blobOrFile;
-    const type = blobOrFile?.type || "application/octet-stream";
-    try {
-      return new File([blobOrFile], name || "upload", { type, lastModified });
-    } catch {
-      // Fallback for very old browsers (unlikely in Next.js apps)
-      return blobOrFile;
-    }
+  const resetToInitial = () => {
+    setMediaType(String(mediaData?.media_type ?? ""));
+    setMediaTitle(mediaData?.media_title || "");
+    setMediaDescription(mediaData?.media_description || "");
+    setSelectedFiles(
+      items.map((item) => ({
+        id: item.id,
+        file: new File([], item.media_url, { type: item.media_type === 0 ? "image/jpeg" : "video/mp4" }),
+        isImage: true,
+        status: "ready",
+        progress: 100,
+        previewUrl: item.media_url,
+      }))
+    );
   };
 
-  const handleCreateMedia = async () => {
+  const handleCancelEdit = () => {
+    resetToInitial();
+    setIsEditMode(false);
+  };
+
+  const handleUpdateMedia = async () => {
     // Basic validations (mirror CreateNewMedia.jsx)
     if (!mediaType) {
       toast.error("Please select a media type", { position: "bottom-right" });
@@ -120,7 +158,6 @@ const CreateMediaIndex = () => {
       if (mediaDescription && mediaDescription.trim() !== "") {
         formData.append("media_description", mediaDescription.trim());
       }
-      console.log(selectedFiles);
       // Preserve user order and ensure filename is sent (avoid default "blob")
       selectedFiles.forEach((item) => {
         const filename = item?.file?.name || "upload";
@@ -128,10 +165,11 @@ const CreateMediaIndex = () => {
       });
       console.log(formData);
 
-      await createMedia(formData);
+      await updateMedia(formData, mediaData.id);
       // await revalidateAPITag();
 
-      toast.success("Media created successfully!", { position: "bottom-right" });
+      toast.success("Media updated successfully!", { position: "bottom-right" });
+      setIsEditMode(false);
 
       // Reset form
       // setSelectedFiles([]);
@@ -139,8 +177,8 @@ const CreateMediaIndex = () => {
       // setMediaDescription("");
       // setMediaType("2");
     } catch (error) {
-      console.error("Error creating media:", error);
-      toast.error("Failed to create media. Please try again.", { position: "bottom-right" });
+      console.error("Error updating media:", error);
+      toast.error("Failed to update media. Please try again.", { position: "bottom-right" });
     } finally {
       setIsLoading(false);
     }
@@ -152,12 +190,14 @@ const CreateMediaIndex = () => {
   };
 
   const handleFileChange = async (e) => {
+    console.log("called");
     const files = Array.from(e.target.files || []);
+    console.log(files.length);
     if (!files.length) {
       // User canceled the dialog; keep previous selection intact
       return;
     }
-
+    console.log(mediaType);
     if (mediaType === "0" || mediaType === "1") {
       const first = files[0];
       if (!first) {
@@ -294,6 +334,25 @@ const CreateMediaIndex = () => {
   return (
     <DashboardPageLayout title="Create Media" description="Create a new media">
       <div className="space-y-6">
+        <div className="flex items-center justify-end gap-2">
+          {!isEditMode ? (
+            <Button type="button" size="sm" onClick={() => setIsEditMode(true)}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          ) : (
+            <>
+              <Button type="button" variant="outline" size="sm" onClick={handleCancelEdit} disabled={isLoading}>
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button type="button" size="sm" onClick={handleUpdateMedia} disabled={isSubmitDisabled || isLoading}>
+                {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Update
+              </Button>
+            </>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
             <Input
@@ -305,12 +364,13 @@ const CreateMediaIndex = () => {
               onChange={(e) => setMediaTitle(e.target.value)}
               placeholder="Enter a descriptive title"
               className="w-full"
+              disabled={!isEditMode}
             />
           </div>
           <div className="md:col-span-1 flex flex-col gap-y-2">
             <Label htmlFor="mediaType">Media Type</Label>
-            <Select value={mediaType} onValueChange={handleMediaTypeChange}>
-              <SelectTrigger className="w-full">
+            <Select value={mediaType} onValueChange={handleMediaTypeChange} disabled={!isEditMode}>
+              <SelectTrigger className="w-full" disabled={!isEditMode}>
                 <SelectValue placeholder="Select media type" />
               </SelectTrigger>
               <SelectContent>
@@ -329,46 +389,52 @@ const CreateMediaIndex = () => {
                 onChange={(e) => setMediaDescription(e.target.value)}
                 placeholder="Optional description"
                 className="min-h-[80px]"
+                disabled={!isEditMode}
               />
             </div>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="file-upload">Upload Files</Label>
-          <Label htmlFor="file-upload" className={mediaType ? "cursor-pointer" : "cursor-not-allowed"}>
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                mediaType ? "border-gray-300 hover:border-gray-400" : "border-gray-200 bg-gray-50 opacity-60"
-              }`}
+        {isEditMode && (
+          <div className="space-y-2">
+            <Label htmlFor="file-upload">Upload Files</Label>
+            <Label
+              htmlFor="file-upload"
+              className={mediaType && isEditMode ? "cursor-pointer" : "cursor-not-allowed pointer-events-none"}
             >
-              <Upload className={`mx-auto h-12 w-12 ${mediaType ? "text-gray-400" : "text-gray-300"}`} />
-              <div className="mt-4">
-                <span className={`text-sm ${mediaType ? "text-gray-600" : "text-gray-400"}`}>
-                  {mediaType ? "Click to upload or drag and drop" : "Select media type first"}
-                </span>
-                {mediaType && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {mediaType === "0"
-                      ? "JPG, PNG, GIF, WebP up to ~10MB"
-                      : mediaType === "1"
-                      ? "MP4, AVI, MOV up to ~100MB"
-                      : "JPG, PNG, GIF, WebP (multiple images for Flipbook), up to ~10MB each"}
-                  </p>
-                )}
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                  mediaType ? "border-gray-300 hover:border-gray-400" : "border-gray-200 bg-gray-50 opacity-60"
+                }`}
+              >
+                <Upload className={`mx-auto h-12 w-12 ${mediaType ? "text-gray-400" : "text-gray-300"}`} />
+                <div className="mt-4">
+                  <span className={`text-sm ${mediaType ? "text-gray-600" : "text-gray-400"}`}>
+                    {mediaType ? "Click to upload or drag and drop" : "Select media type first"}
+                  </span>
+                  {mediaType && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {mediaType === "0"
+                        ? "JPG, PNG, GIF, WebP up to ~10MB"
+                        : mediaType === "1"
+                        ? "MP4, AVI, MOV up to ~100MB"
+                        : "JPG, PNG, GIF, WebP (multiple images for Flipbook), up to ~10MB each"}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-            <input
-              id="file-upload"
-              type="file"
-              multiple={fileMultiple}
-              className="hidden"
-              accept={fileAccept}
-              onChange={handleFileChange}
-              disabled={!mediaType}
-            />
-          </Label>
-        </div>
+              <input
+                id="file-upload"
+                type="file"
+                multiple={fileMultiple}
+                className="hidden"
+                accept={fileAccept}
+                onChange={handleFileChange}
+                disabled={!mediaType}
+              />
+            </Label>
+          </div>
+        )}
 
         {selectedFiles.length > 0 && (
           <>
@@ -412,25 +478,31 @@ const CreateMediaIndex = () => {
                         className={`relative border rounded-lg overflow-hidden bg-gray-50 ${
                           draggingId === item.id ? "ring-2 ring-blue-400" : ""
                         }`}
-                        draggable
-                        onDragStart={() => setDraggingId(item.id)}
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={() => {
-                          if (draggingId) {
-                            setSelectedFiles((prev) => moveItem(prev, draggingId, item.id));
-                            setDraggingId("");
-                          }
-                        }}
-                        onDragEnd={() => setDraggingId("")}
+                        draggable={isEditMode}
+                        onDragStart={isEditMode ? () => setDraggingId(item.id) : undefined}
+                        onDragOver={isEditMode ? (e) => e.preventDefault() : undefined}
+                        onDrop={
+                          isEditMode
+                            ? () => {
+                                if (draggingId) {
+                                  setSelectedFiles((prev) => moveItem(prev, draggingId, item.id));
+                                  setDraggingId("");
+                                }
+                              }
+                            : undefined
+                        }
+                        onDragEnd={isEditMode ? () => setDraggingId("") : undefined}
                       >
-                        <button
-                          type="button"
-                          onClick={() => removeFileAt(index)}
-                          className="absolute right-1 top-1 z-10 bg-white/90 hover:bg-white rounded-full p-1 shadow"
-                          aria-label="Remove file"
-                        >
-                          <X className="h-4 w-4 text-gray-700" />
-                        </button>
+                        {isEditMode && (
+                          <button
+                            type="button"
+                            onClick={() => removeFileAt(index)}
+                            className="absolute right-1 top-1 z-10 bg-white/90 hover:bg-white rounded-full p-1 shadow"
+                            aria-label="Remove file"
+                          >
+                            <X className="h-4 w-4 text-gray-700" />
+                          </button>
+                        )}
                         {isImage ? (
                           <div className="aspect-4/3 w-full bg-white relative">
                             {url ? (
@@ -489,19 +561,24 @@ const CreateMediaIndex = () => {
                         <button
                           type="button"
                           aria-label="Reorder"
-                          className={`h-8 w-8 flex items-center justify-center rounded cursor-move ${
-                            draggingId === row.original.id ? "ring-2 ring-blue-400" : ""
-                          }`}
-                          draggable
-                          onDragStart={() => setDraggingId(row.original.id)}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={() => {
-                            if (draggingId) {
-                              setSelectedFiles((prev) => moveItem(prev, draggingId, row.original.id));
-                              setDraggingId("");
-                            }
-                          }}
-                          onDragEnd={() => setDraggingId("")}
+                          className={`h-8 w-8 flex items-center justify-center rounded ${
+                            isEditMode ? "cursor-move" : "cursor-not-allowed"
+                          } ${draggingId === row.original.id ? "ring-2 ring-blue-400" : ""}`}
+                          disabled={!isEditMode}
+                          draggable={isEditMode}
+                          onDragStart={isEditMode ? () => setDraggingId(row.original.id) : undefined}
+                          onDragOver={isEditMode ? (e) => e.preventDefault() : undefined}
+                          onDrop={
+                            isEditMode
+                              ? () => {
+                                  if (draggingId) {
+                                    setSelectedFiles((prev) => moveItem(prev, draggingId, row.original.id));
+                                    setDraggingId("");
+                                  }
+                                }
+                              : undefined
+                          }
+                          onDragEnd={isEditMode ? () => setDraggingId("") : undefined}
                         >
                           <GripVertical className="h-4 w-4 text-gray-600" />
                         </button>
@@ -521,16 +598,20 @@ const CreateMediaIndex = () => {
                             className={`h-12 w-16 bg-white border overflow-hidden rounded relative ${
                               draggingId === row.original.id ? "ring-2 ring-blue-400" : ""
                             }`}
-                            draggable
-                            onDragStart={() => setDraggingId(row.original.id)}
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={() => {
-                              if (draggingId) {
-                                setSelectedFiles((prev) => moveItem(prev, draggingId, row.original.id));
-                                setDraggingId("");
-                              }
-                            }}
-                            onDragEnd={() => setDraggingId("")}
+                            draggable={isEditMode}
+                            onDragStart={isEditMode ? () => setDraggingId(row.original.id) : undefined}
+                            onDragOver={isEditMode ? (e) => e.preventDefault() : undefined}
+                            onDrop={
+                              isEditMode
+                                ? () => {
+                                    if (draggingId) {
+                                      setSelectedFiles((prev) => moveItem(prev, draggingId, row.original.id));
+                                      setDraggingId("");
+                                    }
+                                  }
+                                : undefined
+                            }
+                            onDragEnd={isEditMode ? () => setDraggingId("") : undefined}
                           >
                             {url ? <img src={url} alt="" className="h-full w-full object-cover" /> : null}
                             {status === "compressing" && (
@@ -584,14 +665,16 @@ const CreateMediaIndex = () => {
                       enableSorting: false,
                       cell: ({ row }) => (
                         <div className="text-right">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeFileAt(row.original.id)}
-                          >
-                            Remove
-                          </Button>
+                          {isEditMode && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeFileAt(row.original.id)}
+                            >
+                              Remove
+                            </Button>
+                          )}
                         </div>
                       ),
                     },
@@ -601,24 +684,9 @@ const CreateMediaIndex = () => {
             )}
           </>
         )}
-
-        <div className="flex justify-end">
-          <Button onClick={handleCreateMedia} disabled={isSubmitDisabled || isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Creating Media...
-              </>
-            ) : (
-              <>
-                <Plus /> Upload Media
-              </>
-            )}
-          </Button>
-        </div>
       </div>
     </DashboardPageLayout>
   );
 };
 
-export default CreateMediaIndex;
+export default DetailMediaIndex;

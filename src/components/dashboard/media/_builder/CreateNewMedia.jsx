@@ -11,6 +11,7 @@ import { Loader2, Plus, Upload, X } from "lucide-react";
 import { createMedia } from "@/lib/api/client/media/urls";
 import { revalidateAPITag } from "@/lib/actions/media";
 import imageCompression from "browser-image-compression";
+import Link from "next/link";
 
 // Fast client-side compression using browser-image-compression (keeps dimensions)
 const compressImageFast = async (file, { maxBytes = 400 * 1024, onProgress } = {}) => {
@@ -200,171 +201,187 @@ const CreateNewMedia = () => {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+    <>
+      <Link href="/dashboard/media/create">
         <Button className="flex items-center gap-2 cursor-pointer">
           <Plus /> Add Media
         </Button>
-      </SheetTrigger>
-      <SheetContent className="border-l-2 border-gray-200 w-[500px]! sm:w-[600px]! max-w-[600px]! overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle className="text-gray-900">Create New Media</SheetTitle>
-          <SheetDescription className="text-gray-600">
-            Add a new media item to your library. Fill in the details below.
-          </SheetDescription>
-        </SheetHeader>
+      </Link>
+    </>
+  );
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
-          {/* Media Type Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="media_type" className="text-gray-900">
-              Media Type <span className="text-red-500">*</span>
-            </Label>
-            <Select value={watch("media_type")} onValueChange={handleMediaTypeChange}>
-              <SelectTrigger className={errors.media_type ? "border-red-500" : ""}>
-                <SelectValue placeholder="Select media type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Image</SelectItem>
-                <SelectItem value="1">Video</SelectItem>
-                <SelectItem value="2">FlipBook</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.media_type && <p className="text-xs text-red-500">{errors.media_type.message}</p>}
-          </div>
+  return (
+    <>
+      <div>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button className="flex items-center gap-2 cursor-pointer">
+              <Plus /> Add Media
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="border-l-2 border-gray-200 w-[500px]! sm:w-[600px]! max-w-[600px]! overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle className="text-gray-900">Create New Media</SheetTitle>
+              <SheetDescription className="text-gray-600">
+                Add a new media item to your library. Fill in the details below.
+              </SheetDescription>
+            </SheetHeader>
 
-          {/* Media Title */}
-          <div className="space-y-2">
-            <Label htmlFor="media_title" className="text-gray-900">
-              Media Title <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="media_title"
-              type="text"
-              placeholder="Enter media title"
-              className={errors.media_title ? "border-red-500" : ""}
-              {...register("media_title", {
-                onChange: () => clearErrors("media_title"),
-              })}
-            />
-            {errors.media_title && <p className="text-xs text-red-500">{errors.media_title.message}</p>}
-          </div>
-
-          {/* Media Description */}
-          <div className="space-y-2">
-            <Label htmlFor="media_description" className="text-gray-900">
-              Media Description
-            </Label>
-            <Textarea
-              id="media_description"
-              placeholder="Enter media description (optional)"
-              className="min-h-[80px]"
-              {...register("media_description")}
-            />
-          </div>
-
-          {/* File Upload */}
-          <div className="space-y-2">
-            <Label htmlFor="files" className="text-gray-900">
-              Upload Files <span className="text-red-500">*</span>
-            </Label>
-            <Label htmlFor="file-upload" className={watch("media_type") ? "cursor-pointer" : "cursor-not-allowed"}>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                  errors.files
-                    ? "border-red-500"
-                    : watch("media_type")
-                    ? "border-gray-300 hover:border-gray-400"
-                    : "border-gray-200 bg-gray-50 opacity-60"
-                }`}
-              >
-                {isCompressing ? (
-                  <>
-                    <Loader2 className="mx-auto h-12 w-12 text-gray-400 animate-spin" />
-                    <div className="mt-4">
-                      <span className="text-sm text-gray-600">
-                        Optimizing images
-                        {typeof compressionProgress === "number" ? ` (${compressionProgress}%)` : "..."}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Upload
-                      className={`mx-auto h-12 w-12 ${watch("media_type") ? "text-gray-400" : "text-gray-300"}`}
-                    />
-                    <div className="mt-4">
-                      <span className={`text-sm ${watch("media_type") ? "text-gray-600" : "text-gray-400"}`}>
-                        {watch("media_type") ? "Click to upload or drag and drop" : "Select media type first"}
-                      </span>
-                      {watch("media_type") && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          {watch("media_type") === "0"
-                            ? "JPG, PNG, GIF, WebP up to 10MB"
-                            : watch("media_type") === "1"
-                            ? "MP4, AVI, MOV up to 100MB"
-                            : "JPG, PNG, GIF, WebP (multiple images for FlipBook) up to 10MB each"}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
+              {/* Media Type Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="media_type" className="text-gray-900">
+                  Media Type <span className="text-red-500">*</span>
+                </Label>
+                <Select value={watch("media_type")} onValueChange={handleMediaTypeChange}>
+                  <SelectTrigger className={errors.media_type ? "border-red-500" : ""}>
+                    <SelectValue placeholder="Select media type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">Image</SelectItem>
+                    <SelectItem value="1">Video</SelectItem>
+                    <SelectItem value="2">FlipBook</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.media_type && <p className="text-xs text-red-500">{errors.media_type.message}</p>}
               </div>
-              <Input
-                id="file-upload"
-                type="file"
-                multiple={watch("media_type") === "2"}
-                className="hidden"
-                onChange={handleFileChange}
-                accept={watch("media_type") === "0" ? "image/*" : watch("media_type") === "1" ? "video/*" : "image/*"}
-                disabled={!watch("media_type") || isCompressing}
-              />
-            </Label>
-            {errors.files && <p className="text-xs text-red-500">{errors.files.message}</p>}
-          </div>
 
-          {/* Selected Files List */}
-          {selectedFiles.length > 0 && (
-            <div className="space-y-2">
-              <Label className="text-gray-900">Selected Files</Label>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                {selectedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                    <span className="text-sm text-gray-700 truncate">{file?.name}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFile(index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+              {/* Media Title */}
+              <div className="space-y-2">
+                <Label htmlFor="media_title" className="text-gray-900">
+                  Media Title <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="media_title"
+                  type="text"
+                  placeholder="Enter media title"
+                  className={errors.media_title ? "border-red-500" : ""}
+                  {...register("media_title", {
+                    onChange: () => clearErrors("media_title"),
+                  })}
+                />
+                {errors.media_title && <p className="text-xs text-red-500">{errors.media_title.message}</p>}
+              </div>
+
+              {/* Media Description */}
+              <div className="space-y-2">
+                <Label htmlFor="media_description" className="text-gray-900">
+                  Media Description
+                </Label>
+                <Textarea
+                  id="media_description"
+                  placeholder="Enter media description (optional)"
+                  className="min-h-[80px]"
+                  {...register("media_description")}
+                />
+              </div>
+
+              {/* File Upload */}
+              <div className="space-y-2">
+                <Label htmlFor="files" className="text-gray-900">
+                  Upload Files <span className="text-red-500">*</span>
+                </Label>
+                <Label htmlFor="file-upload" className={watch("media_type") ? "cursor-pointer" : "cursor-not-allowed"}>
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                      errors.files
+                        ? "border-red-500"
+                        : watch("media_type")
+                        ? "border-gray-300 hover:border-gray-400"
+                        : "border-gray-200 bg-gray-50 opacity-60"
+                    }`}
+                  >
+                    {isCompressing ? (
+                      <>
+                        <Loader2 className="mx-auto h-12 w-12 text-gray-400 animate-spin" />
+                        <div className="mt-4">
+                          <span className="text-sm text-gray-600">
+                            Optimizing images
+                            {typeof compressionProgress === "number" ? ` (${compressionProgress}%)` : "..."}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Upload
+                          className={`mx-auto h-12 w-12 ${watch("media_type") ? "text-gray-400" : "text-gray-300"}`}
+                        />
+                        <div className="mt-4">
+                          <span className={`text-sm ${watch("media_type") ? "text-gray-600" : "text-gray-400"}`}>
+                            {watch("media_type") ? "Click to upload or drag and drop" : "Select media type first"}
+                          </span>
+                          {watch("media_type") && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {watch("media_type") === "0"
+                                ? "JPG, PNG, GIF, WebP up to 10MB"
+                                : watch("media_type") === "1"
+                                ? "MP4, AVI, MOV up to 100MB"
+                                : "JPG, PNG, GIF, WebP (multiple images for FlipBook) up to 10MB each"}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
-                ))}
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    multiple={watch("media_type") === "2"}
+                    className="hidden"
+                    onChange={handleFileChange}
+                    accept={
+                      watch("media_type") === "0" ? "image/*" : watch("media_type") === "1" ? "video/*" : "image/*"
+                    }
+                    disabled={!watch("media_type") || isCompressing}
+                  />
+                </Label>
+                {errors.files && <p className="text-xs text-red-500">{errors.files.message}</p>}
               </div>
-            </div>
-          )}
 
-          {/* Submit Button */}
-          <div className="flex gap-3 pt-4 justify-end">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
-              Close
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading || isCompressing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  {isCompressing ? "Optimizing..." : "Creating Media..."}
-                </>
-              ) : (
-                "Create Media"
+              {/* Selected Files List */}
+              {selectedFiles.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-gray-900">Selected Files</Label>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {selectedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                        <span className="text-sm text-gray-700 truncate">{file?.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFile(index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
-            </Button>
-          </div>
-        </form>
-      </SheetContent>
-    </Sheet>
+
+              {/* Submit Button */}
+              <div className="flex gap-3 pt-4 justify-end">
+                <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+                  Close
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading || isCompressing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      {isCompressing ? "Optimizing..." : "Creating Media..."}
+                    </>
+                  ) : (
+                    "Create Media"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 };
 

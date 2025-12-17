@@ -57,6 +57,18 @@ const DetailMediaIndex = ({ media }) => {
   const [mediaType, setMediaType] = useState(String(mediaData?.media_type ?? ""));
   const [mediaTitle, setMediaTitle] = useState(mediaData?.media_title || "");
   const [mediaDescription, setMediaDescription] = useState(mediaData?.media_description || "");
+  const [studioName, setStudioName] = useState(mediaData?.studio_name || "");
+  const toDateInputValue = (dateLike) => {
+    try {
+      if (!dateLike) return "";
+      const d = new Date(dateLike);
+      if (Number.isNaN(d.getTime())) return "";
+      return d.toISOString().slice(0, 10);
+    } catch {
+      return "";
+    }
+  };
+  const [eventDate, setEventDate] = useState(toDateInputValue(mediaData?.event_date));
   const [selectedFiles, setSelectedFiles] = useState(
     items.map((item) => ({
       id: item.id,
@@ -137,6 +149,8 @@ const DetailMediaIndex = ({ media }) => {
     setMediaType(String(mediaData?.media_type ?? ""));
     setMediaTitle(mediaData?.media_title || "");
     setMediaDescription(mediaData?.media_description || "");
+    setStudioName(mediaData?.studio_name || "");
+    setEventDate(toDateInputValue(mediaData?.event_date));
     setSelectedFiles(
       items.map((item) => ({
         id: item.id,
@@ -178,6 +192,12 @@ const DetailMediaIndex = ({ media }) => {
       formData.append("media_title", mediaTitle.trim());
       if (mediaDescription && mediaDescription.trim() !== "") {
         formData.append("media_description", mediaDescription.trim());
+      }
+      if (studioName && studioName.trim() !== "") {
+        formData.append("studio_name", studioName.trim());
+      }
+      if (eventDate) {
+        formData.append("event_date", eventDate);
       }
       // Preserve user order and ensure filename is sent (avoid default "blob")
       console.log("selectedFiles", selectedFiles);
@@ -356,7 +376,7 @@ const DetailMediaIndex = ({ media }) => {
   };
 
   return (
-    <DashboardPageLayout title="Create Media" description="Create a new media">
+    <DashboardPageLayout title="Media Detail" description="View Or Update Media">
       <div className="space-y-6">
         <div className="flex items-center justify-end gap-2">
           {!isEditMode ? (
@@ -377,12 +397,13 @@ const DetailMediaIndex = ({ media }) => {
             </>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="">
             <Input
               type="text"
               required
-              label="Media Title"
+              label="Event Title"
               id="mediaTitle"
               value={mediaTitle}
               onChange={(e) => setMediaTitle(e.target.value)}
@@ -391,9 +412,33 @@ const DetailMediaIndex = ({ media }) => {
               disabled={!isEditMode}
             />
           </div>
-          <div className="md:col-span-1 flex flex-col gap-y-2">
+          <div className="">
+            <Input
+              type="date"
+              label="Event Date"
+              id="eventDate"
+              value={eventDate}
+              onChange={(e) => setEventDate(e.target.value)}
+              className="w-full"
+              disabled={!isEditMode}
+            />
+          </div>
+          <div className="">
+            <Input
+              type="text"
+              label="Studio Name"
+              id="studioName"
+              value={studioName}
+              onChange={(e) => setStudioName(e.target.value)}
+              placeholder="Enter studio name"
+              className="w-full"
+              disabled={!isEditMode}
+            />
+          </div>
+
+          <div className="">
             <Label htmlFor="mediaType">Media Type</Label>
-            <Select value={mediaType} onValueChange={handleMediaTypeChange} disabled={!isEditMode}>
+            <Select value={mediaType} onValueChange={handleMediaTypeChange} disabled={!isEditMode || true}>
               <SelectTrigger className="w-full" disabled={!isEditMode}>
                 <SelectValue placeholder="Select media type" />
               </SelectTrigger>
@@ -404,9 +449,9 @@ const DetailMediaIndex = ({ media }) => {
               </SelectContent>
             </Select>
           </div>
-          <div className="md:col-span-3">
+          <div className="col-span-full">
             <div className="flex flex-col gap-y-2">
-              <Label htmlFor="mediaDescription">Media Description</Label>
+              <Label htmlFor="mediaDescription">Event Description</Label>
               <Textarea
                 id="mediaDescription"
                 value={mediaDescription}

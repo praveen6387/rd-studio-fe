@@ -17,6 +17,8 @@ const CreateMediaIndex = () => {
   const [mediaType, setMediaType] = useState("2");
   const [mediaTitle, setMediaTitle] = useState("");
   const [mediaDescription, setMediaDescription] = useState("");
+  const [studioName, setStudioName] = useState("");
+  const [eventDate, setEventDate] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
   const [draggingId, setDraggingId] = useState("");
@@ -119,6 +121,12 @@ const CreateMediaIndex = () => {
       formData.append("media_title", mediaTitle.trim());
       if (mediaDescription && mediaDescription.trim() !== "") {
         formData.append("media_description", mediaDescription.trim());
+      }
+      if (studioName && studioName.trim() !== "") {
+        formData.append("studio_name", studioName.trim());
+      }
+      if (eventDate) {
+        formData.append("event_date", eventDate);
       }
       console.log(selectedFiles);
       // Preserve user order and ensure filename is sent (avoid default "blob")
@@ -294,12 +302,12 @@ const CreateMediaIndex = () => {
   return (
     <DashboardPageLayout title="Create Media" description="Create a new media">
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="">
             <Input
               type="text"
               required
-              label="Media Title"
+              label="Event Title"
               id="mediaTitle"
               value={mediaTitle}
               onChange={(e) => setMediaTitle(e.target.value)}
@@ -307,7 +315,28 @@ const CreateMediaIndex = () => {
               className="w-full"
             />
           </div>
-          <div className="md:col-span-1 flex flex-col gap-y-2">
+          <div className="">
+            <Input
+              type="date"
+              label="Event Date"
+              id="eventDate"
+              value={eventDate}
+              onChange={(e) => setEventDate(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <div className="">
+            <Input
+              type="text"
+              label="Studio Name"
+              id="studioName"
+              value={studioName}
+              onChange={(e) => setStudioName(e.target.value)}
+              placeholder="Enter studio name"
+              className="w-full"
+            />
+          </div>
+          <div className="">
             <Label htmlFor="mediaType">Media Type</Label>
             <Select value={mediaType} onValueChange={handleMediaTypeChange}>
               <SelectTrigger className="w-full">
@@ -320,9 +349,9 @@ const CreateMediaIndex = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="md:col-span-3">
+          <div className="col-span-full">
             <div className="flex flex-col gap-y-2">
-              <Label htmlFor="mediaDescription">Media Description</Label>
+              <Label htmlFor="mediaDescription">Event Description</Label>
               <Textarea
                 id="mediaDescription"
                 value={mediaDescription}

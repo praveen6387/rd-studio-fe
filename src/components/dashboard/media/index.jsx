@@ -5,7 +5,7 @@ import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 import React, { useState } from "react";
 import CreateNewMedia from "./_builder/CreateNewMedia";
 import QRModal from "./_builder/QRModal";
-import { convertTime } from "@/lib/utils";
+import { convertTime, convertToDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import ViewMediaModalV2 from "./_builder/ViewMediaModalV2";
 import Link from "next/link";
@@ -90,21 +90,31 @@ const MediaIndex = ({ mediaLibrary }) => {
       ),
     },
     {
-      header: "Created",
+      header: "Date",
       accessorKey: "created_at",
       meta: {
         filterVariant: "date-range",
       },
       cell: ({ row }) => {
-        const createdBy = row.original.created_by_name || row.original.created_by || "Ankit Maurya";
-
+        const eventDate = row.original.event_date;
+        const createdAt = row.original.created_at;
         return (
-          <div className="space-y-1">
-            {createdBy && <p className="font-medium text-sm text-slate-900 line-clamp-1">{createdBy}</p>}
-            <p className="text-xs text-slate-500">{convertTime(row.original.created_at)}</p>
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <div className="text-right">
+              <p>Event Date :</p>
+              <p>Created At :</p>
+            </div>
+            <div className="text-left">
+              {eventDate && <p className="text-xs text-slate-500">{convertToDate(eventDate)}</p>}
+              {createdAt && <p className="text-xs text-slate-500">{convertTime(createdAt)}</p>}
+            </div>
           </div>
         );
       },
+    },
+    {
+      header: "Studio Name",
+      accessorKey: "studio_name",
     },
     {
       header: "Actions",
@@ -136,7 +146,7 @@ const MediaIndex = ({ mediaLibrary }) => {
           <Button
             variant="destructive"
             size="sm"
-            className="h-7 px-3 text-xs"
+            className="h-7 px-3 text-xs hover:bg-red-100 hover:text-red-800"
             onClick={() => handleDeleteMedia(row.original)}
           >
             <Trash2 className="h-4 w-4" />

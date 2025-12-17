@@ -15,7 +15,7 @@ const QRModal = ({ isOpen, onClose, mediaData }) => {
   const mediaUrl = `${baseUrl}/media-view/${mediaData.media_unique_id}?is_open=true`;
   const centerText = "RD"; // Change this text as needed
   const qrSize = 256;
-  const bottomTitle = mediaData?.media_title || "Your Title";
+  const bottomTitle = mediaData?.media_title || "Your Event";
   const bottomCode = mediaData?.code || mediaData?.media_unique_id || "";
   const bottomBy = mediaData?.studio_name ? `By: ${mediaData.studio_name}` : "By: RD-Studio";
 

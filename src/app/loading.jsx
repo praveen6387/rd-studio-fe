@@ -60,7 +60,7 @@ export default function Loading() {
 
         {/* Loading Text */}
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent">
-          RD Photo
+          RD Studio
         </h1>
         <p className="text-xl text-gray-300 mb-8 font-light">Loading beautiful moments...</p>
 

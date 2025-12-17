@@ -43,7 +43,7 @@ export default function Sidenav() {
         <div className={`p-6 border-b border-gray-700 ${isCollapsed ? "px-2" : ""}`}>
           {!isCollapsed ? (
             <>
-              <h2 className="text-2xl font-bold text-white">RD Photo</h2>
+              <h2 className="text-2xl font-bold text-white">RD Studio</h2>
               <p className="text-gray-400 text-sm">Photography Studio</p>
             </>
           ) : (

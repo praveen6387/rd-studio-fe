@@ -17,21 +17,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "RD Photo - Professional Photography Services",
+  title: "RD Studio - Professional Photography Services",
   description:
-    "Professional photography services for weddings, portraits, events, and more. Capture life's beautiful moments with RD Photo.",
+    "Professional photography services for weddings, portraits, events, and more. Capture life's beautiful moments with RD Studio.",
   keywords: "photography, wedding photography, portrait photography, event photography, professional photographer",
-  authors: [{ name: "RD Photo" }],
-  creator: "RD Photo",
+  authors: [{ name: "RD Studio" }],
+  creator: "RD Studio",
   openGraph: {
-    title: "RD Photo - Professional Photography Services",
+    title: "RD Studio - Professional Photography Services",
     description: "Professional photography services for weddings, portraits, events, and more.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "RD Photo - Professional Photography Services",
+    title: "RD Studio - Professional Photography Services",
     description: "Professional photography services for weddings, portraits, events, and more.",
   },
 };

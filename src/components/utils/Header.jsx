@@ -76,7 +76,7 @@ export default function Header() {
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-2">
                 <Image src="/next.svg" alt="Logo" width={32} height={32} className="dark:invert" />
-                <span className="text-xl font-bold text-gray-900 dark:text-white">RD Photo</span>
+                <span className="text-xl font-bold text-gray-900 dark:text-white">RD Studio</span>
               </Link>
             </div>
 

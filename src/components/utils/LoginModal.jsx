@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Cookies from "js-cookie";
 import { userLogin } from "@/lib/api/client/auth/urls";
+import Link from "next/link";
 
 export default function LoginModal({ isOpen, onClose, onLogin }) {
   const [formData, setFormData] = useState({
@@ -114,8 +115,16 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
+        <div className="flex justify-between text-gray-600 text-sm mt-4 underline">
+          <Link href="/signup" className="text-blue-600 hover:text-blue-700">
+            Sign Up
+          </Link>
+          <Link href="/forgot-password" className="text-blue-600 hover:text-blue-700">
+            Forgot Password
+          </Link>
+        </div>
 
-        <div className="mt-6 text-center">
+        {/* <div className="mt-6 text-center">
           <p className="text-gray-600 mb-4">Demo Accounts:</p>
           <div className="text-sm text-gray-500 space-y-1">
             <p>
@@ -128,7 +137,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
               <strong>Photographer:</strong> photographer@rdphoto.com / photographer123
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

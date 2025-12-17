@@ -49,30 +49,30 @@ export const users = [
   // Admin/Operation Users
   {
     id: 6,
-    email: "admin@rdphoto.com",
+    email: "admin@rdstudio.com",
     password: "admin123",
     name: "Admin User",
     type: "admin",
     phone: "+1 (555) 999-9999",
-    address: "RD Photo Studio, 123 Photo Street, City, State 12345",
+    address: "RD Studio, 123 Photo Street, City, State 12345",
   },
   {
     id: 7,
-    email: "photographer@rdphoto.com",
+    email: "photographer@rdstudio.com",
     password: "photographer123",
     name: "Sarah Johnson",
     type: "operation",
     phone: "+1 (555) 888-8888",
-    address: "RD Photo Studio, 123 Photo Street, City, State 12345",
+    address: "RD Studio, 123 Photo Street, City, State 12345",
   },
   {
     id: 8,
-    email: "editor@rdphoto.com",
+    email: "editor@rdstudio.com",
     password: "editor123",
     name: "Mike Chen",
     type: "operation",
     phone: "+1 (555) 777-7777",
-    address: "RD Photo Studio, 123 Photo Street, City, State 12345",
+    address: "RD Studio, 123 Photo Street, City, State 12345",
   },
 ];
 

@@ -48,7 +48,9 @@ const MyGalleryIndex = () => {
             <StatsCard stats={stats} onViewBookingsClick={() => setIsSheetOpen(true)} />
 
             {/* Right Side - Media Tabs */}
-            <MediaTabs mediaData={customerCollections2.mediaList} />
+            <div className="min-w-0">
+              <MediaTabs mediaData={customerCollections2.mediaList} />
+            </div>
           </div>
         </section>
 

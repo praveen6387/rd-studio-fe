@@ -53,7 +53,7 @@ const StatsCard = ({ stats, onViewBookingsClick }) => {
   ];
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 sticky top-28">
+    <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xl hover:shadow-2xl transition-all duration-300 lg:sticky lg:top-28">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

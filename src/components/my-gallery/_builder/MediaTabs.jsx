@@ -67,16 +67,16 @@ const MediaTabs = ({ mediaData }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
+    <div className="bg-white rounded-lg border border-gray-200 w-full">
       {/* tab section */}
-      <div className="border-b border-gray-200 flex justify-between">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         {/* media type section */}
-        <div className="flex space-x-2 p-4">
+        <div className="flex space-x-2 p-4 overflow-x-auto">
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center whitespace-nowrap space-x-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? "bg-teal-500 text-white shadow-sm"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -93,7 +93,7 @@ const MediaTabs = ({ mediaData }) => {
           ))}
         </div>
         {/* media view type dropdown section */}
-        <div className="flex justify-end p-4">
+        <div className="flex justify-end p-4 pt-0 sm:pt-4">
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -130,7 +130,7 @@ const MediaTabs = ({ mediaData }) => {
 
       {/* media section */}
       <div className="p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {filteredMediaData.map((media, index) => (
             <div
               key={index}
@@ -141,7 +141,7 @@ const MediaTabs = ({ mediaData }) => {
               }`}
               onClick={() => handleMediaClick(media, index)}
             >
-              <div className="w-full h-32 mb-2">
+              <div className="w-full aspect-[4/3] sm:h-32 mb-2">
                 {media.type === "photo" ? (
                   <img src={media.url} alt={media.title} className="w-full h-full object-cover rounded" />
                 ) : media.type === "video" ? (

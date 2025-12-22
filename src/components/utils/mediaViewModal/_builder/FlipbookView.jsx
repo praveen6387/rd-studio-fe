@@ -5,23 +5,10 @@ import HTMLFlipBook from "react-pageflip";
 const FlipbookView = ({ media_title, media_description, media_library_items }) => {
   const bookRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [bookSize, setBookSize] = useState({ width: 600, height: 400 });
   const pointerStart = useRef({ x: 0, y: 0, id: null });
 
   useEffect(() => {
-    const update = () => {
-      const mobile = typeof window !== "undefined" && window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (typeof window === "undefined") return;
-      if (mobile) {
-        // On mobile, the container is rotated; use viewport to maximize usage.
-        const width = Math.min(1600, Math.floor(window.innerHeight * 1.0));
-        const height = Math.min(1600, Math.floor(window.innerWidth * 1.0));
-        setBookSize({ width, height });
-      } else {
-        setBookSize({ width: 600, height: 400 });
-      }
-    };
+    const update = () => setIsMobile(typeof window !== "undefined" && window.innerWidth < 768);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
@@ -89,9 +76,9 @@ const FlipbookView = ({ media_title, media_description, media_library_items }) =
 
   return (
     <>
-      <div className={`w-screen h-screen overflow-hidden flex items-center justify-center`}>
+      <div className={`w-dvw h-dvh overflow-hidden flex items-center justify-center`}>
         <div
-          className={`relative flex items-center justify-center rotate-90 md:rotate-0 origin-center w-[100vh] h-[100vw] md:w-full md:h-full`}
+          className={`relative flex items-center justify-center rotate-90 md:rotate-0 origin-center w-dvh h-dvw md:w-full md:h-full`}
         >
           <HTMLFlipBook
             ref={bookRef}

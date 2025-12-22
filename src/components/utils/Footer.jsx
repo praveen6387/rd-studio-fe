@@ -16,7 +16,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             {/* Logo Section */}
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="flex items-center justify-center md:justify-start space-x-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -39,13 +39,13 @@ export default function Footer() {
             </div>
 
             {/* Tagline */}
-            <p className="text-gray-300 mb-8 max-w-md leading-relaxed text-lg">
+            <p className="text-gray-300 mb-8 max-w-md leading-relaxed text-lg text-center md:text-left mx-auto md:mx-0">
               Capturing life's beautiful moments through the lens. Professional photography services for all your
               special occasions with passion and creativity.
             </p>
 
             {/* Social Media */}
-            <div className="flex space-x-4">
+            <div className="flex justify-center md:justify-start space-x-4">
               {/* Instagram */}
               <a
                 href="https://www.instagram.com/rdphoto_570?igsh=MTNjZXpkbzc1NTRyZw=="
@@ -79,14 +79,14 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h3 className="text-xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent text-center md:text-left">
               Quick Links
             </h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/"
-                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center"
+                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center justify-center md:justify-start"
                 >
                   <div className="w-1 h-1 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full mr-3 group-hover:scale-150 transition-transform"></div>
                   Home
@@ -95,7 +95,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/gallery"
-                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center"
+                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center justify-center md:justify-start"
                 >
                   <div className="w-1 h-1 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full mr-3 group-hover:scale-150 transition-transform"></div>
                   Gallery
@@ -104,7 +104,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center"
+                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center justify-center md:justify-start"
                 >
                   <div className="w-1 h-1 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full mr-3 group-hover:scale-150 transition-transform"></div>
                   About
@@ -113,7 +113,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center"
+                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center justify-center md:justify-start"
                 >
                   <div className="w-1 h-1 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full mr-3 group-hover:scale-150 transition-transform"></div>
                   Contact
@@ -124,11 +124,11 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h3 className="text-xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent text-center md:text-left">
               Contact
             </h3>
             <div className="space-y-4">
-              <div className="flex items-center space-x-3 group">
+              <div className="flex items-center justify-center md:justify-start space-x-3 group">
                 <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 group-hover:scale-110 transition-transform">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -144,7 +144,7 @@ export default function Footer() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 group">
+              <div className="flex items-center justify-center md:justify-start space-x-3 group">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 group-hover:scale-110 transition-transform">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -160,7 +160,7 @@ export default function Footer() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 group">
+              <div className="flex items-center justify-center md:justify-start space-x-3 group">
                 <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 group-hover:scale-110 transition-transform">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -187,9 +187,9 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-700/50 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <div className="flex flex-col md:flex-row justify-center md:justify-between items-center space-y-4 md:space-y-0 text-center">
             <p className="text-gray-400 text-center md:text-left">&copy; 2025 RD Studio. All rights reserved.</p>
-            <div className="flex items-center space-x-6 text-sm text-gray-400">
+            <div className="flex items-center justify-center md:justify-end space-x-6 text-sm text-gray-400">
               <Link href="/privacy" className="hover:text-white transition-colors">
                 Privacy Policy
               </Link>

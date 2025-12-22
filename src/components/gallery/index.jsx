@@ -147,7 +147,7 @@ const GalleryIndex = () => {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="py-8 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 sticky top-0 z-40 backdrop-blur-sm bg-white/80">
+      <section className="py-8 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
             {/* Search */}

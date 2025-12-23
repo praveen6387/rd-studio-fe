@@ -67,6 +67,13 @@ const FlipbookView = ({ media_title, media_description, media_library_items }) =
     if (i === 0 || i === pages.length - 1) {
       // First page stays full
       new_pages.push({ url: pages[i].url, title: pages[i].title, cropSide: "full" });
+    } else if (i === 1) {
+      new_pages.push({
+        url: "https://t4.ftcdn.net/jpg/02/52/46/25/360_F_252462576_koy7njo9iYx6gUcM26IZcDUs9fMKIKJs.jpg",
+        title: pages[i].title,
+        cropSide: "left",
+      });
+      new_pages.push({ url: pages[i].url, title: pages[i].title, cropSide: "full" });
     } else {
       // Subsequent pages: split into left and right halves
       new_pages.push({ url: pages[i].url, title: pages[i].title, cropSide: "left" });

@@ -2,7 +2,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { convertToDate } from "@/lib/utils";
-import { Expand, Shrink, Volume2, VolumeOff } from "lucide-react";
+import { Expand, PhoneIcon, Shrink, Volume2, VolumeOff } from "lucide-react";
+import { InstagramLogoIcon } from "@radix-ui/react-icons";
 
 const FlipbookView = ({ media_title, media_description, media_library_items, data }) => {
   console.log(data);
@@ -198,6 +199,12 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
           </div>
           <div className="absolute right-1 top-0">
             <ul className="flex gap-x-4">
+              <li>
+                <InstagramLogoIcon className="w-6 h-6" />
+              </li>
+              <li>
+                <PhoneIcon className="w-6 h-6" />
+              </li>
               {!isMuted ? (
                 <li>
                   <Volume2 onClick={toggleMute} />

@@ -3,21 +3,25 @@
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import LoadingLink from "@/components/ui/loading-link";
-import { Gauge, Settings, LogOut, Menu, X } from "lucide-react";
+import { Gauge, Settings, LogOut, Menu, X, User, Image } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
 
 export default function Sidenav() {
   const pathname = usePathname();
   const { isCollapsed, toggleSidebar } = useSidebar();
-
+  const { user } = useUser();
+  console.log(user);
   const isActive = (path) => {
     return pathname === path;
   };
 
   const navItems = [
-    { href: "/dashboard", icon: <Gauge />, label: "Dashboard" },
+    // { href: "/dashboard", icon: <Gauge />, label: "Dashboard" },
+    { href: "/dashboard/portfolio", icon: <Image />, label: "Portfolio", user_view: [1, 2, 3, 4] },
+    { href: "/dashboard/users", icon: <User />, label: "Users", user_view: [3, 4] },
     // { href: "/dashboard/operations", icon: <Gauge />, label: "Operations" },
     // { href: "/dashboard/operations2", icon: <Gauge />, label: "Operations2" },
-    { href: "/dashboard/media", icon: <Gauge />, label: "Media" },
+    { href: "/dashboard/media", icon: <Gauge />, label: "Media", user_view: [1, 2, 3, 4] },
   ];
 
   return (
@@ -56,27 +60,31 @@ export default function Sidenav() {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto">
           <ul className={`p-4 space-y-2 ${isCollapsed ? "px-2" : ""}`}>
-            {navItems.map((item) => (
-              <li key={item.href}>
-                <LoadingLink
-                  href={item.href}
-                  className={`flex items-center p-3 rounded-lg transition-colors group ${
-                    isActive(item.href) ? "bg-gray-700 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                  title={isCollapsed ? item.label : ""}
-                >
-                  <span className={`${isCollapsed ? "mx-auto" : "mr-3"}`}>{item.icon}</span>
-                  {!isCollapsed && item.label}
+            {navItems
+              .filter((item) => item.user_view.includes(user.role))
+              .map((item) => (
+                <li key={item.href}>
+                  <LoadingLink
+                    href={item.href}
+                    className={`flex items-center p-3 rounded-lg transition-colors group ${
+                      isActive(item.href)
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    }`}
+                    title={isCollapsed ? item.label : ""}
+                  >
+                    <span className={`${isCollapsed ? "mx-auto" : "mr-3"}`}>{item.icon}</span>
+                    {!isCollapsed && item.label}
 
-                  {/* Tooltip for collapsed state */}
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                      {item.label}
-                    </div>
-                  )}
-                </LoadingLink>
-              </li>
-            ))}
+                    {/* Tooltip for collapsed state */}
+                    {isCollapsed && (
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                        {item.label}
+                      </div>
+                    )}
+                  </LoadingLink>
+                </li>
+              ))}
           </ul>
         </nav>
 

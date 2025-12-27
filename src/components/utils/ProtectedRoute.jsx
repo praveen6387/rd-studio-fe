@@ -1,18 +1,18 @@
-'use client';
-import { useUser } from '@/contexts/UserContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+"use client";
+import { useUser } from "@/contexts/UserContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Function to decode JWT token
 function decodeJWT(token) {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
     );
     return JSON.parse(jsonPayload);
   } catch (error) {
@@ -29,38 +29,38 @@ export default function ProtectedRoute({ children, requireAdmin = true }) {
   useEffect(() => {
     const checkAuthorization = () => {
       setIsChecking(true);
-      
+
       // If not logged in, redirect to home
       if (!user) {
-        router.push('/');
+        router.push("/");
         return;
       }
 
       // Get access token from localStorage
-      const accessToken = localStorage.getItem('accessToken');
-      
+      const accessToken = localStorage.getItem("accessToken");
+
       if (!accessToken) {
-        router.push('/');
+        router.push("/");
         return;
       }
 
       // Decode the token
       const tokenPayload = decodeJWT(accessToken);
-      
+
       if (!tokenPayload) {
-        router.push('/');
+        router.push("/");
         return;
       }
 
       // Check if token is expired
       if (tokenPayload.exp && Date.now() >= tokenPayload.exp * 1000) {
-        router.push('/');
+        router.push("/");
         return;
       }
 
       // If requireAdmin is true, check is_admin field
-      if (requireAdmin && !tokenPayload.is_admin) {
-        router.push('/');
+      if ((requireAdmin && (tokenPayload.role || 0)) < 1) {
+        router.push("/");
         return;
       }
 

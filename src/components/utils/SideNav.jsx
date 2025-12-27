@@ -61,7 +61,7 @@ export default function Sidenav() {
         <nav className="flex-1 overflow-y-auto">
           <ul className={`p-4 space-y-2 ${isCollapsed ? "px-2" : ""}`}>
             {navItems
-              .filter((item) => item.user_view.includes(user.role))
+              .filter((item) => item.user_view.includes(user?.role))
               .map((item) => (
                 <li key={item.href}>
                   <LoadingLink

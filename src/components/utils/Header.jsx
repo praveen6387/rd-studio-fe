@@ -35,7 +35,7 @@ export default function Header() {
         const accessToken = localStorage.getItem("accessToken");
         if (accessToken) {
           const tokenPayload = decodeJWT(accessToken);
-          setIsAdmin(tokenPayload?.is_admin || false);
+          setIsAdmin(tokenPayload?.role >= 1 || false);
         } else {
           setIsAdmin(false);
         }

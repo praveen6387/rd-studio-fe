@@ -15,3 +15,19 @@ export const userLogin = async (data) => {
   }
   return res.json();
 };
+
+export const userSignup = async (data) => {
+  const url = endpoint.signup;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Failed to signup");
+  }
+  return res.json();
+};

@@ -34,7 +34,7 @@ const PortfolioIndex = ({ current_user }) => {
   };
 
   return (
-    <DashboardPageLayout title="Portfolio" description="Manage your portfolio">
+    <DashboardPageLayout title="Profile" description="Manage your profile">
       <Card className="lg:col-span-2">
         <CardHeader>
           <CardTitle>Profile details</CardTitle>

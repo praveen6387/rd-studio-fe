@@ -17,7 +17,7 @@ export default function Sidenav() {
 
   const navItems = [
     // { href: "/dashboard", icon: <Gauge />, label: "Dashboard" },
-    { href: "/dashboard/portfolio", icon: <Image />, label: "Portfolio", user_view: [1, 2, 3, 4] },
+    { href: "/dashboard/portfolio", icon: <Image />, label: "Profile", user_view: [1, 2, 3, 4] },
     { href: "/dashboard/users", icon: <User />, label: "Users", user_view: [3, 4] },
     // { href: "/dashboard/operations", icon: <Gauge />, label: "Operations" },
     // { href: "/dashboard/operations2", icon: <Gauge />, label: "Operations2" },

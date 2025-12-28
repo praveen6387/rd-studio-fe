@@ -39,46 +39,8 @@ export default function RouteLoadingBar() {
     };
   }, [pathname]);
 
-  // Listen for custom route change events
-  useEffect(() => {
-    const handleRouteChangeStart = () => {
-      setIsLoading(true);
-      setProgress(0);
-    };
-
-    const handleRouteChangeComplete = () => {
-      setProgress(100);
-      setTimeout(() => {
-        setIsLoading(false);
-        setProgress(0);
-      }, 200);
-    };
-
-    window.addEventListener("route-change-start", handleRouteChangeStart);
-    window.addEventListener("route-change-complete", handleRouteChangeComplete);
-
-    return () => {
-      window.removeEventListener("route-change-start", handleRouteChangeStart);
-      window.removeEventListener("route-change-complete", handleRouteChangeComplete);
-    };
-  }, []);
-
-  // Also listen for link clicks
-  useEffect(() => {
-    const handleLinkClick = (e) => {
-      const target = e.target.closest("a");
-      if (target && target.href && !target.href.startsWith("mailto:") && !target.href.startsWith("tel:")) {
-        const url = new URL(target.href);
-        if (url.origin === window.location.origin) {
-          setIsLoading(true);
-          setProgress(0);
-        }
-      }
-    };
-
-    document.addEventListener("click", handleLinkClick);
-    return () => document.removeEventListener("click", handleLinkClick);
-  }, []);
+  // Remove custom/global click listeners to avoid double-triggering;
+  // rely on pathname changes (and app/loading for full-page skeleton).
 
   if (!isLoading) return null;
 

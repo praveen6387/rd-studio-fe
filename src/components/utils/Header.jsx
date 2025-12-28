@@ -26,26 +26,26 @@ export default function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(user?.role >= 1 || false);
 
   // Check if user is admin by decoding JWT token
-  useEffect(() => {
-    const checkAdminStatus = () => {
-      if (user) {
-        const accessToken = localStorage.getItem("accessToken");
-        if (accessToken) {
-          const tokenPayload = decodeJWT(accessToken);
-          setIsAdmin(tokenPayload?.role >= 1 || false);
-        } else {
-          setIsAdmin(false);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-    };
+  // useEffect(() => {
+  //   const checkAdminStatus = () => {
+  //     if (user) {
+  //       const accessToken = localStorage.getItem("accessToken");
+  //       if (accessToken) {
+  //         const tokenPayload = decodeJWT(accessToken);
+  //         setIsAdmin(tokenPayload?.role >= 1 || false);
+  //       } else {
+  //         setIsAdmin(false);
+  //       }
+  //     } else {
+  //       setIsAdmin(false);
+  //     }
+  //   };
 
-    checkAdminStatus();
-  }, [user]);
+  //   checkAdminStatus();
+  // }, [user]);
 
   const handleLogout = () => {
     logout();

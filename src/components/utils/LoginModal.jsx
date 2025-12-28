@@ -43,22 +43,6 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
           password: formData.password,
         });
 
-        if (response.access) {
-          Cookies.set("access_token", response.access, {
-            expires: 1,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-          });
-        }
-
-        if (response.refresh) {
-          Cookies.set("refresh_token", response.refresh, {
-            expires: 7,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-          });
-        }
-
         onLogin(response);
         onClose();
       } else {

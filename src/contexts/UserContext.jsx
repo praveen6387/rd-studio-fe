@@ -1,13 +1,14 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   useEffect(() => {
     // Check if user is logged in from localStorage
     const savedUser = localStorage.getItem("user");
@@ -25,18 +26,10 @@ export function UserProvider({ children }) {
     // Extract user data and tokens from response
     const { user: userData, access, refresh } = response;
 
-    // Map backend role to frontend type
-    const roleToType = {
-      0: "customer",
-      1: "admin",
-      2: "operation",
-      3: "admin", // super admin maps to admin
-    };
-
     // Add type and name fields to user data
     const enhancedUserData = {
       ...userData,
-      type: roleToType[userData.role] || "customer",
+      type: userData.role_name,
       name: `${userData.first_name} ${userData.last_name}`.trim(),
     };
 
@@ -45,8 +38,22 @@ export function UserProvider({ children }) {
     localStorage.setItem("user", JSON.stringify(enhancedUserData));
 
     // Store tokens separately
-    if (access) localStorage.setItem("accessToken", access);
-    if (refresh) localStorage.setItem("refreshToken", refresh);
+    // if (access) localStorage.setItem("accessToken", access);
+    // if (refresh) localStorage.setItem("refreshToken", refresh);
+
+    Cookies.set("access_token", access, {
+      expires: 1,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    Cookies.set("refresh_token", refresh, {
+      expires: 7,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    router.push("/dashboard");
   };
 
   const logout = () => {

@@ -5,12 +5,20 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import LoadingLink from "@/components/ui/loading-link";
 import { Gauge, Settings, LogOut, Menu, X, User, Image } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function Sidenav() {
   const pathname = usePathname();
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { user } = useUser();
-  console.log(user);
+  const router = useRouter();
+  const { logout } = useUser();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   const isActive = (path) => {
     return pathname === path;
   };
@@ -31,14 +39,14 @@ export default function Sidenav() {
 
       {/* Sidebar */}
       <div
-        className={`bg-gray-800 text-white h-screen flex flex-col fixed left-0 pt-16 top-0 z-30 transition-all duration-300 ease-in-out ${
+        className={`bg-gray-800 text-white h-screen flex flex-col fixed left-0 pt-0 top-0 z-30 transition-all duration-300 ease-in-out ${
           isCollapsed ? "w-16" : "w-64"
         }`}
       >
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute -right-3 top-20 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-40"
+          className="absolute -right-3 top-2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-40"
         >
           {isCollapsed ? <Menu size={16} /> : <X size={16} />}
         </button>
@@ -48,7 +56,7 @@ export default function Sidenav() {
           {!isCollapsed ? (
             <>
               <h2 className="text-2xl font-bold text-white">RD Studio</h2>
-              <p className="text-gray-400 text-sm">Photography Studio</p>
+              <p className="text-gray-400 text-sm">Operations Management</p>
             </>
           ) : (
             <div className="flex justify-center">
@@ -90,7 +98,7 @@ export default function Sidenav() {
 
         {/* Bottom Section */}
         <div className={`p-4 border-t border-gray-700 ${isCollapsed ? "px-2" : ""}`}>
-          <button
+          {/* <button
             className={`flex items-center w-full p-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group ${
               isCollapsed ? "justify-center" : ""
             }`}
@@ -99,18 +107,18 @@ export default function Sidenav() {
             <Settings className={`${isCollapsed ? "" : "mr-3"}`} size={16} />
             {!isCollapsed && "Settings"}
 
-            {/* Tooltip for collapsed state */}
             {isCollapsed && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
                 Settings
               </div>
             )}
-          </button>
+          </button> */}
           <button
             className={`flex items-center w-full p-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors mt-2 group ${
               isCollapsed ? "justify-center" : ""
             }`}
             title={isCollapsed ? "Logout" : ""}
+            onClick={handleLogout}
           >
             <LogOut className={`${isCollapsed ? "" : "mr-3"}`} size={16} />
             {!isCollapsed && "Logout"}

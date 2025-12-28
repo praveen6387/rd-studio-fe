@@ -8,7 +8,7 @@ export default function DashboardPageLayout({ children, title, description, butt
   const { isCollapsed } = useSidebar();
 
   return (
-    <PageLayout footer={false} sidebar={true}>
+    <PageLayout header={false} footer={false} sidebar={true}>
       <div className="flex min-h-screen bg-gray-100">
         <Sidenav />
         <main className={`flex-1 transition-all duration-300 ease-in-out ${isCollapsed ? "ml-16" : "ml-64"}`}>

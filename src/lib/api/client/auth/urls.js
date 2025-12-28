@@ -11,7 +11,8 @@ export const userLogin = async (data) => {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to login");
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Failed to Login");
   }
   return res.json();
 };

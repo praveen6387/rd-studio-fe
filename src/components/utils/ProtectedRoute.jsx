@@ -2,6 +2,7 @@
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 // Function to decode JWT token
 function decodeJWT(token) {
@@ -37,7 +38,7 @@ export default function ProtectedRoute({ children, requireAdmin = true }) {
       }
 
       // Get access token from localStorage
-      const accessToken = localStorage.getItem("accessToken");
+      const accessToken = Cookies.get("access_token");
 
       if (!accessToken) {
         router.push("/");

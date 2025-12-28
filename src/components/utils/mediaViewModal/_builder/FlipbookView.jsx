@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { convertToDate } from "@/lib/utils";
 import { Expand, PhoneIcon, Shrink, Volume2, VolumeOff } from "lucide-react";
-import { InstagramLogoIcon } from "@radix-ui/react-icons";
+import Instagram from "public/images/svg/Instagram";
+import WhatsApp from "public/images/svg/WhatsApp";
 
 const FlipbookView = ({ media_title, media_description, media_library_items, data }) => {
-  console.log(data);
   const bookRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const pointerStart = useRef({ x: 0, y: 0, id: null });
@@ -197,13 +197,13 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
           <div className="text-yellow-300 text-2xl font-semibold justify-self-center text-center w-full">
             {data.media_title}
           </div>
-          <div className="absolute right-1 top-0">
+          <div className="absolute right-1 top-0 text-white">
             <ul className="flex gap-x-4">
               <li>
-                <InstagramLogoIcon className="w-6 h-6" />
+                <Instagram className="w-6 h-6" />
               </li>
               <li>
-                <PhoneIcon className="w-6 h-6" />
+                <WhatsApp className="w-6 h-6" />
               </li>
               {!isMuted ? (
                 <li>

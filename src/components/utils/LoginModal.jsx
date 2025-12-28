@@ -39,7 +39,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     try {
       if (mode === "login") {
         const response = await userLogin({
-          email: formData.email,
+          phone: formData.phone,
           password: formData.password,
         });
 
@@ -111,6 +111,22 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
       : formData.password.length === 0 && formData.confirm_password.length === 0
       ? true
       : formData.password === formData.confirm_password;
+  const isPhoneValid =
+    mode !== "signup" || signupStep !== 2 ? true : /^\d{10}$/.test((formData.phone || "").replace(/\D/g, ""));
+  const isSignupFormComplete =
+    mode !== "signup" || signupStep !== 2
+      ? true
+      : Boolean(
+          formData.first_name &&
+            formData.last_name &&
+            (String(formData.role) === "2" ? formData.lab_name : formData.studio_name) &&
+            formData.email &&
+            formData.phone &&
+            formData.gender !== "" &&
+            formData.date_of_birth &&
+            formData.password &&
+            formData.confirm_password
+        );
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-50">
@@ -164,13 +180,13 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
               )}
 
               <Input
-                id="login_email"
-                label="Email Address"
-                type="email"
-                name="email"
-                value={formData.email}
+                id="phone_number"
+                label="Phone Number"
+                type="tel"
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
-                placeholder="your.email@example.com"
+                placeholder="Enter Phone number"
                 required
                 className="bg-gray-50 border-gray-200 focus:bg-white"
               />
@@ -207,7 +223,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
                   <button
                     type="button"
-                    className={`text-left rounded-xl border p-5 hover:bg-gray-50 transition shadow-sm ${
+                    className={`text-left rounded-xl border p-5 hover:bg-gray-100 transition shadow-sm ${
                       formData.role === "1" ? "border-gray-900 ring-2 ring-gray-900/10" : "border-gray-300"
                     }`}
                     onClick={() => {
@@ -225,6 +241,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                     </p>
                   </button>
                   <button
+                    disabled={true}
                     type="button"
                     className={`text-left rounded-xl border p-5 hover:bg-gray-50 transition shadow-sm ${
                       formData.role === "2" ? "border-gray-900 ring-2 ring-gray-900/10" : "border-gray-300"
@@ -235,7 +252,10 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                     }}
                     aria-pressed={formData.role === "2"}
                   >
-                    <div className="text-lg font-semibold text-gray-900">Lab</div>
+                    <div className="text-lg font-semibold text-gray-900 flex items-center justify-between">
+                      <div>Studio</div>
+                      <div className="text-xs text-gray-500">Coming soon</div>
+                    </div>
                     <p className="text-sm text-gray-600 mt-3">
                       Create flipbooks for multiple studios; set Studio Name per flipbook.
                     </p>
@@ -245,13 +265,13 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             ) : (
               <div className="">
                 <div className="flex items-center justify-between mb-2">
-                  <button
+                  {/* <button
                     type="button"
                     onClick={() => setSignupStep(1)}
                     className="text-sm text-gray-600 hover:text-gray-900 hover:underline"
                   >
                     ← Back to user type
-                  </button>
+                  </button> */}
                   <div className="text-xs text-gray-500">
                     {formData.role === "1" ? "Role: Studio" : formData.role === "2" ? "Role: Lab" : ""}
                   </div>
@@ -319,16 +339,24 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                       placeholder="your.email@example.com"
                       required
                     />
-                    <Input
-                      id="phone"
-                      label="Phone"
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="Phone number"
-                      required
-                    />
+                    <div>
+                      <Input
+                        id="phone"
+                        label="Phone"
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="Phone number"
+                        required
+                        inputMode="numeric"
+                        maxLength={10}
+                        pattern="^[0-9]{10}$"
+                      />
+                      {formData.phone && !isPhoneValid && (
+                        <p className="text-xs text-red-600 md:col-span-2 mt-1">Phone must be 10 digits.</p>
+                      )}
+                    </div>
                     <Input
                       id="dob"
                       label="Date of Birth"
@@ -412,7 +440,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <div className="flex items-center justify-end pt-2">
                     <button
                       type="submit"
-                      disabled={isLoading || !passwordsMatch}
+                      disabled={isLoading || !passwordsMatch || !isSignupFormComplete || !isPhoneValid}
                       className="bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? "Creating account..." : "Create account"}

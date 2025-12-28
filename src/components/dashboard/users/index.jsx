@@ -1,10 +1,25 @@
 "use client";
 import DataTable from "@/components/shared/clientDataTable";
+import { Button } from "@/components/ui/button";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
-import { convertToDate } from "@/lib/utils";
+import { convertTime } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { EllipsisVertical } from "lucide-react";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { EyeIcon } from "lucide-react";
+import PaymentTransation from "./_builder/PaymentTransation";
+import { useState } from "react";
 
 const UsersIndex = ({ users }) => {
   console.log(users);
+  const [isPaymentTransationOpen, setIsPaymentTransationOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+
   const columns = [
     {
       header: "Name",
@@ -31,12 +46,41 @@ const UsersIndex = ({ users }) => {
     {
       header: "Created At",
       accessorKey: "created_at",
-      cell: ({ row }) => <div>{convertToDate(row.original.created_at)}</div>,
+      cell: ({ row }) => <div>{convertTime(row.original.created_at)}</div>,
+    },
+    {
+      header: "Actions",
+      accessorKey: "action",
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="cursor-pointer">
+              <EllipsisVertical className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsPaymentTransationOpen(true);
+                  setUserData(row.original);
+                }}
+              >
+                <EyeIcon className="h-4 w-4 mr-2" />
+                Payments
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
     },
   ];
+
   return (
     <DashboardPageLayout title="Users" description="Manage your users">
       <DataTable columns={columns} data={users.users} />
+      <PaymentTransation isOpen={isPaymentTransationOpen} setIsOpen={setIsPaymentTransationOpen} userData={userData} />
     </DashboardPageLayout>
   );
 };

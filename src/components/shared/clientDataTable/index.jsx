@@ -244,6 +244,7 @@ const DataTable = ({
   footer = null,
   showFooterWhenFiltered = false,
   showFilter = true,
+  showPagination = true,
 }) => {
   const queryParams = {
     search: parseAsString.withDefault(""),
@@ -571,7 +572,7 @@ const DataTable = ({
         )}
       </div>
 
-      <Pagination table={table} />
+      {showPagination && <Pagination table={table} />}
     </>
   );
 };

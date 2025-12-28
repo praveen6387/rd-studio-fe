@@ -15,8 +15,6 @@ import { useState } from "react";
 import { Pencil } from "lucide-react";
 import { X } from "lucide-react";
 import { SaveIcon } from "lucide-react";
-import PaymentModal from "./_builder/PaymentModal";
-import DataTable from "@/components/shared/clientDataTable";
 
 const PortfolioIndex = ({ current_user }) => {
   console.log(current_user);
@@ -28,7 +26,6 @@ const PortfolioIndex = ({ current_user }) => {
     ).toUpperCase() || (current_user?.user?.email || "?")[0].toUpperCase();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -51,46 +48,8 @@ const PortfolioIndex = ({ current_user }) => {
     });
   };
 
-  const columns = [
-    {
-      header: "Transaction ID",
-      accessorKey: "transaction_id",
-    },
-    {
-      header: "Amount",
-      accessorKey: "transaction_amount",
-    },
-    {
-      header: "Status",
-      accessorKey: "transaction_status_name",
-    },
-    {
-      header: "Total Operations",
-      accessorKey: "operation_count",
-    },
-    {
-      header: "Transaction Active From Date",
-      accessorKey: "transaction_active_from_date",
-    },
-    {
-      header: "Created At",
-      accessorKey: "created_at",
-      cell: ({ row }) => {
-        return <div>{convertTime(row.original.created_at)}</div>;
-      },
-    },
-  ];
-
   return (
-    <DashboardPageLayout
-      title="Profile"
-      description="Manage your profile"
-      button={
-        <div className="space-x-2">
-          <Button onClick={() => setIsPaymentModalOpen(true)}>Make Payment</Button>
-        </div>
-      }
-    >
+    <DashboardPageLayout title="Profile" description="Manage your profile">
       <div className="space-y-6 over">
         <div className="flex items-center justify-center gap-x-20 gap-y-10 flex-wrap">
           <Avatar className="rounded-full w-68 h-68">
@@ -258,14 +217,6 @@ const PortfolioIndex = ({ current_user }) => {
           </div>
         )}
       </div>
-
-      <DataTable
-        columns={columns}
-        data={current_user?.user.user_payment_transactions}
-        showFilter={false}
-        showPagination={false}
-      />
-      <PaymentModal isOpen={isPaymentModalOpen} setIsOpen={setIsPaymentModalOpen} />
     </DashboardPageLayout>
   );
 };

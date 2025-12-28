@@ -30,6 +30,7 @@ export default function Sidenav() {
     // { href: "/dashboard/operations", icon: <Gauge />, label: "Operations" },
     // { href: "/dashboard/operations2", icon: <Gauge />, label: "Operations2" },
     { href: "/dashboard/media", icon: <Gauge />, label: "Media", user_view: [1, 2, 3, 4] },
+    { href: "/dashboard/billing", icon: <Settings />, label: "Billing", user_view: [1, 2, 3, 4] },
   ];
 
   return (

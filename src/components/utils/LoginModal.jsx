@@ -253,7 +253,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                     aria-pressed={formData.role === "2"}
                   >
                     <div className="text-lg font-semibold text-gray-900 flex items-center justify-between">
-                      <div>Studio</div>
+                      <div>Lab/Designer</div>
                       <div className="text-xs text-gray-500">Coming soon</div>
                     </div>
                     <p className="text-sm text-gray-600 mt-3">

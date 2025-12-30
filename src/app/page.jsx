@@ -1,118 +1,126 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import PageLayout from "@/components/utils/PageLayout";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 
 export default function Home() {
   return (
     <PageLayout>
-      {/* Hero Section with Beautiful Background */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 w-full h-full">
-          {/* Beautiful Wedding Background Image */}
-          <div
-            className="w-full h-full bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop&q=80')`,
-            }}
-          ></div>
+      {/* Hero Section with Carousel */}
+      <section className="relative h-screen overflow-hidden">
+        <Carousel>
+          <CarouselContent>
+            {/* Slide 1: Flipbook promo */}
+            <CarouselItem>
+              <div className="relative h-screen flex items-center">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(249,250,251,1),rgba(245,237,225,0.8))]"></div>
+                <div className="absolute inset-0 bg-[url('/about.png')] opacity-10 bg-cover bg-center"></div>
+                <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                  <div>
+                    <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+                      Transform Your Photos into Timeless Digital Stories.
+                    </h1>
+                    <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-2xl">
+                      Elegantly convert physical albums to interactive digital keepsakes with music, motion, and simple
+                      sharing.
+                    </p>
+                    <div className="mt-10 flex flex-wrap gap-4">
+                      <Link
+                        href="/dashboard/billing"
+                        className="px-6 py-3 rounded-full text-white font-semibold shadow-md bg-[#f59f0b] hover:bg-[#fbbf24] transition-colors"
+                      >
+                        Start Free Trial
+                      </Link>
+                      <Link
+                        href="/gallery"
+                        className="px-6 py-3 rounded-full text-white font-semibold shadow-md"
+                        style={{ backgroundColor: "#6aa67a" }}
+                      >
+                        View Demo
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="hidden lg:block relative">
+                    <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl">
+                      <Image src="/about4.jpg" alt="Flipbook Preview" fill className="object-cover" priority />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CarouselItem>
 
-          {/* Animated Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/70"></div>
-
-          {/* Floating Particles */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(25)].map((_, i) => (
-              <div
-                key={i}
-                className={`absolute w-2 h-2 rounded-full animate-float ${
-                  i % 4 === 0
-                    ? "bg-amber-300/40"
-                    : i % 4 === 1
-                    ? "bg-rose-300/40"
-                    : i % 4 === 2
-                    ? "bg-pink-300/40"
-                    : "bg-yellow-200/40"
-                }`}
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 3}s`,
-                  animationDuration: `${3 + Math.random() * 4}s`,
-                }}
-              ></div>
-            ))}
-          </div>
-
-          {/* Animated Light Beams */}
-          <div className="absolute inset-0">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-amber-400/30 to-transparent rounded-full animate-pulse"></div>
-            <div
-              className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-radial from-rose-400/30 to-transparent rounded-full animate-pulse"
-              style={{ animationDelay: "1s" }}
-            ></div>
-            <div
-              className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-radial from-pink-300/25 to-transparent rounded-full animate-pulse"
-              style={{ animationDelay: "2s" }}
-            ></div>
-            <div
-              className="absolute top-3/4 left-1/3 w-72 h-72 bg-gradient-radial from-yellow-300/20 to-transparent rounded-full animate-pulse"
-              style={{ animationDelay: "3s" }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
-          <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent leading-tight">
-              Capture Life's Beautiful Moments
-            </h1>
-            <p className="text-xl md:text-2xl mb-10 text-gray-200 font-light max-w-3xl mx-auto leading-relaxed">
-              Professional photography services for weddings, portraits, events, and more. Creating timeless memories
-              that last forever.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link
-                href="/my-gallery"
-                className="group bg-white/10 backdrop-blur-sm text-white px-10 py-4 rounded-full font-semibold border border-white/30 hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
-              >
-                <span className="flex items-center gap-2">
-                  View Gallery
-                  <svg
-                    className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </span>
-              </Link>
-              <Link
-                href="/contact"
-                className="group border-2 border-white/50 text-white px-10 py-4 rounded-full font-semibold hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
-              >
-                <span className="flex items-center gap-2">
-                  Book Session
-                  <svg
-                    className="w-5 h-5 group-hover:rotate-12 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
+            {/* Slide 2: Existing hero */}
+            <CarouselItem>
+              <div className="relative h-screen flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 w-full h-full">
+                  <div
+                    className="w-full h-full bg-cover bg-center bg-no-repeat"
+                    style={{
+                      backgroundImage: `url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop&q=80')`,
+                    }}
+                  ></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/70"></div>
+                </div>
+                <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
+                  <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent leading-tight">
+                    Capture Life's Beautiful Moments
+                  </h1>
+                  <p className="text-xl md:text-2xl mb-10 text-gray-200 font-light max-w-3xl mx-auto leading-relaxed">
+                    Professional photography services for weddings, portraits, events, and more. Creating timeless
+                    memories that last forever.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <Link
+                      href="/my-gallery"
+                      className="group bg-white/10 backdrop-blur-sm text-white px-10 py-4 rounded-full font-semibold border border-white/30 hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                    >
+                      <span className="flex items-center gap-2">
+                        View Gallery
+                        <svg
+                          className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </span>
+                    </Link>
+                    <Link
+                      href="/contact"
+                      className="group border-2 border-white/50 text-white px-10 py-4 rounded-full font-semibold hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                    >
+                      <span className="flex items-center gap-2">
+                        Book Session
+                        <svg
+                          className="w-5 h-5 group-hover:rotate-12 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious className="bg-white/20 border-white/40 text-white hover:bg-white hover:text-gray-900" />
+          <CarouselNext className="bg-white/20 border-white/40 text-white hover:bg-white hover:text-gray-900" />
+        </Carousel>
       </section>
 
       {/* Services Section */}

@@ -40,14 +40,14 @@ export default function Sidenav() {
 
       {/* Sidebar */}
       <div
-        className={`bg-gray-800 text-white h-screen flex flex-col fixed left-0 pt-0 top-0 z-30 transition-all duration-300 ease-in-out ${
+        className={`bg-gradient-to-b from-slate-950 to-slate-800 text-white h-screen flex flex-col fixed left-0 pt-0 top-0 z-30 transition-all duration-300 ease-in-out ${
           isCollapsed ? "w-16" : "w-64"
         }`}
       >
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute -right-3 top-2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-40"
+          className="absolute -right-3 top-2 bg-slate-800 text-white p-2 rounded-full shadow-lg hover:bg-slate-700 transition-colors z-40"
         >
           {isCollapsed ? <Menu size={16} /> : <X size={16} />}
         </button>
@@ -77,8 +77,8 @@ export default function Sidenav() {
                     href={item.href}
                     className={`flex items-center p-3 rounded-lg transition-colors group ${
                       isActive(item.href)
-                        ? "bg-gray-700 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        ? "bg-indigo-500/20 ring-1 ring-indigo-500/30 text-white"
+                        : "text-gray-300 hover:bg-indigo-500/10 hover:text-white"
                     }`}
                     title={isCollapsed ? item.label : ""}
                   >

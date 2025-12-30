@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { getAllCustomers } from "../../../../data/users";
+// import { getAllCustomers } from "../../../../data/users";
 import { Image, Video, BookOpen, User } from "lucide-react";
 
 const CustomerSection = ({ selectedCustomer, setSelectedCustomer }) => {
@@ -14,19 +14,19 @@ const CustomerSection = ({ selectedCustomer, setSelectedCustomer }) => {
     flipbooks: 0,
   });
 
-  useEffect(() => {
-    const customerList = getAllCustomers();
-    setCustomers(customerList);
+  // useEffect(() => {
+  //   const customerList = getAllCustomers();
+  //   setCustomers(customerList);
 
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setIsDropdownOpen(false);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => document.removeEventListener("mousedown", handleClickOutside);
+  // }, []);
 
   const filteredCustomers = customers.filter(
     (customer) =>

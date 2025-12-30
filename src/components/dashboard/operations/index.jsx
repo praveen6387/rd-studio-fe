@@ -2,7 +2,7 @@
 
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 import { useState, useRef } from "react";
-import { getAllCustomers } from "@/data/users";
+// import { getAllCustomers } from "@/data/users";
 import { photoCollections } from "@/data/photoCollections";
 import {
   Upload,
@@ -51,7 +51,7 @@ const OperationsIndex = () => {
     isNewCustomer: false,
     individualTitles: {},
   });
-  const [existingCustomers, setExistingCustomers] = useState(getAllCustomers());
+  const [existingCustomers, setExistingCustomers] = useState([]);
   const fileInputRef = useRef(null);
   const [mediaTab, setMediaTab] = useState("photo"); // 'photo', 'video', 'flipbook'
   const [mediaSearch, setMediaSearch] = useState("");

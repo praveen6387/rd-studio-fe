@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import LoginModal from "./LoginModal";
+import Image from "next/image";
 
 export default function Header() {
   console.log("renter");
@@ -24,8 +25,8 @@ export default function Header() {
 
   const header_links = [
     { href: "/", label: "Home" },
-    { href: "/gallery", label: "Gallery" },
     { href: "/about", label: "About" },
+    { href: "/gallery", label: "Gallery" },
     { href: "/contact", label: "Contact" },
   ];
 
@@ -37,7 +38,7 @@ export default function Header() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-2">
-                <span className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">RD Studio</span>
+                <Image src="/images/png/logo.jpeg" alt="RD Studio" width={100} height={100} />
               </Link>
             </div>
 

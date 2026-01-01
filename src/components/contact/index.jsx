@@ -1,35 +1,39 @@
+"use client";
 import PageLayout from "@/components/utils/PageLayout";
+import Heading from "@/components/utils/Heading";
+import { motion } from "framer-motion";
 
 const ContactIndex = () => {
   return (
     <PageLayout>
-      {/* Contact Header */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 overflow-hidden">
-        {/* Background Decorative Elements */}
+      {/* Contact Header (light theme, consistent with About/Gallery) */}
+      <section className="relative bg-gradient-to-br from-white via-gray-50 to-gray-100 text-gray-900 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-10 right-10 w-40 h-40 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 left-10 w-32 h-32 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-yellow-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 right-10 w-40 h-40 bg-gradient-to-br from-indigo-100 to-sky-100 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-32 h-32 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-amber-100 to-yellow-50 rounded-full blur-3xl"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="animate-fade-in-up">
-            <div className="inline-block px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-semibold rounded-full mb-8 shadow-lg">
-              Contact RD Studio
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent leading-tight">
-              Let's Create Something Beautiful Together
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Heading text="Contact Us" />
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+              Let’s Create Something Beautiful Together
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Ready to capture your special moments? Get in touch with us today and let's discuss how we can bring your
-              vision to life.
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Share your project details or questions with us. We’ll guide you through our simple flipbook process,
+              timelines and pricing, and help you get a beautiful, sharable result.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Contact Form and Info */}
-      <section className="py-20 bg-gradient-to-br from-white via-gray-50 to-gray-100 relative overflow-hidden">
+      <section className="py-14 bg-gradient-to-br from-white via-gray-50 to-gray-100 relative overflow-hidden">
         {/* Background Decorative Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl opacity-60"></div>
@@ -37,17 +41,17 @@ const ContactIndex = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Contact Form */}
+          <div className="grid grid-cols-1 gap-12">
+            {/* Contact Form (top) */}
             <div className="relative">
-              <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 relative overflow-hidden">
+              <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 relative overflow-hidden">
                 {/* Form Background Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/30 opacity-50"></div>
 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -57,83 +61,39 @@ const ContactIndex = () => {
                       </svg>
                     </div>
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 via-indigo-700 to-gray-900 bg-clip-text text-transparent">
+                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 via-indigo-700 to-gray-900 bg-clip-text text-transparent">
                         Send us a Message
                       </h2>
-                      <p className="text-gray-600 mt-1">We'd love to hear from you</p>
+                      <p className="text-gray-600 mt-1 text-sm">We'd love to hear from you</p>
                     </div>
                   </div>
 
-                  <form className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <form className="space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
-                          First Name
+                        <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-2">
+                          Name
                         </label>
                         <input
                           type="text"
-                          id="firstName"
-                          name="firstName"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
-                          placeholder="Your first name"
+                          id="fullName"
+                          name="fullName"
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
+                          placeholder="Your name"
                         />
                       </div>
                       <div>
-                        <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
-                          Last Name
+                        <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                          Phone Number
                         </label>
                         <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
-                          placeholder="Your last name"
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
+                          placeholder="(555) 123-4567"
                         />
                       </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
-                        placeholder="(555) 123-4567"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="service" className="block text-sm font-semibold text-gray-700 mb-2">
-                        Service Type
-                      </label>
-                      <select
-                        id="service"
-                        name="service"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300"
-                      >
-                        <option value="">Select a service</option>
-                        <option value="wedding">Wedding Photography</option>
-                        <option value="portrait">Portrait Session</option>
-                        <option value="event">Event Coverage</option>
-                        <option value="corporate">Corporate Photography</option>
-                        <option value="other">Other</option>
-                      </select>
                     </div>
 
                     <div>
@@ -143,15 +103,15 @@ const ContactIndex = () => {
                       <textarea
                         id="message"
                         name="message"
-                        rows={11}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300 resize-none"
+                        rows={6}
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 hover:border-gray-300 resize-none"
                         placeholder="Tell us about your photography needs..."
                       ></textarea>
                     </div>
 
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-6 rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+                      className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3.5 px-6 rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
                     >
                       <span className="flex items-center justify-center gap-2">
                         Send Message
@@ -175,9 +135,9 @@ const ContactIndex = () => {
               </div>
             </div>
 
-            {/* Contact Information */}
+            {/* Contact Information (bottom) */}
             <div className="relative">
-              <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 relative overflow-hidden">
+              <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 relative overflow-hidden">
                 {/* Info Background Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 opacity-50"></div>
 

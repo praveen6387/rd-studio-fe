@@ -24,7 +24,7 @@ export default function Sidenav() {
   };
 
   const navItems = [
-    // { href: "/dashboard", icon: <Gauge />, label: "Dashboard" },
+    { href: "/dashboard", icon: <Gauge />, label: "Dashboard", user_view: [1, 2, 3, 4] },
     { href: "/dashboard/portfolio", icon: <Image />, label: "Profile", user_view: [1, 2, 3, 4] },
     { href: "/dashboard/users", icon: <User />, label: "Users", user_view: [3, 4] },
     // { href: "/dashboard/operations", icon: <Gauge />, label: "Operations" },
@@ -115,13 +115,13 @@ export default function Sidenav() {
             )}
           </button> */}
           <button
-            className={`flex items-center w-full p-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors mt-2 group ${
+            className={`flex border border-pink-700 bg-pink-600 items-center w-full p-3 text-white font-bold hover:bg-pink-700 hover:text-white rounded-lg transition-colors mt-2 group ${
               isCollapsed ? "justify-center" : ""
             }`}
             title={isCollapsed ? "Logout" : ""}
             onClick={handleLogout}
           >
-            <LogOut className={`${isCollapsed ? "" : "mr-3"}`} size={16} />
+            <LogOut className={`font-bold ${isCollapsed ? "" : "mr-3"}`} size={16} strokeWidth={3} />
             {!isCollapsed && "Logout"}
 
             {/* Tooltip for collapsed state */}

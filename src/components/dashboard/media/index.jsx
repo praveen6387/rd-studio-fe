@@ -157,8 +157,13 @@ const MediaIndex = ({ mediaLibrary }) => {
   ];
 
   return (
-    <DashboardPageLayout title="Media" description="Manage your media" button={<CreateNewMedia />}>
-      <DataTable data={data} columns={columns} />
+    <DashboardPageLayout title="Media" description="Manage your flipbooks">
+      <div className="relative">
+        <div className="absolute top-0 right-0">
+          <CreateNewMedia />
+        </div>
+        <DataTable data={data} columns={columns} />
+      </div>
       <ViewMediaModalV2 isOpen={isModalOpen} onClose={handleCloseModal} mediaData={selectedMedia} />
       <QRModal isOpen={isQRModalOpen} onClose={handleCloseQRModal} mediaData={qrMediaData} />
     </DashboardPageLayout>

@@ -300,7 +300,7 @@ const CreateMediaIndex = () => {
   };
 
   return (
-    <DashboardPageLayout title="Create Media" description="Create a new media">
+    <DashboardPageLayout title="Create Flipbook" description="Fill in the details below and upload your images">
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="">
@@ -336,7 +336,7 @@ const CreateMediaIndex = () => {
               className="w-full"
             />
           </div>
-          <div className="">
+          {/* <div className="">
             <Label htmlFor="mediaType">Media Type</Label>
             <Select value={mediaType} onValueChange={handleMediaTypeChange}>
               <SelectTrigger className="w-full">
@@ -348,7 +348,7 @@ const CreateMediaIndex = () => {
                 <SelectItem value="2">Flipbook</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           <div className="col-span-full">
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="mediaDescription">Event Description</Label>
@@ -382,7 +382,7 @@ const CreateMediaIndex = () => {
                       ? "JPG, PNG, GIF, WebP up to ~10MB"
                       : mediaType === "1"
                       ? "MP4, AVI, MOV up to ~100MB"
-                      : "JPG, PNG, GIF, WebP (multiple images for Flipbook), up to ~10MB each"}
+                      : "JPG, PNG, GIF, WebP (multiple images for Flipbook)"}
                   </p>
                 )}
               </div>

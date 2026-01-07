@@ -16,7 +16,6 @@ import PaymentTransation from "./_builder/PaymentTransation";
 import { useState } from "react";
 
 const UsersIndex = ({ users }) => {
-  console.log(users);
   const [isPaymentTransationOpen, setIsPaymentTransationOpen] = useState(false);
   const [userData, setUserData] = useState(null);
 

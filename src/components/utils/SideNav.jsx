@@ -6,6 +6,9 @@ import LoadingLink from "@/components/ui/loading-link";
 import { Gauge, Settings, LogOut, Menu, X, User, Image } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
+import { BookImage } from "lucide-react";
+import { Users } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 
 export default function Sidenav() {
   const pathname = usePathname();
@@ -25,18 +28,20 @@ export default function Sidenav() {
 
   const navItems = [
     { href: "/dashboard", icon: <Gauge />, label: "Dashboard", user_view: [1, 2, 3, 4] },
-    { href: "/dashboard/portfolio", icon: <Image />, label: "Profile", user_view: [1, 2, 3, 4] },
-    { href: "/dashboard/users", icon: <User />, label: "Users", user_view: [3, 4] },
+    { href: "/dashboard/portfolio", icon: <CircleUserRound />, label: "Profile", user_view: [1, 2, 3, 4] },
+    { href: "/dashboard/users", icon: <Users />, label: "Users", user_view: [3, 4] },
     // { href: "/dashboard/operations", icon: <Gauge />, label: "Operations" },
     // { href: "/dashboard/operations2", icon: <Gauge />, label: "Operations2" },
-    { href: "/dashboard/media", icon: <Gauge />, label: "Media", user_view: [1, 2, 3, 4] },
+    { href: "/dashboard/media", icon: <BookImage />, label: "Flipbook", user_view: [1, 2, 3, 4] },
     { href: "/dashboard/billing", icon: <Settings />, label: "Billing", user_view: [1, 2, 3, 4] },
   ];
 
   return (
     <>
       {/* Overlay for mobile */}
-      {isCollapsed && <div className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" onClick={toggleSidebar} />}
+      {!isCollapsed && (
+        <div className="fixed inset-0 bg-transparent bg-opacity-50 z-20 lg:hidden" onClick={toggleSidebar} />
+      )}
 
       {/* Sidebar */}
       <div

@@ -9,9 +9,13 @@ export default function DashboardPageLayout({ children, title, description, butt
 
   return (
     <PageLayout header={false} footer={false} sidebar={true}>
-      <main className={`flex-1 transition-all duration-300 ease-in-out ${isCollapsed ? "ml-16" : "ml-64"}`}>
+      <main
+        className={`flex-1 transition-all duration-300 ease-in-out ${
+          isCollapsed ? "ml-16 max-w-[calc(100vw-88px)]" : "ml-64 max-w-[calc(100vw-280px)]"
+        } w-full`}
+      >
         <div className="p-6">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-end">
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-1">{title}</h1>
               <p className="text-gray-600">{description}</p>

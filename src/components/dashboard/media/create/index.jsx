@@ -1,313 +1,339 @@
 "use client";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Plus, Upload, X, Loader2, LayoutGrid, Table as TableIcon, GripVertical } from "lucide-react";
-import imageCompression from "browser-image-compression";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import DataTable from "@/components/shared/clientDataTable";
+import { useState, useEffect, useRef } from "react";
+import { Grip } from "lucide-react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 import { createMedia } from "@/lib/api/client/media/urls";
+import { Loader2 } from "lucide-react";
 
-const CreateMediaIndex = () => {
-  const [mediaType, setMediaType] = useState("2");
+// Reusable, styled upload card used for Front / Back / Remaining sections
+const ImageTypeBlock = ({
+  title,
+  images,
+  onChange,
+  onReorder = () => {},
+  onBringToTop = () => {},
+  optimizationPercent = 0,
+  thumbSize = "h-20 w-20",
+}) => {
+  const inputRef = useRef(null);
+
+  const onDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  // Helper to reorder an array (pure)
+  const reorderArray = (arr, fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return arr.slice();
+    const copy = arr.slice();
+    const [moved] = copy.splice(fromIndex, 1);
+    copy.splice(toIndex, 0, moved);
+    return copy;
+  };
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer?.files || []).filter((f) => f.type.startsWith("image/"));
+    if (!files.length) return;
+    // Create a synthetic event that matches the shape handlers expect
+    const synthetic = { target: { files } };
+    onChange(synthetic);
+  };
+
+  // Drag and drop between thumbnails
+  const handleThumbDragStart = (e, index) => {
+    e.dataTransfer.setData("text/plain", String(index));
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleThumbDrop = (e, targetIndex) => {
+    e.preventDefault();
+    const src = e.dataTransfer.getData("text/plain");
+    if (src === "") return;
+    const fromIndex = Number(src);
+    if (Number.isNaN(fromIndex)) return;
+    const newOrder = reorderArray(images, fromIndex, targetIndex);
+    onReorder(newOrder);
+  };
+
+  const handleBringToTop = (index) => {
+    const newOrder = reorderArray(images, index, 0);
+    onBringToTop(newOrder);
+  };
+
+  console.log(images);
+
+  return (
+    <div className="w-full">
+      {/* <div className="flex items-center justify-between mb-2">
+        <div className="text-sm font-medium text-gray-700">{title}</div>
+        <div>
+          {optimizationPercent > 0 ? (
+            <div className="text-xs text-indigo-700 px-2 py-1 rounded-full">Optimizing {optimizationPercent}%</div>
+          ) : (
+            images.length > 0 && (
+              <div className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full">
+                {images.length} selected
+              </div>
+            )
+          )}
+        </div>
+      </div> */}
+
+      <div className="bg-white/80 rounded-xl shadow-sm p-4">
+        {/* Thumbnails */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="text-sm font-medium text-gray-700">{title}</div>
+          <div>
+            {optimizationPercent > 0 ? (
+              <div className="text-xs text-indigo-700 px-2 py-1 rounded-full">Optimizing {optimizationPercent}%</div>
+            ) : (
+              images.length > 0 && (
+                <div className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full">
+                  {images.length} selected
+                </div>
+              )
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-3 mb-3 flex-wrap  pb-2">
+          {images.length > 0 ? (
+            images.map((img, idx) => (
+              <div key={idx}>
+                <div
+                  key={`${title}-${idx}`}
+                  draggable
+                  onDragStart={(e) => handleThumbDragStart(e, idx)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => handleThumbDrop(e, idx)}
+                  className="relative"
+                >
+                  <Image
+                    width={40}
+                    height={10}
+                    src={img.preview}
+                    alt={`${title} ${idx + 1}`}
+                    className={`${thumbSize} rounded object-cover border min-w-20`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleBringToTop(idx)}
+                    className="absolute top-0 right-0 bg-white/90 text-xs px-0.5 py-0.5 rounded shadow"
+                    title="Bring to top"
+                  >
+                    <Grip className="w-3 h-3" />
+                  </button>
+                </div>
+                <div className="text-xs text-gray-600">{img.file.name}</div>
+              </div>
+            ))
+          ) : (
+            <div key={"test"} className="text-sm text-gray-400 italic">
+              No images selected yet
+            </div>
+          )}
+        </div>
+
+        <input ref={inputRef} type="file" accept="image/*" multiple onChange={onChange} className="hidden" />
+
+        <div
+          onDragOver={onDragOver}
+          onDrop={handleFileDrop}
+          onClick={() => inputRef.current && inputRef.current.click()}
+          className="relative flex flex-col items-center justify-center gap-2 py-8 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
+        >
+          <div className="rounded-full bg-gray-100 w-12 h-12 flex items-center justify-center shadow-sm">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M12 16V4" />
+              <path d="M8 8l4-4 4 4" />
+              <path d="M20 12v7H4v-7" />
+            </svg>
+          </div>
+          <div className="text-lg font-semibold text-gray-800">Click to upload or drag & drop</div>
+          <div className="text-sm text-gray-500">JPG, PNG, GIF, WebP — you can add multiple images</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Image compression helpers
+const compressImageFile = async (file, targetKB = 100) => {
+  const targetBytes = targetKB * 1024;
+  const mimePrefer = file.type || "image/jpeg";
+  // create image bitmap
+  const bitmap = await createImageBitmap(file);
+  let width = bitmap.width;
+  let height = bitmap.height;
+  const maxWidth = 1920;
+  if (width > maxWidth) {
+    const ratio = maxWidth / width;
+    width = Math.round(width * ratio);
+    height = Math.round(height * ratio);
+  }
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const tryCompress = async (w, h, mime, quality) => {
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    return await new Promise((res) => canvas.toBlob(res, mime, quality));
+  };
+
+  // try decreasing quality, then reduce dimensions if needed
+  let qualitySteps = [0.92, 0.85, 0.7, 0.55, 0.4, 0.3];
+  let currentWidth = width;
+  let currentHeight = height;
+  let blob = null;
+  let mime = mimePrefer;
+
+  for (let dimAttempts = 0; dimAttempts < 6; dimAttempts++) {
+    for (let q of qualitySteps) {
+      // prefer webp/jpeg for compression
+      try {
+        blob = await tryCompress(currentWidth, currentHeight, mime, q);
+      } catch (err) {
+        blob = null;
+      }
+      if (!blob) continue;
+      if (blob.size <= targetBytes) return blob;
+    }
+    // reduce size by 0.85 and retry
+    currentWidth = Math.max(400, Math.round(currentWidth * 0.85));
+    currentHeight = Math.max(400, Math.round(currentHeight * 0.85));
+  }
+
+  // fallback: return original file as blob
+  return file;
+};
+
+const optimizeFiles = async (files, setProgress, targetKB = 100) => {
+  const results = [];
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    try {
+      const blobOrFile = await compressImageFile(f, targetKB);
+      const outFile =
+        blobOrFile instanceof File ? blobOrFile : new File([blobOrFile], f.name, { type: blobOrFile.type || f.type });
+      const preview = URL.createObjectURL(outFile);
+      results.push({ file: outFile, preview });
+    } catch (err) {
+      // on error, fall back to original
+      const preview = URL.createObjectURL(f);
+      results.push({ file: f, preview });
+    }
+    setProgress(Math.round(((i + 1) / files.length) * 100));
+    // small yield so UI updates smoothly
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  return results;
+};
+
+export default function CreateMediaIndex() {
   const [mediaTitle, setMediaTitle] = useState("");
-  const [mediaDescription, setMediaDescription] = useState("");
-  const [studioName, setStudioName] = useState("");
   const [eventDate, setEventDate] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [viewMode, setViewMode] = useState("grid");
-  const [draggingId, setDraggingId] = useState("");
+
+  const [frontImages, setFrontImages] = useState([]);
+  const [backImages, setBackImages] = useState([]);
+  const [mediaImages, setMediaImages] = useState([]);
+
+  const [frontImagesOptimizationPercetage, setFrontImagesOptimizationPercetage] = useState(0);
+  const [backImagesOptimizationPercetage, setBackImagesOptimizationPercetage] = useState(0);
+  const [mediaImagesOptimizationPercetage, setMediaImagesOptimizationPercetage] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fast client-side compression keeping original dimensions, targeting <= 100 KB
-  const compressImageFast = async (file, { maxBytes = 100 * 1024, onProgress } = {}) => {
-    if (!(file instanceof File)) return file;
-    if (!file.type?.startsWith("image/")) return file;
-    if (file.size <= maxBytes) return file;
+  // Unified handler for front/back/media upload inputs.
+  // Call as: onChange={handleImagesChange("front")}
+  const handleImagesChange = (type) => async (e) => {
+    const files = Array.from(e.target.files || []);
+    const images = files.filter((f) => f.type && f.type.startsWith("image/"));
+    if (!images.length) return;
 
-    const targetMB = Math.max(0.05, maxBytes / (1024 * 1024));
-    const baseOptions = {
-      maxSizeMB: targetMB,
-      useWebWorker: true,
-    };
-    const qualities = [0.85, 0.7, 0.55, 0.4, 0.3];
-    const totalAttempts = qualities.length + 1; // plus final fallback
-    let best = null;
-    for (let attemptIndex = 0; attemptIndex < qualities.length; attemptIndex++) {
-      const q = qualities[attemptIndex];
-      try {
-        const out = await imageCompression(file, {
-          ...baseOptions,
-          initialQuality: q,
-          onProgress: (p) => {
-            const normalized = Math.min(
-              100,
-              Math.round(((attemptIndex + (typeof p === "number" ? p : 0) / 100) / totalAttempts) * 100)
-            );
-            onProgress?.(normalized);
-          },
-        });
-        if (out && out.size <= maxBytes && out.size <= file.size) {
-          onProgress?.(100);
-          return out;
-        }
-        if (out && out.size < file.size) best = out;
-      } catch {
-        // try next quality
-      }
-    }
-    if (best) {
-      onProgress?.(100);
-      return best;
-    }
-    try {
-      const attemptIndex = qualities.length; // final attempt
-      const last = await imageCompression(file, {
-        ...baseOptions,
-        initialQuality: 0.25,
-        onProgress: (p) => {
-          const normalized = Math.min(
-            100,
-            Math.round(((attemptIndex + (typeof p === "number" ? p : 0) / 100) / totalAttempts) * 100)
-          );
-          onProgress?.(normalized);
-        },
-      });
-      if (last && last.size <= file.size) {
-        onProgress?.(100);
-        return last;
-      }
-    } catch {}
-    onProgress?.(100);
-    return file;
-  };
-
-  // Ensure we always have a File (with a filename) even if a Blob is returned by compressor
-  const toFile = (blobOrFile, name, lastModified = Date.now()) => {
-    if (blobOrFile instanceof File) return blobOrFile;
-    const type = blobOrFile?.type || "application/octet-stream";
-    try {
-      return new File([blobOrFile], name || "upload", { type, lastModified });
-    } catch {
-      // Fallback for very old browsers (unlikely in Next.js apps)
-      return blobOrFile;
+    if (type === "front") {
+      setFrontImagesOptimizationPercetage(0);
+      const optimized = await optimizeFiles(images, setFrontImagesOptimizationPercetage, 100);
+      frontImages.forEach((img) => URL.revokeObjectURL(img.preview));
+      setFrontImages(optimized);
+      // hide progress after short delay
+      setTimeout(() => setFrontImagesOptimizationPercetage(0), 600);
+    } else if (type === "back") {
+      setBackImagesOptimizationPercetage(0);
+      const optimized = await optimizeFiles(images, setBackImagesOptimizationPercetage, 100);
+      backImages.forEach((img) => URL.revokeObjectURL(img.preview));
+      setBackImages(optimized);
+      setTimeout(() => setBackImagesOptimizationPercetage(0), 600);
+    } else if (type === "media") {
+      setMediaImagesOptimizationPercetage(0);
+      const optimized = await optimizeFiles(images, setMediaImagesOptimizationPercetage, 100);
+      mediaImages.forEach((img) => URL.revokeObjectURL(img.preview));
+      setMediaImages(optimized);
+      setTimeout(() => setMediaImagesOptimizationPercetage(0), 600);
     }
   };
 
-  const handleCreateMedia = async () => {
+  const handleCreateFlipbook = async () => {
     // Basic validations (mirror CreateNewMedia.jsx)
-    if (!mediaType) {
-      toast.error("Please select a media type", { position: "bottom-right" });
-      return;
-    }
     if (!mediaTitle || mediaTitle.trim() === "") {
       toast.error("Please enter a media title", { position: "bottom-right" });
       return;
     }
-    if (selectedFiles.length === 0) {
-      toast.error("Please select at least one file to upload", { position: "bottom-right" });
+
+    if (!eventDate) {
+      toast.error("Please select event data", { position: "bottom-right" });
       return;
     }
 
+    if (frontImages.length === 0 || backImages.length === 0 || mediaImages.length === 0) {
+      toast.error("Please select at least one image for front cover, back cover and remaining media", {
+        position: "bottom-right",
+      });
+      return;
+    }
     try {
       setIsLoading(true);
       const formData = new FormData();
-      formData.append("media_type", mediaType);
-      formData.append("media_title", mediaTitle.trim());
-      if (mediaDescription && mediaDescription.trim() !== "") {
-        formData.append("media_description", mediaDescription.trim());
-      }
-      if (studioName && studioName.trim() !== "") {
-        formData.append("studio_name", studioName.trim());
-      }
-      if (eventDate) {
-        formData.append("event_date", eventDate);
-      }
-      console.log(selectedFiles);
-      // Preserve user order and ensure filename is sent (avoid default "blob")
-      selectedFiles.forEach((item) => {
+      formData.append("media_title", mediaTitle);
+      formData.append("event_date", eventDate);
+      formData.append("media_type", "2");
+      // formData.append("back_images", backImages);
+      // formData.append("media_images", mediaImages);
+      frontImages.forEach((item) => {
         const filename = item?.file?.name || "upload";
         formData.append("media_items", item.file, filename);
       });
-      console.log(formData);
-
-      await createMedia(formData);
-      // await revalidateAPITag();
-
+      backImages.forEach((item) => {
+        const filename = item?.file?.name || "upload";
+        formData.append("media_items", item.file, filename);
+      });
+      mediaImages.forEach((item) => {
+        const filename = item?.file?.name || "upload";
+        formData.append("media_items", item.file, filename);
+      });
+      const res = await createMedia(formData);
       toast.success("Media created successfully!", { position: "bottom-right" });
-
-      // Reset form
-      // setSelectedFiles([]);
-      // setMediaTitle("");
-      // setMediaDescription("");
-      // setMediaType("2");
     } catch (error) {
-      console.error("Error creating media:", error);
-      toast.error("Failed to create media. Please try again.", { position: "bottom-right" });
+      console.error("Error creating flipbook:", error);
+      toast.error("Failed to create flipbook. Please try again.", { position: "bottom-right" });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleMediaTypeChange = (value) => {
-    setMediaType(value);
-    setSelectedFiles([]); // clear files when media type changes
-  };
-
-  const handleFileChange = async (e) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) {
-      // User canceled the dialog; keep previous selection intact
-      return;
-    }
-
-    if (mediaType === "0" || mediaType === "1") {
-      const first = files[0];
-      if (!first) {
-        setSelectedFiles([]);
-        return;
-      }
-      const isImage = first.type?.startsWith("image/");
-      const entry = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        file: first,
-        isImage,
-        status: isImage && mediaType === "0" ? "compressing" : "ready",
-        progress: 0,
-        previewUrl: isImage ? URL.createObjectURL(first) : null,
-      };
-      setSelectedFiles([entry]);
-      if (isImage && mediaType === "0") {
-        try {
-          const compressed = await compressImageFast(first, {
-            onProgress: (p) => {
-              const entryId = entry.id;
-              setSelectedFiles((prev) =>
-                prev.map((it) => (it.id === entryId ? { ...it, progress: Math.round(p || 0) } : it))
-              );
-            },
-          });
-          const entryId = entry.id;
-          const compressedFile = toFile(compressed, first.name, first.lastModified || Date.now());
-          const newUrl = URL.createObjectURL(compressedFile);
-          setSelectedFiles((prev) =>
-            prev.map((it) => {
-              if (it.id !== entryId) return it;
-              if (it.previewUrl && it.previewUrl !== newUrl) {
-                try {
-                  URL.revokeObjectURL(it.previewUrl);
-                } catch {}
-              }
-              return { ...it, file: compressedFile, status: "ready", progress: 100, previewUrl: newUrl };
-            })
-          );
-        } catch {
-          const entryId = entry.id;
-          setSelectedFiles((prev) => prev.map((it) => (it.id === entryId ? { ...it, status: "ready" } : it)));
-        }
-      }
-    } else if (mediaType === "2") {
-      const imageFiles = files.filter(
-        (file) => file.type.startsWith("image/") || file.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)
-      );
-      if (imageFiles.length) {
-        // append placeholders with preview and start compressing each
-        const placeholders = imageFiles.map((f) => ({
-          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          file: f,
-          isImage: true,
-          status: "compressing",
-          progress: 0,
-          previewUrl: URL.createObjectURL(f),
-        }));
-        // append, then compress each sequentially per item
-        setSelectedFiles((prev) => [...prev, ...placeholders]);
-        // compress in background, update each based on its absolute index
-        placeholders.forEach(async (p, i) => {
-          const placeholderId = p.id;
-          const original = imageFiles[i];
-          try {
-            const compressed = await compressImageFast(original, {
-              onProgress: (p) => {
-                setSelectedFiles((prev) =>
-                  prev.map((it) => (it.id === placeholderId ? { ...it, progress: Math.round(p || 0) } : it))
-                );
-              },
-            });
-            const compressedFile = toFile(compressed, original.name, original.lastModified || Date.now());
-            const newUrl = URL.createObjectURL(compressedFile);
-            setSelectedFiles((prev) =>
-              prev.map((it) => {
-                if (it.id !== placeholderId) return it;
-                if (it.previewUrl && it.previewUrl !== newUrl) {
-                  try {
-                    URL.revokeObjectURL(it.previewUrl);
-                  } catch {}
-                }
-                return { ...it, file: compressedFile, status: "ready", progress: 100, previewUrl: newUrl };
-              })
-            );
-          } catch {
-            setSelectedFiles((prev) => prev.map((it) => (it.id === placeholderId ? { ...it, status: "ready" } : it)));
-          }
-        });
-      }
-    }
-  };
-
-  const removeFileAt = (indexOrId) => {
-    setSelectedFiles((prev) => {
-      let toRemove;
-      let next = prev;
-      if (typeof indexOrId === "number") {
-        toRemove = prev[indexOrId];
-        next = prev.filter((_, i) => i !== indexOrId);
-      } else {
-        toRemove = prev.find((it) => it.id === indexOrId);
-        next = prev.filter((it) => it.id !== indexOrId);
-      }
-      if (toRemove?.previewUrl) {
-        try {
-          URL.revokeObjectURL(toRemove.previewUrl);
-        } catch {}
-      }
-      return next;
-    });
-  };
-
-  const fileAccept = mediaType === "1" ? "video/*" : "image/*";
-  const fileMultiple = mediaType === "2";
-  const isSubmitDisabled =
-    !mediaTitle.trim() ||
-    !mediaType ||
-    selectedFiles.length === 0 ||
-    selectedFiles.some((f) => f.status === "compressing");
-
-  const moveItem = (list, fromId, toId) => {
-    if (!fromId || !toId || fromId === toId) return list;
-    const fromIndex = list.findIndex((it) => it.id === fromId);
-    const toIndex = list.findIndex((it) => it.id === toId);
-    if (fromIndex === -1 || toIndex === -1) return list;
-    const updated = [...list];
-    const [moved] = updated.splice(fromIndex, 1);
-    updated.splice(toIndex, 0, moved);
-    return updated;
-  };
-
   return (
     <DashboardPageLayout title="Create Flipbook" description="Fill in the details below and upload your images">
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="">
+      <div className="bg-white/80 rounded-2xl shadow-lg p-6 md:p-8 space-y-6 w-full max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Flipbook Title</label>
             <Input
               type="text"
-              required
-              label="Event Title"
               id="mediaTitle"
               value={mediaTitle}
               onChange={(e) => setMediaTitle(e.target.value)}
@@ -315,339 +341,57 @@ const CreateMediaIndex = () => {
               className="w-full"
             />
           </div>
-          <div className="">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Event Date</label>
             <Input
               type="date"
-              label="Event Date"
               id="eventDate"
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
               className="w-full"
             />
           </div>
-          <div className="">
-            <Input
-              type="text"
-              label="Studio Name"
-              id="studioName"
-              value={studioName}
-              onChange={(e) => setStudioName(e.target.value)}
-              placeholder="Enter studio name"
-              className="w-full"
-            />
-          </div>
-          {/* <div className="">
-            <Label htmlFor="mediaType">Media Type</Label>
-            <Select value={mediaType} onValueChange={handleMediaTypeChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select media type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Image</SelectItem>
-                <SelectItem value="1">Video</SelectItem>
-                <SelectItem value="2">Flipbook</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
-          <div className="col-span-full">
-            <div className="flex flex-col gap-y-2">
-              <Label htmlFor="mediaDescription">Event Description</Label>
-              <Textarea
-                id="mediaDescription"
-                value={mediaDescription}
-                onChange={(e) => setMediaDescription(e.target.value)}
-                placeholder="Optional description"
-                className="min-h-[80px]"
-              />
-            </div>
-          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="file-upload">Upload Files</Label>
-          <Label htmlFor="file-upload" className={mediaType ? "cursor-pointer" : "cursor-not-allowed"}>
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                mediaType ? "border-gray-300 hover:border-gray-400" : "border-gray-200 bg-gray-50 opacity-60"
-              }`}
-            >
-              <Upload className={`mx-auto h-12 w-12 ${mediaType ? "text-gray-400" : "text-gray-300"}`} />
-              <div className="mt-4">
-                <span className={`text-sm ${mediaType ? "text-gray-600" : "text-gray-400"}`}>
-                  {mediaType ? "Click to upload or drag and drop" : "Select media type first"}
-                </span>
-                {mediaType && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {mediaType === "0"
-                      ? "JPG, PNG, GIF, WebP up to ~10MB"
-                      : mediaType === "1"
-                      ? "MP4, AVI, MOV up to ~100MB"
-                      : "JPG, PNG, GIF, WebP (multiple images for Flipbook)"}
-                  </p>
-                )}
-              </div>
-            </div>
-            <input
-              id="file-upload"
-              type="file"
-              multiple={fileMultiple}
-              className="hidden"
-              accept={fileAccept}
-              onChange={handleFileChange}
-              disabled={!mediaType}
-            />
-          </Label>
+        <div className="space-y-4">
+          <ImageTypeBlock
+            title="Front Cover"
+            images={frontImages}
+            onChange={handleImagesChange("front")}
+            onReorder={(newImgs) => setFrontImages(newImgs)}
+            onBringToTop={(newImgs) => setFrontImages(newImgs)}
+            optimizationPercent={frontImagesOptimizationPercetage}
+            thumbSize="h-24 w-24"
+          />
+          <ImageTypeBlock
+            title="Back Cover"
+            images={backImages}
+            onChange={handleImagesChange("back")}
+            onReorder={(newImgs) => setBackImages(newImgs)}
+            onBringToTop={(newImgs) => setBackImages(newImgs)}
+            optimizationPercent={backImagesOptimizationPercetage}
+            thumbSize="h-24 w-24"
+          />
+          <ImageTypeBlock
+            title="Remaining Media"
+            images={mediaImages}
+            onChange={handleImagesChange("media")}
+            onReorder={(newImgs) => setMediaImages(newImgs)}
+            onBringToTop={(newImgs) => setMediaImages(newImgs)}
+            optimizationPercent={mediaImagesOptimizationPercetage}
+            thumbSize="h-20 w-20"
+          />
         </div>
 
-        {selectedFiles.length > 0 && (
-          <>
-            <div className="flex items-center justify-between">
-              <Label>Selected Files</Label>
-              <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v)} className="gap-2">
-                <ToggleGroupItem
-                  value="grid"
-                  aria-label="Grid view"
-                  className="px-2 py-1 border"
-                  data-state={viewMode === "grid" ? "on" : "off"}
-                >
-                  <div className="flex items-center gap-1 text-sm">
-                    <LayoutGrid className="h-4 w-4" />
-                    <span>Grid</span>
-                  </div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="table"
-                  aria-label="Table view"
-                  className="px-2 py-1 border"
-                  data-state={viewMode === "table" ? "on" : "off"}
-                >
-                  <div className="flex items-center gap-1 text-sm">
-                    <TableIcon className="h-4 w-4" />
-                    <span>Table</span>
-                  </div>
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
-
-            {viewMode === "grid" && (
-              <div className="space-y-3">
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                  {selectedFiles.map((item, index) => {
-                    const isImage = item?.isImage;
-                    const url = isImage ? item?.previewUrl : null;
-                    return (
-                      <div
-                        key={`${item?.file?.name}-${index}`}
-                        className={`relative border rounded-lg overflow-hidden bg-gray-50 ${
-                          draggingId === item.id ? "ring-2 ring-blue-400" : ""
-                        }`}
-                        draggable
-                        onDragStart={() => setDraggingId(item.id)}
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={() => {
-                          if (draggingId) {
-                            setSelectedFiles((prev) => moveItem(prev, draggingId, item.id));
-                            setDraggingId("");
-                          }
-                        }}
-                        onDragEnd={() => setDraggingId("")}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => removeFileAt(index)}
-                          className="absolute right-1 top-1 z-10 bg-white/90 hover:bg-white rounded-full p-1 shadow"
-                          aria-label="Remove file"
-                        >
-                          <X className="h-4 w-4 text-gray-700" />
-                        </button>
-                        {isImage ? (
-                          <div className="aspect-4/3 w-full bg-white relative">
-                            {url ? (
-                              <img
-                                src={url}
-                                alt={item?.file?.name || "preview"}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : null}
-                            {item.status === "compressing" && (
-                              <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex flex-col items-center justify-center gap-2">
-                                <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
-                                <span className="text-xs text-gray-700">
-                                  Optimizing{typeof item.progress === "number" ? ` ${item.progress}%` : ""}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center h-32 text-sm text-gray-600">
-                            Video selected
-                          </div>
-                        )}
-                        <div className="p-2">
-                          <p className="text-xs text-gray-700 truncate" title={item?.file?.name}>
-                            {item?.file?.name}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {viewMode === "table" && (
-              <div className="space-y-2">
-                <DataTable
-                  showFilter={false}
-                  data={selectedFiles.map((item) => ({
-                    id: item.id,
-                    name: item?.file?.name || "",
-                    type: item?.isImage ? "Image" : "Video",
-                    sizeKB: item?.file?.size ? Math.round(item.file.size / 1024) : 0,
-                    status: item.status,
-                    progress: item.progress,
-                    previewUrl: item?.previewUrl,
-                    isImage: item?.isImage,
-                  }))}
-                  columns={[
-                    {
-                      header: "",
-                      id: "reorder",
-                      enableSorting: false,
-                      cell: ({ row }) => (
-                        <button
-                          type="button"
-                          aria-label="Reorder"
-                          className={`h-8 w-8 flex items-center justify-center rounded cursor-move ${
-                            draggingId === row.original.id ? "ring-2 ring-blue-400" : ""
-                          }`}
-                          draggable
-                          onDragStart={() => setDraggingId(row.original.id)}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={() => {
-                            if (draggingId) {
-                              setSelectedFiles((prev) => moveItem(prev, draggingId, row.original.id));
-                              setDraggingId("");
-                            }
-                          }}
-                          onDragEnd={() => setDraggingId("")}
-                        >
-                          <GripVertical className="h-4 w-4 text-gray-600" />
-                        </button>
-                      ),
-                    },
-                    {
-                      header: "Preview",
-                      accessorKey: "previewUrl",
-                      enableSorting: false,
-                      cell: ({ row }) => {
-                        const url = row.original.previewUrl;
-                        const isImage = row.original.isImage;
-                        const status = row.original.status;
-                        const progress = row.original.progress;
-                        return isImage ? (
-                          <div
-                            className={`h-12 w-16 bg-white border overflow-hidden rounded relative ${
-                              draggingId === row.original.id ? "ring-2 ring-blue-400" : ""
-                            }`}
-                            draggable
-                            onDragStart={() => setDraggingId(row.original.id)}
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={() => {
-                              if (draggingId) {
-                                setSelectedFiles((prev) => moveItem(prev, draggingId, row.original.id));
-                                setDraggingId("");
-                              }
-                            }}
-                            onDragEnd={() => setDraggingId("")}
-                          >
-                            {url ? <img src={url} alt="" className="h-full w-full object-cover" /> : null}
-                            {status === "compressing" && (
-                              <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
-                                <Loader2 className="w-4 h-4 animate-spin text-gray-600" />
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="h-12 w-16 bg-gray-100 border rounded flex items-center justify-center text-[10px]">
-                            Video
-                          </div>
-                        );
-                      },
-                    },
-                    {
-                      header: "Name",
-                      accessorKey: "name",
-                      enableSorting: false,
-                      cell: ({ row }) => (
-                        <div className="max-w-[280px] truncate" title={row.original.name}>
-                          {row.original.name}
-                        </div>
-                      ),
-                    },
-                    {
-                      header: "Size",
-                      accessorKey: "sizeKB",
-                      enableSorting: false,
-                      cell: ({ row }) => <span>{row.original.sizeKB} KB</span>,
-                    },
-                    {
-                      header: "Status",
-                      accessorKey: "status",
-                      enableSorting: false,
-                      cell: ({ row }) =>
-                        row.original.status === "compressing" ? (
-                          <div className="flex items-center gap-2 text-xs text-gray-700">
-                            <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
-                            <span>
-                              Optimizing{typeof row.original.progress === "number" ? ` ${row.original.progress}%` : ""}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-green-700">Ready</span>
-                        ),
-                    },
-                    {
-                      header: "Action",
-                      id: "action",
-                      enableSorting: false,
-                      cell: ({ row }) => (
-                        <div className="text-right">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeFileAt(row.original.id)}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      ),
-                    },
-                  ]}
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="flex justify-end">
-          <Button onClick={handleCreateMedia} disabled={isSubmitDisabled || isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Creating Media...
-              </>
-            ) : (
-              <>
-                <Plus /> Upload Media
-              </>
-            )}
-          </Button>
+        <div className="pt-4 border-t border-gray-100 flex justify-end">
+          <button
+            onClick={handleCreateFlipbook}
+            className="bg-indigo-600 cursor-pointer text-white px-5 py-2 rounded-md shadow hover:bg-indigo-700 transition"
+          >
+            {isLoading ? `${(<Loader2 className="animate-spin" />)}Creating...` : "Create Flipbook"}
+          </button>
         </div>
       </div>
     </DashboardPageLayout>
   );
-};
-
-export default CreateMediaIndex;
+}

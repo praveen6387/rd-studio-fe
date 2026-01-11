@@ -138,11 +138,11 @@ const MediaIndex = ({ mediaLibrary }) => {
           >
             QR
           </Button>
-          <Link href={`/dashboard/media/detail/${row.original.id}`}>
+          {/* <Link href={`/dashboard/media/detail/${row.original.id}`}>
             <Button variant="outline" size="sm" className="h-7 px-3 text-xs">
               Detail
             </Button>
-          </Link>
+          </Link> */}
           <Button
             variant="destructive"
             size="sm"

@@ -387,9 +387,10 @@ export default function CreateMediaIndex() {
         <div className="pt-4 border-t border-gray-100 flex justify-end">
           <button
             onClick={handleCreateFlipbook}
-            className="bg-indigo-600 cursor-pointer text-white px-5 py-2 rounded-md shadow hover:bg-indigo-700 transition"
+            className="bg-indigo-600 cursor-pointer text-white px-5 py-2 rounded-md shadow hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            {isLoading ? `${(<Loader2 className="animate-spin" />)}Creating...` : "Create Flipbook"}
+            {isLoading ? <div className="flex items-center gap-2"><Loader2 className="animate-spin h-4 w-4" /> <span>Creating...</span></div> : "Create Flipbook"}
           </button>
         </div>
       </div>

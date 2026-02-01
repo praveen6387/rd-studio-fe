@@ -306,16 +306,17 @@ export default function CreateMediaIndex() {
       // formData.append("media_images", mediaImages);
       frontImages.forEach((item) => {
         const filename = item?.file?.name || "upload";
-        formData.append("media_items", item.file, filename);
-      });
-      backImages.forEach((item) => {
-        const filename = item?.file?.name || "upload";
-        formData.append("media_items", item.file, filename);
+        formData.append("media_items", item.file, `0_${filename}`);
       });
       mediaImages.forEach((item) => {
         const filename = item?.file?.name || "upload";
-        formData.append("media_items", item.file, filename);
+        formData.append("media_items", item.file, `1_${filename}`);
       });
+      backImages.forEach((item) => {
+        const filename = item?.file?.name || "upload";
+        formData.append("media_items", item.file, `2_${filename}`);
+      });
+
       const res = await createMedia(formData);
       toast.success("Media created successfully!", { position: "bottom-right" });
     } catch (error) {

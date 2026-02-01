@@ -158,21 +158,21 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
     e.preventDefault();
   };
 
-  const pages = media_library_items.map((item) => ({ url: item.media_url, title: item.media_item_title }));
+  const pages = media_library_items.map((item) => ({ url: item.media_url, title: item.media_item_title, page_type: item.page_type }));
   let new_pages = [];
 
   for (let i = 0; i < pages.length; i++) {
     if (i === 0 || i === pages.length - 1) {
       // First page stays full
       new_pages.push({ url: pages[i].url, title: pages[i].title, cropSide: "full" });
-    } else if (i === 1) {
+    } else if (pages[i].page_type == 0) {
       new_pages.push({
         url: "https://t4.ftcdn.net/jpg/02/52/46/25/360_F_252462576_koy7njo9iYx6gUcM26IZcDUs9fMKIKJs.jpg",
         title: pages[i].title,
         cropSide: "left",
       });
       new_pages.push({ url: pages[i].url, title: pages[i].title, cropSide: "full" });
-    } else if (i == pages.length - 2) {
+    } else if (pages[i].page_type == 2) {
       new_pages.push({ url: pages[i].url, title: pages[i].title, cropSide: "full" });
       new_pages.push({
         url: "https://t4.ftcdn.net/jpg/02/52/46/25/360_F_252462576_koy7njo9iYx6gUcM26IZcDUs9fMKIKJs.jpg",
@@ -282,7 +282,7 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
         </div>
         {/* Bottom placeholder (rotates on small screens) */}
         <div className="text-yellow-300 text-center">
-          <div>Created By - {data.studio_name}</div>
+          {data.studio_name && <div>Created By - {data.studio_name}</div>}
           {/* <div>+91- 9792098570</div> */}
         </div>
       </div>

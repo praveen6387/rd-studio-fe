@@ -17,6 +17,16 @@ import { X } from "lucide-react";
 import { SaveIcon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Instagram as InstagramIcon, Facebook, Twitter, Linkedin, Youtube, MessageCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import EditSocialLinks from "./_builder/EditSocialLinks";
 
 const PortfolioIndex = ({ current_user }) => {
   console.log(current_user);
@@ -28,6 +38,16 @@ const PortfolioIndex = ({ current_user }) => {
     ).toUpperCase() || (current_user?.user?.email || "?")[0].toUpperCase();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+
+  const [socialLinks, setSocialLinks] = useState({
+    social_whatsapp: current_user?.user?.social_whatsapp || "",
+    social_facebook: current_user?.user?.social_facebook || "",
+    social_twitter: current_user?.user?.social_twitter || "",
+    social_linkedin: current_user?.user?.social_linkedin || "",
+    social_instagram: current_user?.user?.social_instagram || "",
+    social_youtube: current_user?.user?.social_youtube || "",
+  });
 
   const form = useForm({
     defaultValues: {
@@ -57,7 +77,7 @@ const PortfolioIndex = ({ current_user }) => {
           <Card className="lg:col-span-1 border border-gray-200 shadow-sm">
             <CardContent className="pt-6">
               <div className="flex flex-col items-center text-center space-y-4">
-                <Avatar className="rounded-full w-28 h-28">
+                <Avatar className="rounded-full w-60 h-60">
                   <AvatarImage
                     src={current_user?.user?.profile_image || undefined}
                     alt={current_user?.user?.first_name || "User avatar"}
@@ -66,33 +86,13 @@ const PortfolioIndex = ({ current_user }) => {
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <div className="text-xl font-semibold text-gray-900">
-                    {current_user?.user?.first_name} {current_user?.user?.last_name}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {current_user?.user?.organization_name ? current_user?.user?.organization_name : ""}
-                    {current_user?.user?.phone ? ` · ${current_user?.user?.phone}` : ""}
-                  </div>
-                </div>
                 <div className="flex items-center gap-2">
                   {current_user?.user?.role_name && (
                     <Badge variant={current_user?.user?.role_name === "admin" ? "purple" : "default"}>
                       {current_user?.user?.role_name}
                     </Badge>
                   )}
-                  {current_user?.user?.created_at && (
-                    <Badge variant="outline">Joined {convertToDate(current_user?.user?.created_at)}</Badge>
-                  )}
                 </div>
-                <Button
-                  size="sm"
-                  className="bg-blue-500 text-white hover:bg-blue-400"
-                  style={{ color: "#ffffff", textShadow: "0 0 6px rgba(255,255,255,0.6)" }}
-                  onClick={() => setIsEditing((s) => !s)}
-                >
-                  {isEditing ? "Close" : "Edit"}
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -134,7 +134,90 @@ const PortfolioIndex = ({ current_user }) => {
           </Card>
         </div>
 
+        {/* Social link  */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-1 border border-gray-200 shadow-sm">
+            <CardHeader>
+              <CardTitle>Social Media Links</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
+                {(() => {
+                  const iconClasses = "w-4 h-4 text-white";
+                  const items = [
+                    {
+                      name: "WhatsApp",
+                      value: socialLinks.social_whatsapp,
+                      icon: <MessageCircle className={iconClasses} />,
+                      bg: "bg-gradient-to-br from-green-500 to-emerald-600",
+                    },
+                    {
+                      name: "Facebook",
+                      value: socialLinks.social_facebook,
+                      icon: <Facebook className={iconClasses} />,
+                      bg: "bg-gradient-to-br from-blue-500 to-blue-600",
+                    },
+                    {
+                      name: "Twitter",
+                      value: socialLinks.social_twitter,
+                      icon: <Twitter className={iconClasses} />,
+                      bg: "bg-gradient-to-br from-sky-400 to-sky-500",
+                    },
+                    {
+                      name: "LinkedIn",
+                      value: socialLinks.social_linkedin,
+                      icon: <Linkedin className={iconClasses} />,
+                      bg: "bg-gradient-to-br from-sky-600 to-blue-700",
+                    },
+                    {
+                      name: "Instagram",
+                      value: socialLinks.social_instagram,
+                      icon: <InstagramIcon className={iconClasses} />,
+                      bg: "bg-gradient-to-br from-pink-500 via-purple-500 to-orange-500",
+                    },
+                    {
+                      name: "YouTube",
+                      value: socialLinks.social_youtube,
+                      icon: <Youtube className={iconClasses} />,
+                      bg: "bg-gradient-to-br from-red-500 to-rose-600",
+                    },
+                  ];
+                  return items.map((item, idx) => {
+                    const row = (
+                      <div key={item.name} className="flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-8 h-8 rounded-xl flex items-center justify-center ${item.bg} shadow-md ring-1 ring-white/20 transition-transform duration-200 hover:scale-105`}
+                          >
+                            {item.icon}
+                          </div>
+                          <div className="text-sm text-gray-700 font-medium">{item.name}</div>
+                        </div>
+                        <div className={`text-xs font-semibold ${item.value ? "text-emerald-600" : "text-rose-500"}`}>
+                          {item.value ? "Set" : "Not Set"}
+                        </div>
+                      </div>
+                    );
+                    return (
+                      <div key={item.name} className={idx < items.length - 1 ? "border-b border-gray-200" : ""}>
+                        {row}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+              <div className="pt-4">
+                <Button
+                  size="sm"
+                  className="bg-blue-500 text-white hover:bg-blue-400"
+                  style={{ color: "#ffffff", textShadow: "0 0 6px rgba(255,255,255,0.6)" }}
+                  onClick={() => setIsSocialModalOpen(true)}
+                >
+                  Edit Social Links
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
           <Card className="lg:col-span-2 border border-gray-200 shadow-sm rounded-2xl">
             {(() => {
               const transactions = current_user?.user?.user_payment_transactions || [];
@@ -205,88 +288,6 @@ const PortfolioIndex = ({ current_user }) => {
                 </>
               );
             })()}
-          </Card>
-
-          <Card className="lg:col-span-1 border border-gray-200 shadow-sm">
-            <CardHeader>
-              <CardTitle>Social Media Links</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
-                {(() => {
-                  const iconClasses = "w-4 h-4 text-white";
-                  const items = [
-                    {
-                      name: "WhatsApp",
-                      value: current_user?.user?.social_whatsapp,
-                      icon: <MessageCircle className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-green-500 to-emerald-600",
-                    },
-                    {
-                      name: "Facebook",
-                      value: current_user?.user?.social_facebook,
-                      icon: <Facebook className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-blue-500 to-blue-600",
-                    },
-                    {
-                      name: "Twitter",
-                      value: current_user?.user?.social_twitter,
-                      icon: <Twitter className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-sky-400 to-sky-500",
-                    },
-                    {
-                      name: "LinkedIn",
-                      value: current_user?.user?.social_linkedin,
-                      icon: <Linkedin className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-sky-600 to-blue-700",
-                    },
-                    {
-                      name: "Instagram",
-                      value: current_user?.user?.social_instagram,
-                      icon: <InstagramIcon className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-pink-500 via-purple-500 to-orange-500",
-                    },
-                    {
-                      name: "YouTube",
-                      value: current_user?.user?.social_youtube,
-                      icon: <Youtube className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-red-500 to-rose-600",
-                    },
-                  ];
-                  return items.map((item, idx) => {
-                    const row = (
-                      <div key={item.name} className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-8 h-8 rounded-xl flex items-center justify-center ${item.bg} shadow-md ring-1 ring-white/20 transition-transform duration-200 hover:scale-105`}
-                          >
-                            {item.icon}
-                          </div>
-                          <div className="text-sm text-gray-700 font-medium">{item.name}</div>
-                        </div>
-                        <div className={`text-xs font-semibold ${item.value ? "text-emerald-600" : "text-rose-500"}`}>
-                          {item.value ? "Set" : "Not Set"}
-                        </div>
-                      </div>
-                    );
-                    return (
-                      <div key={item.name} className={idx < items.length - 1 ? "border-b border-gray-200" : ""}>
-                        {row}
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-              <div className="pt-4">
-                <Button
-                  size="sm"
-                  className="bg-blue-500 text-white hover:bg-blue-400"
-                  style={{ color: "#ffffff", textShadow: "0 0 6px rgba(255,255,255,0.6)" }}
-                >
-                  Edit Social Links
-                </Button>
-              </div>
-            </CardContent>
           </Card>
         </div>
 
@@ -389,6 +390,17 @@ const PortfolioIndex = ({ current_user }) => {
               </form>
             </Form>
           </div>
+        )}
+        {isSocialModalOpen && (
+          <EditSocialLinks
+            open={isSocialModalOpen}
+            initialLinks={socialLinks}
+            onClose={() => setIsSocialModalOpen(false)}
+            onSave={(values) => {
+              setSocialLinks((prev) => ({ ...prev, ...values }));
+              // TODO: call API to persist social links server-side if available
+            }}
+          />
         )}
       </div>
     </DashboardPageLayout>

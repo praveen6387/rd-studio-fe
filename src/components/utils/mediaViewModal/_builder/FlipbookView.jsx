@@ -189,11 +189,8 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
   console.log(current_user)
 
   const user_social_links = current_user?.user_social_links;
-  console.log(user_social_links)
   const instagram_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "instagram")?.social_media_url;
-  console.log(instagram_url)
   const whatsapp_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "whatsapp")?.social_media_url;
-  console.log(whatsapp_url)
 
   return (
     <>
@@ -202,11 +199,12 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
         className={`flex flex-col items-center justify-center rotate-90 md:rotate-0 origin-center gap-y-6`}
       >
         {/* Top placeholder (rotates on small screens) */}
-        <div className="relative w-full">
+        <div className="relative w-full min-w-[100vh] border border-red-500">
           <div className="text-yellow-300 text-2xl font-semibold justify-self-center text-center w-full">
             {data.media_title}
           </div>
-          <div className="absolute right-1 top-0 text-white">
+          <div className="absolute right-0 top-0 text-white">
+            {/* Social links for the media */}
             <ul className="flex gap-x-4">
               {instagram_url && <li className="cursor-pointer">
                 <a href={"" + instagram_url} target="_blank">

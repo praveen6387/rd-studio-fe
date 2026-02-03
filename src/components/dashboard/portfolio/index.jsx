@@ -30,6 +30,14 @@ import EditSocialLinks from "./_builder/EditSocialLinks";
 
 const PortfolioIndex = ({ current_user }) => {
   console.log(current_user);
+  const user_social_links = current_user?.user?.user_social_links || [];
+  console.log(user_social_links)
+  let plateform_name_link_map = {}
+  user_social_links.forEach(link => {
+    plateform_name_link_map[link.social_media_platform.toLocaleLowerCase()] = link.social_media_url;
+  });
+  console.log(plateform_name_link_map)
+
   const { toast } = useToast();
   const initials =
     (
@@ -41,12 +49,11 @@ const PortfolioIndex = ({ current_user }) => {
   const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
 
   const [socialLinks, setSocialLinks] = useState({
-    social_whatsapp: current_user?.user?.social_whatsapp || "",
-    social_facebook: current_user?.user?.social_facebook || "",
-    social_twitter: current_user?.user?.social_twitter || "",
-    social_linkedin: current_user?.user?.social_linkedin || "",
-    social_instagram: current_user?.user?.social_instagram || "",
-    social_youtube: current_user?.user?.social_youtube || "",
+    social_whatsapp: plateform_name_link_map["whatsapp"] || "",
+    social_facebook: plateform_name_link_map["facebook"] || "",
+    social_twitter: plateform_name_link_map["twitter"] || "",
+    social_instagram: plateform_name_link_map["instagram"] || "",
+    social_youtube: plateform_name_link_map["youtube"] || "",
   });
 
   const form = useForm({
@@ -74,6 +81,7 @@ const PortfolioIndex = ({ current_user }) => {
     <DashboardPageLayout title="Profile" description="Manage your profile">
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* profile image  */}
           <Card className="lg:col-span-1 border border-gray-200 shadow-sm">
             <CardContent className="pt-6">
               <div className="flex flex-col items-center text-center space-y-4">
@@ -96,7 +104,7 @@ const PortfolioIndex = ({ current_user }) => {
               </div>
             </CardContent>
           </Card>
-
+          {/* user info and important information  */}
           <Card className="lg:col-span-2 border border-gray-200 shadow-sm">
             <CardHeader>
               <CardTitle>Important Information</CardTitle>
@@ -162,12 +170,6 @@ const PortfolioIndex = ({ current_user }) => {
                       value: socialLinks.social_twitter,
                       icon: <Twitter className={iconClasses} />,
                       bg: "bg-gradient-to-br from-sky-400 to-sky-500",
-                    },
-                    {
-                      name: "LinkedIn",
-                      value: socialLinks.social_linkedin,
-                      icon: <Linkedin className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-sky-600 to-blue-700",
                     },
                     {
                       name: "Instagram",
@@ -391,6 +393,7 @@ const PortfolioIndex = ({ current_user }) => {
             </Form>
           </div>
         )}
+
         {isSocialModalOpen && (
           <EditSocialLinks
             open={isSocialModalOpen}

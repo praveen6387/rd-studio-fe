@@ -34,14 +34,14 @@ export const userSignup = async (data) => {
 };
 
 export const updateSocialLinks = async (data) => {
-  const url = endpoint.update_social_links;
+  const url = endpoint.current_user;
   const res = await fetch(url, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: getAuthToken(),
     },
-    body: JSON.stringify({ social_links: data }),
+    body: JSON.stringify(data),
   });
 
   if (!res.ok) {

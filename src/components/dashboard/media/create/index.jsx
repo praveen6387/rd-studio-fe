@@ -7,6 +7,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { createMedia } from "@/lib/api/client/media/urls";
 import { Loader2 } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
 
 // Reusable, styled upload card used for Front / Back / Remaining sections
 const ImageTypeBlock = ({
@@ -62,8 +63,6 @@ const ImageTypeBlock = ({
     const newOrder = reorderArray(images, index, 0);
     onBringToTop(newOrder);
   };
-
-  console.log(images);
 
   return (
     <div className="w-full">
@@ -236,9 +235,10 @@ const optimizeFiles = async (files, setProgress, targetKB = 100) => {
 };
 
 export default function CreateMediaIndex() {
+  const { user: current_user } = useUser();
   const [mediaTitle, setMediaTitle] = useState("");
   const [eventDate, setEventDate] = useState("");
-
+  const [studioName, setStudioName] = useState("");
   const [frontImages, setFrontImages] = useState([]);
   const [backImages, setBackImages] = useState([]);
   const [mediaImages, setMediaImages] = useState([]);
@@ -302,6 +302,9 @@ export default function CreateMediaIndex() {
       formData.append("media_title", mediaTitle);
       formData.append("event_date", eventDate);
       formData.append("media_type", "2");
+      if (studioName && studioName.trim() !== "" && current_user.role > 1) {
+        formData.append("studio_name", studioName);
+      }
       // formData.append("back_images", backImages);
       // formData.append("media_images", mediaImages);
       frontImages.forEach((item) => {
@@ -352,6 +355,16 @@ export default function CreateMediaIndex() {
               className="w-full"
             />
           </div>
+          {current_user.role > 1 && <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Studio Name</label>
+            <Input
+              type="text"
+              id="studioName"
+              value={studioName}
+              onChange={(e) => setStudioName(e.target.value)}
+              className="w-full"
+            />
+          </div>}
         </div>
 
         <div className="space-y-4">

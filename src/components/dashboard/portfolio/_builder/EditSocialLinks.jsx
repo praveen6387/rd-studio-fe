@@ -27,9 +27,20 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
   const handleSave = async (values) => {
     try {
       setIsLoading(true);
+      console.log(values)
+      let social_links = []
+      Object.entries(values).forEach(([key, value]) => {
+        if (value) {
+          social_links.push({
+            social_media_platform: key.replace("social_", ""),
+            social_media_url: value,
+          });
+        }
+      });
       const payload = {
-        ...values,
+        social_links: social_links,
       };
+      
       console.log(payload);
       await updateSocialLinks(payload);
       onSave(values);
@@ -93,20 +104,6 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
                   <FormLabel>Twitter</FormLabel>
                   <FormControl>
                     <Input placeholder="https://twitter.com/handle" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="social_linkedin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>LinkedIn</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://linkedin.com/in/your-profile" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

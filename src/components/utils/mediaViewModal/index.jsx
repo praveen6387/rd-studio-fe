@@ -5,7 +5,7 @@ import VideoView from "./_builder/VideoView";
 import FlipbookView from "./_builder/FlipbookView";
 import { X } from "lucide-react";
 
-const MediaViewModal = ({ data, open, onOpenChange }) => {
+const MediaViewModal = ({ data, open, onOpenChange, current_user }) => {
   if (!data) return null;
 
   const { media_type, media_title, media_description, media_library_items } = data;
@@ -35,6 +35,7 @@ const MediaViewModal = ({ data, open, onOpenChange }) => {
             media_description={media_description}
             media_library_items={media_library_items}
             data={data}
+            current_user={current_user}
           />
         )}
       </DialogContent>

@@ -6,7 +6,7 @@ import { Expand, PhoneIcon, Shrink, Volume2, VolumeOff } from "lucide-react";
 import Instagram from "public/images/svg/Instagram";
 import WhatsApp from "public/images/svg/WhatsApp";
 
-const FlipbookView = ({ media_title, media_description, media_library_items, data }) => {
+const FlipbookView = ({ media_title, media_description, media_library_items, data, current_user }) => {
   const bookRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const pointerStart = useRef({ x: 0, y: 0, id: null });
@@ -186,6 +186,15 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
     }
   }
 
+  console.log(current_user)
+
+  const user_social_links = current_user?.user_social_links;
+  console.log(user_social_links)
+  const instagram_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "instagram")?.social_media_url;
+  console.log(instagram_url)
+  const whatsapp_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "whatsapp")?.social_media_url;
+  console.log(whatsapp_url)
+
   return (
     <>
       <div
@@ -199,12 +208,17 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
           </div>
           <div className="absolute right-1 top-0 text-white">
             <ul className="flex gap-x-4">
-              <li>
-                <Instagram className="w-6 h-6" />
-              </li>
-              <li>
-                <WhatsApp className="w-6 h-6" />
-              </li>
+              {instagram_url && <li className="cursor-pointer">
+                <a href={"" + instagram_url} target="_blank">
+                  <Instagram className="w-6 h-6" />
+                </a>
+              </li>}
+              {whatsapp_url && <li className="cursor-pointer">
+                <a href={"https://wa.me/91" + whatsapp_url} target="_blank">
+                  <WhatsApp className="w-6 h-6" />
+                </a>
+              </li>}
+              
               {!isMuted ? (
                 <li>
                   <Volume2 onClick={toggleMute} />

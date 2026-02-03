@@ -14,6 +14,8 @@ import { deleteMedia } from "@/lib/api/client/media/urls";
 import toast from "react-hot-toast";
 
 const MediaIndex = ({ mediaLibrary }) => {
+  const current_user = mediaLibrary.user;
+  // console.log(current_user)
   const [data, setData] = useState(mediaLibrary?.data);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -164,7 +166,7 @@ const MediaIndex = ({ mediaLibrary }) => {
         </div>
         <DataTable data={data} columns={columns} />
       </div>
-      <ViewMediaModalV2 isOpen={isModalOpen} onClose={handleCloseModal} mediaData={selectedMedia} />
+      <ViewMediaModalV2 isOpen={isModalOpen} onClose={handleCloseModal} mediaData={selectedMedia} current_user={current_user} />
       <QRModal isOpen={isQRModalOpen} onClose={handleCloseQRModal} mediaData={qrMediaData} />
     </DashboardPageLayout>
   );

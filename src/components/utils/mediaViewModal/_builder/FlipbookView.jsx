@@ -199,7 +199,7 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
         className={`flex flex-col items-center justify-center rotate-90 md:rotate-0 origin-center gap-y-6`}
       >
         {/* Top placeholder (rotates on small screens) */}
-        <div className="relative w-full min-w-[100vh] border border-red-500">
+        <div className="relative w-full min-w-[100vh]">
           <div className="text-yellow-300 text-2xl font-semibold justify-self-center text-center w-full">
             {data.media_title}
           </div>

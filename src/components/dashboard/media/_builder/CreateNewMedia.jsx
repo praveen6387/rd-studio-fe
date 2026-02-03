@@ -45,7 +45,7 @@ const compressImageFast = async (file, { maxBytes = 400 * 1024, onProgress } = {
   return file;
 };
 
-const CreateNewMedia = () => {
+const CreateNewMedia = ({ current_user }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -202,11 +202,15 @@ const CreateNewMedia = () => {
 
   return (
     <>
-      <Link href="/dashboard/media/create">
-        <Button className="flex items-center gap-2 cursor-pointer" variant="secondary">
-          <Plus /> Create New Flipbook
+        <Button 
+          className="cursor-pointer" 
+          variant="secondary"
+          disabled={current_user?.remaining_credit <= 0}
+        >
+          <Link href="/dashboard/media/create" className="flex items-center gap-2">
+            <Plus /> Create New Flipbook
+          </Link>
         </Button>
-      </Link>
     </>
   );
 };

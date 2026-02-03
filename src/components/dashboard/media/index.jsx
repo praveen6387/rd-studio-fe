@@ -162,7 +162,7 @@ const MediaIndex = ({ mediaLibrary }) => {
     <DashboardPageLayout title="Media" description="Manage your flipbooks">
       <div className="relative">
         <div className="absolute top-0 right-0">
-          <CreateNewMedia />
+          <CreateNewMedia current_user={current_user} />
         </div>
         <DataTable data={data} columns={columns} />
       </div>

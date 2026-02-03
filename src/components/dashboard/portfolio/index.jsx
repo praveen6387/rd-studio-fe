@@ -4,39 +4,23 @@ import { useForm } from "react-hook-form";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { convertTime, convertToDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { Pencil } from "lucide-react";
-import { X } from "lucide-react";
-import { SaveIcon } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Instagram as InstagramIcon, Facebook, Twitter, Linkedin, Youtube, MessageCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
+import { Instagram as InstagramIcon, Facebook, Twitter, Youtube, MessageCircle } from "lucide-react";
+
 import EditSocialLinks from "./_builder/EditSocialLinks";
 
 const PortfolioIndex = ({ current_user }) => {
-  console.log(current_user);
   const user_social_links = current_user?.user?.user_social_links || [];
-  console.log(user_social_links)
+
   let plateform_name_link_map = {}
   user_social_links.forEach(link => {
     plateform_name_link_map[link.social_media_platform.toLocaleLowerCase()] = link.social_media_url;
   });
-  console.log(plateform_name_link_map)
 
   const { toast } = useToast();
   const initials =
@@ -76,6 +60,43 @@ const PortfolioIndex = ({ current_user }) => {
       description: "Your changes have been saved.",
     });
   };
+
+  const isActive = current_user.user.remaining_credit > 0;
+
+  const iconClasses = "w-4 h-4 text-white";
+
+  const items = [
+    {
+      name: "WhatsApp",
+      value: socialLinks.social_whatsapp,
+      icon: <MessageCircle className={iconClasses} />,
+      bg: "bg-gradient-to-br from-green-500 to-emerald-600",
+    },
+    {
+      name: "Facebook",
+      value: socialLinks.social_facebook,
+      icon: <Facebook className={iconClasses} />,
+      bg: "bg-gradient-to-br from-blue-500 to-blue-600",
+    },
+    {
+      name: "Twitter",
+      value: socialLinks.social_twitter,
+      icon: <Twitter className={iconClasses} />,
+      bg: "bg-gradient-to-br from-sky-400 to-sky-500",
+    },
+    {
+      name: "Instagram",
+      value: socialLinks.social_instagram,
+      icon: <InstagramIcon className={iconClasses} />,
+      bg: "bg-gradient-to-br from-pink-500 via-purple-500 to-orange-500",
+    },
+    {
+      name: "YouTube",
+      value: socialLinks.social_youtube,
+      icon: <Youtube className={iconClasses} />,
+      bg: "bg-gradient-to-br from-red-500 to-rose-600",
+    },
+  ];
 
   return (
     <DashboardPageLayout title="Profile" description="Manage your profile">
@@ -150,41 +171,8 @@ const PortfolioIndex = ({ current_user }) => {
             </CardHeader>
             <CardContent>
               <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
-                {(() => {
-                  const iconClasses = "w-4 h-4 text-white";
-                  const items = [
-                    {
-                      name: "WhatsApp",
-                      value: socialLinks.social_whatsapp,
-                      icon: <MessageCircle className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-green-500 to-emerald-600",
-                    },
-                    {
-                      name: "Facebook",
-                      value: socialLinks.social_facebook,
-                      icon: <Facebook className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-blue-500 to-blue-600",
-                    },
-                    {
-                      name: "Twitter",
-                      value: socialLinks.social_twitter,
-                      icon: <Twitter className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-sky-400 to-sky-500",
-                    },
-                    {
-                      name: "Instagram",
-                      value: socialLinks.social_instagram,
-                      icon: <InstagramIcon className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-pink-500 via-purple-500 to-orange-500",
-                    },
-                    {
-                      name: "YouTube",
-                      value: socialLinks.social_youtube,
-                      icon: <Youtube className={iconClasses} />,
-                      bg: "bg-gradient-to-br from-red-500 to-rose-600",
-                    },
-                  ];
-                  return items.map((item, idx) => {
+                {
+                  items.map((item, idx) => {
                     const row = (
                       <div key={item.name} className="flex items-center justify-between px-4 py-3">
                         <div className="flex items-center gap-3">
@@ -205,8 +193,8 @@ const PortfolioIndex = ({ current_user }) => {
                         {row}
                       </div>
                     );
-                  });
-                })()}
+                  })
+                }
               </div>
               <div className="pt-4">
                 <Button
@@ -222,30 +210,7 @@ const PortfolioIndex = ({ current_user }) => {
           </Card>
           <Card className="lg:col-span-2 border border-gray-200 shadow-sm rounded-2xl">
             {(() => {
-              const transactions = current_user?.user?.user_payment_transactions || [];
-              const approved = [...transactions].filter((t) => t.transaction_status === 1);
-              approved.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-              const latest = approved[0];
-              const trialDaysTotal = 7;
-              const operationsTotal = 3;
-              const activeFrom = latest?.transaction_active_from_date
-                ? new Date(latest.transaction_active_from_date)
-                : null;
-              const now = new Date();
-              const daysPassed = activeFrom
-                ? Math.min(trialDaysTotal, Math.max(0, Math.ceil((now - activeFrom) / (1000 * 60 * 60 * 24))))
-                : 0;
-              const isActive = activeFrom ? daysPassed < trialDaysTotal : false;
-              const expireOn = activeFrom
-                ? new Date(activeFrom.getTime() + trialDaysTotal * 24 * 60 * 60 * 1000)
-                : null;
-              const usedOps = latest?.operation_count ?? 0;
-              const creditsLeft = Math.max(0, operationsTotal - usedOps);
-              const remainingDays = activeFrom ? Math.max(0, trialDaysTotal - daysPassed) : 0;
-              const pad2 = (n) =>
-                String(n || 0)
-                  .toString()
-                  .padStart(2, "0");
+             
 
               return (
                 <>
@@ -263,29 +228,29 @@ const PortfolioIndex = ({ current_user }) => {
                     <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
                       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                         <div className="text-gray-500 font-medium">Active Plan</div>
-                        <div className="text-gray-900 font-semibold">{latest ? "Recharge" : "-"}</div>
+                        <div className="text-gray-900 font-semibold">{"-"}</div>
                       </div>
                       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                         <div className="text-gray-500 font-medium">Credits Left</div>
-                        <div className="text-gray-900 font-semibold">{creditsLeft} Credits</div>
+                        <div className="text-gray-900 font-semibold">{current_user?.user?.remaining_credit} Credits</div>
                       </div>
-                      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                      {/* <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                         <div className="text-gray-500 font-medium">Days Passed</div>
                         <div className="text-gray-900 font-semibold">{pad2(daysPassed)}</div>
-                      </div>
-                      <div className="flex items-center justify-between px-4 py-3">
+                      </div> */}
+                      {/* <div className="flex items-center justify-between px-4 py-3">
                         <div className="text-gray-500 font-medium">Expiry On</div>
-                        <div className="text-gray-900 font-semibold">{expireOn ? pad2(remainingDays) : "00"}</div>
-                      </div>
+                        <div className="text-gray-900 font-semibold">{}</div>
+                      </div> */}
                     </div>
-                    <div className="pt-6 flex justify-center">
+                    {/* <div className="pt-6 flex justify-center">
                       <Button
                         className="rounded-full bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 px-8 py-3 shadow-lg"
                         style={{ color: "#ffffff", textShadow: "0 0 6px rgba(255,255,255,0.6)" }}
                       >
                         Recharge Now
                       </Button>
-                    </div>
+                    </div> */}
                   </CardContent>
                 </>
               );

@@ -323,8 +323,8 @@ export default function CreateMediaIndex() {
       const res = await createMedia(formData);
       toast.success("Media created successfully!", { position: "bottom-right" });
     } catch (error) {
-      console.error("Error creating flipbook:", error);
-      toast.error("Failed to create flipbook. Please try again.", { position: "bottom-right" });
+      const errorBody = JSON.parse(error.message);
+      toast.error(errorBody.message || "Failed to create flipbook. Please try again.", { position: "bottom-right" });
     } finally {
       setIsLoading(false);
     }

@@ -19,7 +19,8 @@ export const createMedia = async (formData) => {
     body: formData,
   });
   if (!res.ok) {
-    throw new Error("Failed to create media");
+    const error = await res.json();
+    throw new Error(JSON.stringify(error));
   }
   return res.json();
 };

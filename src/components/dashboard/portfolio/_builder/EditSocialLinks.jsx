@@ -27,7 +27,6 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
   const handleSave = async (values) => {
     try {
       setIsLoading(true);
-      console.log(values)
       let social_links = []
       Object.entries(values).forEach(([key, value]) => {
         if (value) {
@@ -41,7 +40,6 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
         social_links: social_links,
       };
       
-      console.log(payload);
       await updateSocialLinks(payload);
       onSave(values);
       toast.success("Social links updated successfully", {
@@ -55,7 +53,6 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
         position: "bottom-right",
       });
     } finally {
-      console.log("updated");
       setIsLoading(false);
     }
   };

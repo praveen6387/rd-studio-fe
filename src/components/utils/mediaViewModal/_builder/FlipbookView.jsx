@@ -5,6 +5,8 @@ import { convertToDate } from "@/lib/utils";
 import { Expand, PhoneIcon, Shrink, Volume2, VolumeOff } from "lucide-react";
 import Instagram from "public/images/svg/Instagram";
 import WhatsApp from "public/images/svg/WhatsApp";
+import Share from "public/images/svg/Share";
+import Image from "next/image";
 
 const FlipbookView = ({ media_title, media_description, media_library_items, data, current_user }) => {
   const bookRef = useRef(null);
@@ -122,6 +124,18 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
     api?.flipNext?.();
   };
 
+  const shareCurrentUrlToWhatsApp = () => {
+    if (typeof window === "undefined") return;
+    try {
+      const currentUrl = window.location.href;
+      const text = encodeURIComponent(currentUrl);
+      const whatsappUrl = `https://wa.me/?text=${text}`;
+      window.open(whatsappUrl, "_blank");
+    } catch (err) {
+      // ignore any errors when sharing
+    }
+  };
+
   const onPointerDown = (e) => {
     pointerStart.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
     try {
@@ -186,8 +200,6 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
     }
   }
 
-  console.log(current_user)
-
   const user_social_links = current_user?.user_social_links;
   const instagram_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "instagram")?.social_media_url;
   const whatsapp_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "whatsapp")?.social_media_url;
@@ -216,6 +228,11 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
                   <WhatsApp className="w-6 h-6" />
                 </a>
               </li>}
+              {
+                <li className="cursor-pointer" onClick={shareCurrentUrlToWhatsApp} role="button" tabIndex={0}>
+                  <Image src={'/images/png/forward.png'} alt="profile" width={24} height={24} className="hover:scale-125 transition-all duration-300" />
+                </li>
+              }
               
               {!isMuted ? (
                 <li>

@@ -8,7 +8,6 @@ const DetailMediaPage = async ({ params }) => {
   const cookieStore = await cookies();
   const token = cookieStore.get("access_token");
   const media = await getMediaLibraryById(id, token?.value);
-  console.log(media);
   return (
     <ProtectedRoute requireAdmin={true}>
       <DetailMediaIndex media={media} />

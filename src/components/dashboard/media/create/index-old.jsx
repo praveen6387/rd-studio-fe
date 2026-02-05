@@ -128,13 +128,11 @@ const CreateMediaIndex = () => {
       if (eventDate) {
         formData.append("event_date", eventDate);
       }
-      console.log(selectedFiles);
       // Preserve user order and ensure filename is sent (avoid default "blob")
       selectedFiles.forEach((item) => {
         const filename = item?.file?.name || "upload";
         formData.append("media_items", item.file, filename);
       });
-      console.log(formData);
 
       await createMedia(formData);
       // await revalidateAPITag();

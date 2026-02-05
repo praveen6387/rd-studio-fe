@@ -27,7 +27,7 @@ const MediaViewIndex = ({ mediaId, media }) => {
 
         {/* Media Viewer Section */}
         <section className="bg-gray-50 py-12 max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MediaViewer mediaData={mediaData} />
+          <MediaViewer mediaData={mediaData} current_user={media.user} />
         </section>
       </div>
     </PageLayout>

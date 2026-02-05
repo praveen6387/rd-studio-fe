@@ -6,7 +6,6 @@ import LoginModal from "./LoginModal";
 import Image from "next/image";
 
 export default function Header() {
-  console.log("renter");
   const { user, logout, login } = useUser();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

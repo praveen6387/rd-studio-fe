@@ -22,7 +22,6 @@ const PaymentModal = ({ isOpen, setIsOpen }) => {
       setAmount(0);
       setIsOpen(false);
     } catch (error) {
-      console.log(error.message);
       toast.error(error.message);
     } finally {
       setIsLoading(false);

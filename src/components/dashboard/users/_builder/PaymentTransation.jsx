@@ -20,7 +20,6 @@ import { EllipsisVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const PaymentTransation = ({ isOpen, setIsOpen, userData }) => {
-  console.log(userData);
   const [transactionId, setTransactionId] = useState("");
   const [amount, setAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);

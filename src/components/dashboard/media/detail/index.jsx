@@ -52,7 +52,6 @@ const fetchUrlAsFile = async (url, nameHint) => {
 const DetailMediaIndex = ({ media }) => {
   const mediaData = media?.data || {};
   const items = mediaData?.media_library_items || [];
-  console.log(mediaData);
 
   const [mediaType, setMediaType] = useState(String(mediaData?.media_type ?? ""));
   const [mediaTitle, setMediaTitle] = useState(mediaData?.media_title || "");
@@ -200,7 +199,6 @@ const DetailMediaIndex = ({ media }) => {
         formData.append("event_date", eventDate);
       }
       // Preserve user order and ensure filename is sent (avoid default "blob")
-      console.log("selectedFiles", selectedFiles);
       // Append ALL files in current order
       selectedFiles.forEach((item) => {
         if (!(item?.file instanceof File)) {
@@ -217,7 +215,6 @@ const DetailMediaIndex = ({ media }) => {
         }));
         formData.append("order", JSON.stringify(orderPayload));
       } catch {}
-      console.log(formData);
 
       await updateMedia(formData, mediaData.id);
       // await revalidateAPITag();

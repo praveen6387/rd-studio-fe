@@ -15,7 +15,6 @@ import toast from "react-hot-toast";
 
 const MediaIndex = ({ mediaLibrary }) => {
   const current_user = mediaLibrary.user;
-  // console.log(current_user)
   const [data, setData] = useState(mediaLibrary?.data);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

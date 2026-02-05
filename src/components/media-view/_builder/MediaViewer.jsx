@@ -2,7 +2,7 @@ import { useState } from "react";
 import MediaViewModal from "@/components/utils/mediaViewModal";
 import { useSearchParams } from "next/navigation";
 
-const MediaViewer = ({ mediaData }) => {
+const MediaViewer = ({ mediaData, current_user }) => {
   const searchParams = useSearchParams();
   const is_open = searchParams.get("is_open");
   const [isModalOpen, setIsModalOpen] = useState(is_open === "true" ? true : false); // Open by default
@@ -93,7 +93,7 @@ const MediaViewer = ({ mediaData }) => {
       {/* Media Viewer Modal */}
       {isModalOpen && (
         <>
-          <MediaViewModal data={mediaData} open={isModalOpen} onOpenChange={handleCloseModal} />
+          <MediaViewModal data={mediaData} open={isModalOpen} onOpenChange={handleCloseModal} current_user={current_user} />
         </>
       )}
     </div>

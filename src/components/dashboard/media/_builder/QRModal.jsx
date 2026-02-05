@@ -8,7 +8,6 @@ import Tag from "@/components/ui/tag";
 
 const QRModal = ({ isOpen, onClose, mediaData }) => {
   if (!mediaData) return null;
-  console.log(mediaData);
 
   const baseUrl =
     typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host}` : "http://127.0.0.1:3000";

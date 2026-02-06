@@ -9,6 +9,7 @@ import Share from "public/images/svg/Share";
 import Image from "next/image";
 
 const FlipbookView = ({ media_title, media_description, media_library_items, data, current_user }) => {
+  console.log(data)
   const bookRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const pointerStart = useRef({ x: 0, y: 0, id: null });
@@ -200,9 +201,8 @@ const FlipbookView = ({ media_title, media_description, media_library_items, dat
     }
   }
 
-  const user_social_links = current_user?.user_social_links;
-  const instagram_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "instagram")?.social_media_url;
-  const whatsapp_url = user_social_links?.find(link => link.social_media_platform.toLowerCase() == "whatsapp")?.social_media_url;
+  const instagram_url = data.instagram_profile_url;
+  const whatsapp_url = data.whatsapp_number;
 
   return (
     <>

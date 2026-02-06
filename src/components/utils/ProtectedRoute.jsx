@@ -41,6 +41,8 @@ export default function ProtectedRoute({ children, requireAdmin = true }) {
       const accessToken = Cookies.get("access_token");
 
       if (!accessToken) {
+        localStorage.removeItem("user");
+        Cookies.remove("refresh_token");
         router.push("/");
         return;
       }

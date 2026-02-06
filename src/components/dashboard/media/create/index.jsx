@@ -242,7 +242,8 @@ export default function CreateMediaIndex() {
   const [frontImages, setFrontImages] = useState([]);
   const [backImages, setBackImages] = useState([]);
   const [mediaImages, setMediaImages] = useState([]);
-
+  const [instagramProfileUrl, setInstagramProfileUrl] = useState("");
+  const [whatsappNumber, setWhatsappNumber] = useState("");
   const [frontImagesOptimizationPercetage, setFrontImagesOptimizationPercetage] = useState(0);
   const [backImagesOptimizationPercetage, setBackImagesOptimizationPercetage] = useState(0);
   const [mediaImagesOptimizationPercetage, setMediaImagesOptimizationPercetage] = useState(0);
@@ -301,6 +302,8 @@ export default function CreateMediaIndex() {
       const formData = new FormData();
       formData.append("media_title", mediaTitle);
       formData.append("event_date", eventDate);
+      formData.append("instagram_profile_url", instagramProfileUrl);
+      formData.append("whatsapp_number", whatsappNumber);
       formData.append("media_type", "2");
       if (studioName && studioName.trim() !== "" && current_user.role > 1) {
         formData.append("studio_name", studioName);
@@ -355,16 +358,43 @@ export default function CreateMediaIndex() {
               className="w-full"
             />
           </div>
-          {current_user.role > 1 && <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Studio Name</label>
-            <Input
-              type="text"
-              id="studioName"
-              value={studioName}
-              onChange={(e) => setStudioName(e.target.value)}
-              className="w-full"
-            />
-          </div>}
+          {current_user?.role > 1 && 
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Studio Name</label>
+                <Input
+                  type="text"
+                  id="studioName"
+                  value={studioName}
+                  onChange={(e) => setStudioName(e.target.value)}
+                  placeholder="Enter studio name"
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Studio Instagram URL</label>
+                <Input
+                  type="text"
+                  id="instagramProfileUrl"
+                  value={instagramProfileUrl}
+                  onChange={(e) => setInstagramProfileUrl(e.target.value)}
+                  placeholder="URL to show on flipbook view (optional)"
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Studio WhatsApp Number</label>
+                <Input
+                  type="text"
+                  id="whatsappNumber"
+                  value={whatsappNumber}
+                  onChange={(e) => setWhatsappNumber(e.target.value)}
+                  placeholder="Number to show on flipbook view (optional)"
+                  className="w-full"
+                />
+              </div>
+              </>
+          }
         </div>
 
         <div className="space-y-4">

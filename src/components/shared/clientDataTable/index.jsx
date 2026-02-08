@@ -252,6 +252,8 @@ const DataTable = ({
     pageSize: parseAsInteger.withDefault(10),
   };
 
+  console.log(data)
+
   columns.forEach((col) => {
     if (col.meta?.filterVariant && col.accessorKey) {
       const paramKey = col.accessorKey.replace(/_/g, "-");

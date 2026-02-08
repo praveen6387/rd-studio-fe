@@ -26,10 +26,30 @@ const PaymentTransation = ({ isOpen, setIsOpen, userData }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [userPaymentTransactions, setUserPaymentTransactions] = useState([]);
   const [isPaymentUpdateLoading, setIsPaymentUpdateLoading] = useState(false);
+  const [editOperationCount, setEditOperationCount] = useState("");
+  const [editActiveToDate, setEditActiveToDate] = useState("");
 
   useEffect(() => {
     setUserPaymentTransactions(userData?.user_payment_transactions || []);
   }, [userData]);
+
+  // initialize edit fields with first row values (if any)
+  const formatDateForInput = (dateStr) => {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return "";
+    return d.toISOString().slice(0, 10);
+  };
+
+  useEffect(() => {
+    if (userPaymentTransactions && userPaymentTransactions.length > 0) {
+      const first = userPaymentTransactions[0];
+      setEditOperationCount(first.operation_count ?? 0);
+      setEditActiveToDate(first.transaction_active_to_date ? formatDateForInput(first.transaction_active_to_date) : "");
+    } else {
+      setEditOperationCount("");
+      setEditActiveToDate("");
+    }
+  }, [userPaymentTransactions]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -62,7 +82,10 @@ const PaymentTransation = ({ isOpen, setIsOpen, userData }) => {
     try {
       const payload = {
         transaction_status: status,
+        transaction_active_to_date: editActiveToDate ? formatDateForInput(editActiveToDate) : null,
+        operation_count: Number(editOperationCount),
       };
+      console.log(payload)
       const res = await updatePaymentTransaction(id, payload);
       toast.success("Payment transaction updated successfully");
       setUserPaymentTransactions(
@@ -73,6 +96,8 @@ const PaymentTransation = ({ isOpen, setIsOpen, userData }) => {
                 transaction_status_name: res.data.transaction_status_name,
                 transaction_status: res.data.transaction_status,
                 transaction_active_from_date: res.data.transaction_active_from_date,
+                transaction_active_to_date: res.data.transaction_active_to_date,
+                operation_count: res.data.operation_count,
               }
             : transaction
         )
@@ -118,15 +143,71 @@ const PaymentTransation = ({ isOpen, setIsOpen, userData }) => {
     {
       header: "Total Operations",
       accessorKey: "operation_count",
+      cell: ({ row }) => {
+        // make first row editable
+        if (row.index === 0) {
+          return (
+            <div>
+              <Input
+                type="number"
+                className="h-8 px-2 text-xs w-24"
+                value={editOperationCount}
+                onChange={(e) => setEditOperationCount(e.target.value)}
+              />
+            </div>
+          );
+        }
+        return (
+          <div>
+            {row.original.operation_count}
+          </div>
+        );
+      },
     },
     {
-      header: "Transaction Active From Date",
+      header: "Used Operations",
+      accessorKey: "used_operation_count",
+    },
+    {
+      header: "Remaining Operations",
+      accessorKey: "remaining_operation_count",
+      cell: ({ row }) => {
+        return <div>{row.original.operation_count - row.original.used_operation_count}</div>;
+      },
+    },
+    {
+      header: "Active From Date",
       accessorKey: "transaction_active_from_date",
       cell: ({ row }) => {
         return (
           <div>
             {row.original.transaction_active_from_date
               ? convertToDate(row.original.transaction_active_from_date)
+              : "-"}
+          </div>
+        );
+      },
+    },
+    {
+      header: "Active To Date",
+      accessorKey: "transaction_active_to_date",
+      cell: ({ row }) => {
+        if (row.index === 0) {
+          return (
+            <div>
+              <Input
+                type="date"
+                className="h-8 px-2 text-xs w-40"
+                value={editActiveToDate}
+                onChange={(e) => setEditActiveToDate(e.target.value)}
+              />
+            </div>
+          );
+        }
+        return (
+          <div>
+            {row.original.transaction_active_to_date
+              ? convertToDate(row.original.transaction_active_to_date)
               : "-"}
           </div>
         );
@@ -169,21 +250,21 @@ const PaymentTransation = ({ isOpen, setIsOpen, userData }) => {
   return (
     <div>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent className="w-[90vw] sm:max-w-5xl overflow-y-auto">
+        <SheetContent className="min-w-[80vw] overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Payments for {userData?.id}</SheetTitle>
+            <SheetTitle>Payments for {userData?.first_name + " " + userData?.last_name}</SheetTitle>
           </SheetHeader>
           <div className="space-y-4 mt-4">
             {/* Compact user info */}
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3 flex-wrap text-xs text-gray-700">
-                <div>
+                {/* <div>
                   Name
                   <div className="font-semibold text-gray-900">
                     {(userData?.first_name || "") + " " + (userData?.last_name || "")}
                   </div>
-                </div>
-                <div className="border-l border-gray-200 pl-2">
+                </div> */}
+                <div className="">
                   Email
                   <div className="font-semibold text-gray-900">{userData?.email}</div>
                 </div>

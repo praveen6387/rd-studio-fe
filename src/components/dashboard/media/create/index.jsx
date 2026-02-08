@@ -7,7 +7,9 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { createMedia } from "@/lib/api/client/media/urls";
 import { Loader2 } from "lucide-react";
-import { useUser } from "@/contexts/UserContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useRouter,  } from "next/navigation";
 
 // Reusable, styled upload card used for Front / Back / Remaining sections
 const ImageTypeBlock = ({
@@ -234,8 +236,9 @@ const optimizeFiles = async (files, setProgress, targetKB = 100) => {
   return results;
 };
 
-export default function CreateMediaIndex() {
-  const { user: current_user } = useUser();
+export default function CreateMediaIndex({ current_user }) {
+  console.log(current_user)
+  const router = useRouter();
   const [mediaTitle, setMediaTitle] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [studioName, setStudioName] = useState("");
@@ -436,6 +439,23 @@ export default function CreateMediaIndex() {
             {isLoading ? <div className="flex items-center gap-2"><Loader2 className="animate-spin h-4 w-4" /> <span>Creating...</span></div> : "Create Flipbook"}
           </button>
         </div>
+      </div>
+      <div>
+        <Dialog
+          open={current_user?.remaining_operation_status?.is_show_recharge_now == true}
+          onOpenChange={() => {}}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-red-500">Recharge Required</DialogTitle>  
+              <DialogDescription>You have no remaining operations. Please buy more operations to create more flipbooks.</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => router.push("/dashboard/billing?is_open=true")}>Buy Operations</Button>
+              {/* <Button variant="outline" onClick={() => {}}>Cancel</Button> */}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardPageLayout>
   );

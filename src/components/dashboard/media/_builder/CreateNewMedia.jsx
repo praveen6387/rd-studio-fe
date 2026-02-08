@@ -51,15 +51,9 @@ const CreateNewMedia = ({ current_user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressionProgress, setCompressionProgress] = useState(0);
+  console.log(current_user)
   const {
-    register,
-    handleSubmit,
     formState: { errors },
-    setValue,
-    watch,
-    reset,
-    setError,
-    clearErrors,
   } = useForm({
     defaultValues: {
       media_type: "",
@@ -68,144 +62,13 @@ const CreateNewMedia = ({ current_user }) => {
     },
   });
 
-  const onSubmit = async (data) => {
-    // Validation: Check if media type is selected
-    if (!data.media_type) {
-      setError("media_type", {
-        type: "manual",
-        message: "Please select a media type",
-      });
-      return;
-    }
-
-    // Validation: Check if media title is provided
-    if (!data.media_title || data.media_title.trim() === "") {
-      setError("media_title", {
-        type: "manual",
-        message: "Please enter a media title",
-      });
-      return;
-    }
-
-    // Validation: Check if files are selected
-    if (selectedFiles.length === 0) {
-      setError("files", {
-        type: "manual",
-        message: "Please select at least one file to upload",
-      });
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("media_type", data.media_type);
-      formData.append("media_title", data.media_title.trim());
-      if (data.media_description && data.media_description.trim() !== "") {
-        formData.append("media_description", data.media_description.trim());
-      }
-
-      selectedFiles.forEach((file) => {
-        formData.append("media_items", file);
-      });
-
-      const res = await createMedia(formData);
-
-      // Revalidate the media library cache
-      await revalidateAPITag();
-
-      // Show success toast
-      toast.success("Media created successfully!", {
-        duration: 4000,
-        position: "bottom-right",
-      });
-
-      // Reset form after successful upload
-      setSelectedFiles([]);
-      reset();
-
-      // Close the sheet after successful upload
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Error creating media:", error);
-
-      // Show error toast
-      toast.error("Failed to create media. Please try again.", {
-        duration: 4000,
-        position: "bottom-right",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFileChange = async (e) => {
-    const files = Array.from(e.target.files);
-    const mediaType = watch("media_type");
-
-    if (mediaType === "0" || mediaType === "1") {
-      // Image or Video: single file only
-      const first = files[0];
-      if (!first) {
-        setSelectedFiles([]);
-      } else if (mediaType === "0" && first.type.startsWith("image/")) {
-        try {
-          setIsCompressing(true);
-          setCompressionProgress(0);
-          const compressed = await compressImageFast(first, {
-            onProgress: (p) => setCompressionProgress(Math.round(p || 0)),
-          });
-          setSelectedFiles([compressed]);
-        } catch {
-          setSelectedFiles([first]);
-        } finally {
-          setIsCompressing(false);
-        }
-      } else {
-        setSelectedFiles([first]);
-      }
-    } else if (mediaType === "2") {
-      // FlipBook: multiple images only
-      const imageFiles = files.filter(
-        (file) => file.type.startsWith("image/") || file.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)
-      );
-      if (imageFiles.length === 0) {
-        setSelectedFiles((prev) => prev);
-      } else {
-        try {
-          setIsCompressing(true);
-          setCompressionProgress(0);
-          const compressedList = await Promise.all(imageFiles.map((f) => compressImageFast(f)));
-          setSelectedFiles((prev) => [...prev, ...compressedList]);
-        } catch {
-          setSelectedFiles((prev) => [...prev, ...imageFiles]);
-        } finally {
-          setIsCompressing(false);
-          setCompressionProgress(0);
-        }
-      }
-    }
-    // Clear validation error when user selects files
-    clearErrors("files");
-  };
-
-  const removeFile = (index) => {
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleMediaTypeChange = (value) => {
-    setValue("media_type", value);
-    setSelectedFiles([]); // Clear files when media type changes
-    // Clear validation error when user selects a media type
-    clearErrors("media_type");
-  };
 
   return (
     <>
         <Button 
           className="cursor-pointer" 
           variant="secondary"
-          disabled={current_user?.remaining_credit <= 0}
+          // disabled={current_user?.remaining_credit <= 0}
         >
           <Link href="/dashboard/media/create" className="flex items-center gap-2">
             <Plus /> Create New Flipbook

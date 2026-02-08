@@ -2,13 +2,12 @@
 import DataTable from "@/components/shared/clientDataTable";
 import { Badge } from "@/components/ui/badge";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
-import React, { useState } from "react";
+import { useState } from "react";
 import CreateNewMedia from "./_builder/CreateNewMedia";
 import QRModal from "./_builder/QRModal";
 import { convertTime, convertToDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import ViewMediaModalV2 from "./_builder/ViewMediaModalV2";
-import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { deleteMedia } from "@/lib/api/client/media/urls";
 import toast from "react-hot-toast";

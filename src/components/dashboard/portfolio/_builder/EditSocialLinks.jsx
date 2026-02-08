@@ -17,10 +17,10 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
     defaultValues: {
       social_whatsapp: initialLinks.social_whatsapp || "",
       social_facebook: initialLinks.social_facebook || "",
-      social_twitter: initialLinks.social_twitter || "",
+      // social_twitter: initialLinks.social_twitter || "",
       social_linkedin: initialLinks.social_linkedin || "",
       social_instagram: initialLinks.social_instagram || "",
-      social_youtube: initialLinks.social_youtube || "",
+      // social_youtube: initialLinks.social_youtube || "",
     },
   });
 
@@ -93,7 +93,7 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="social_twitter"
               render={({ field }) => (
@@ -105,7 +105,7 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <FormField
               control={form.control}
@@ -121,7 +121,7 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="social_youtube"
               render={({ field }) => (
@@ -133,7 +133,7 @@ const EditSocialLinks = ({ open = true, initialLinks = {}, onClose = () => {}, o
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <div className="flex gap-2">

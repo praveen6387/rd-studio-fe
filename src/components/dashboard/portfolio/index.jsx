@@ -11,12 +11,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Instagram as InstagramIcon, Facebook, Twitter, Youtube, MessageCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import EditSocialLinks from "./_builder/EditSocialLinks";
+import { convertToDate } from "@/lib/utils";
 
 const PortfolioIndex = ({ current_user }) => {
   const user_social_links = current_user?.user?.user_social_links || [];
-
+  const router = useRouter();
   let plateform_name_link_map = {}
   user_social_links.forEach(link => {
     plateform_name_link_map[link.social_media_platform.toLocaleLowerCase()] = link.social_media_url;
@@ -35,9 +37,9 @@ const PortfolioIndex = ({ current_user }) => {
   const [socialLinks, setSocialLinks] = useState({
     social_whatsapp: plateform_name_link_map["whatsapp"] || "",
     social_facebook: plateform_name_link_map["facebook"] || "",
-    social_twitter: plateform_name_link_map["twitter"] || "",
+    // social_twitter: plateform_name_link_map["twitter"] || "",
     social_instagram: plateform_name_link_map["instagram"] || "",
-    social_youtube: plateform_name_link_map["youtube"] || "",
+    // social_youtube: plateform_name_link_map["youtube"] || "",
   });
 
   const form = useForm({
@@ -61,7 +63,9 @@ const PortfolioIndex = ({ current_user }) => {
     });
   };
 
-  const isActive = current_user.user.remaining_credit > 0;
+  // console.log(current_user.user.remaining_operation_status.status)
+  console.log(current_user)
+  const remaining_operation_status = current_user?.user?.remaining_operation_status
 
   const iconClasses = "w-4 h-4 text-white";
 
@@ -78,24 +82,24 @@ const PortfolioIndex = ({ current_user }) => {
       icon: <Facebook className={iconClasses} />,
       bg: "bg-gradient-to-br from-blue-500 to-blue-600",
     },
-    {
-      name: "Twitter",
-      value: socialLinks.social_twitter,
-      icon: <Twitter className={iconClasses} />,
-      bg: "bg-gradient-to-br from-sky-400 to-sky-500",
-    },
+    // {
+    //   name: "Twitter",
+    //   value: socialLinks.social_twitter,
+    //   icon: <Twitter className={iconClasses} />,
+    //   bg: "bg-gradient-to-br from-sky-400 to-sky-500",
+    // },
     {
       name: "Instagram",
       value: socialLinks.social_instagram,
       icon: <InstagramIcon className={iconClasses} />,
       bg: "bg-gradient-to-br from-pink-500 via-purple-500 to-orange-500",
     },
-    {
-      name: "YouTube",
-      value: socialLinks.social_youtube,
-      icon: <Youtube className={iconClasses} />,
-      bg: "bg-gradient-to-br from-red-500 to-rose-600",
-    },
+    // {
+    //   name: "YouTube",
+    //   value: socialLinks.social_youtube,
+    //   icon: <Youtube className={iconClasses} />,
+    //   bg: "bg-gradient-to-br from-red-500 to-rose-600",
+    // },
   ];
 
   return (
@@ -218,22 +222,26 @@ const PortfolioIndex = ({ current_user }) => {
                     <CardTitle>Plan Details</CardTitle>
                     <div
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        isActive ? "bg-emerald-100 text-emerald-700" : "bg-rose-500 text-white"
+                        remaining_operation_status?.status ? "bg-emerald-100 text-emerald-700" : "bg-rose-500 text-white"
                       }`}
                     >
-                      {isActive ? "Active" : "Expired"}
+                      {remaining_operation_status?.plan_status}
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
-                      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-                        <div className="text-gray-500 font-medium">Active Plan</div>
-                        <div className="text-gray-900 font-semibold">{"-"}</div>
-                      </div>
+                      {!remaining_operation_status?.status && <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                        <div className="text-gray-500 font-medium">Message</div>
+                        <div className="text-gray-900 font-semibold">{remaining_operation_status?.message}</div>
+                      </div>}
                       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                         <div className="text-gray-500 font-medium">Credits Left</div>
-                        <div className="text-gray-900 font-semibold">{current_user?.user?.remaining_credit} Credits</div>
+                        <div className="text-gray-900 font-semibold">{remaining_operation_status?.remaining_operation_count || 0} Credits</div>
                       </div>
+                     {remaining_operation_status?.transaction_active_to_date && <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                        <div className="text-gray-500 font-medium">Credits Expired On</div>
+                        <div className="text-gray-900 font-semibold">{convertToDate(remaining_operation_status?.transaction_active_to_date)}</div>
+                      </div>}
                       {/* <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                         <div className="text-gray-500 font-medium">Days Passed</div>
                         <div className="text-gray-900 font-semibold">{pad2(daysPassed)}</div>
@@ -243,14 +251,17 @@ const PortfolioIndex = ({ current_user }) => {
                         <div className="text-gray-900 font-semibold">{}</div>
                       </div> */}
                     </div>
-                    {/* <div className="pt-6 flex justify-center">
-                      <Button
-                        className="rounded-full bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 px-8 py-3 shadow-lg"
-                        style={{ color: "#ffffff", textShadow: "0 0 6px rgba(255,255,255,0.6)" }}
-                      >
-                        Recharge Now
-                      </Button>
-                    </div> */}
+                    {
+                      (remaining_operation_status?.is_show_recharge_now) && 
+                      <div className="pt-6 flex justify-center">
+                        <Button
+                          className="rounded-full bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 px-8 py-3 shadow-lg"
+                          style={{ color: "#ffffff", textShadow: "0 0 6px rgba(255,255,255,0.6)" }}
+                          onClick={() => router.push("/dashboard/billing?is_open=true")}
+                        >
+                          Recharge Now
+                        </Button>
+                    </div>}
                   </CardContent>
                 </>
               );

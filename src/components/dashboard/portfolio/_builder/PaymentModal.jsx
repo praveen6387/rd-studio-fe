@@ -35,7 +35,7 @@ const PaymentModal = ({ isOpen, setIsOpen }) => {
           <DialogTitle>Make Payment</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center justify-center">
-          <Image src="/PhonePayQR.png" alt="QR Code" width={256} height={256} />
+          <Image src="/images/png/PhonePayQR.jpeg" alt="QR Code" width={256} height={256} />
           <div className="text-sm text-gray-500">
             Scan the QR code to make the payment then enter the transaction ID and submit for verification
           </div>

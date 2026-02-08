@@ -2,7 +2,7 @@
 import DataTable from "@/components/shared/clientDataTable";
 import { Button } from "@/components/ui/button";
 import DashboardPageLayout from "@/components/utils/DashboardPagelayout";
-import { convertTime } from "@/lib/utils";
+import { convertTime, convertToDate } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 import {
@@ -24,28 +24,56 @@ const UsersIndex = ({ users }) => {
       header: "Name",
       accessorKey: "first_name",
       cell: ({ row }) => (
-        <div>
-          {row.original.first_name} {row.original.last_name}
-        </div>
+        <>
+          <div>
+            {row.original.first_name} {row.original.last_name}
+          </div>
+          <div>
+            {row.original.role_name}
+          </div>
+        </>
       ),
     },
     {
       header: "Email",
       accessorKey: "email",
-    },
-    {
-      header: "Phone",
-      accessorKey: "phone",
-    },
-    {
-      header: "Role",
-      accessorKey: "role",
-      cell: ({ row }) => <div className="capitalize">{row.original.role_name}</div>,
+      cell: ({ row }) => {
+      return (
+        <>
+          <div className="">
+            {row.original.phone}
+          </div>
+          <div className="">
+            {row.original.email}
+          </div>
+        </>
+      )}
     },
     {
       header: "Created At",
       accessorKey: "created_at",
       cell: ({ row }) => <div>{convertTime(row.original.created_at)}</div>,
+    },
+    {
+      header: "Active Status",
+      accessorKey: "role_name",
+      cell: ({ row }) => {
+        const last_transaction = row.original.user_payment_transactions[0];
+
+        const formatDate = (date) => {
+          return date ? convertToDate(date) : "N/A";
+        }
+        
+        if (last_transaction) {
+          return (
+            <>
+              <div>{last_transaction.transaction_status_name}</div>
+              <div>{formatDate(last_transaction?.transaction_active_from_date)} - {formatDate(last_transaction?.transaction_active_to_date)}</div>
+            </>
+          )
+        }
+        return <div>No transaction found</div>
+      }
     },
     {
       header: "Actions",

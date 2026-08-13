@@ -1,5 +1,8 @@
 import Cookies from "js-cookie";
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://192.168.16.40:9000";
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? ""
+    : process.env.NEXT_PUBLIC_BASE_URL || "http://192.168.16.40:9000";
 
 export const getAuthToken = () => {
   let authToken = "";

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Cookies from "js-cookie";
+import { userLogin, userSignup } from "@/lib/api/client/auth/urls";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
@@ -36,26 +37,15 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 
     try {
       if (mode === "login") {
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone: formData.phone,
-            password: formData.password,
-          }),
+        const response = await userLogin({
+          phone: formData.phone,
+          password: formData.password,
         });
 
-        if (!response.ok) {
-          const text = await response.text().catch(() => "");
-          const parsed = text ? JSON.parse(text) : {};
-          throw new Error(JSON.stringify(parsed));
-        }
-
-        const data = await response.json();
-        onLogin(data);
+        onLogin(response);
         onClose();
       } else {
-        // signup (server-side proxied)
+        // signup
         const payload = {
           email: formData.email,
           password: formData.password,
@@ -71,20 +61,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
           date_of_birth: formData.date_of_birth,
           ...(formData.gender !== "" ? { gender: Number(formData.gender) } : {}),
         };
-
-        const response = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          const text = await response.text().catch(() => "");
-          const parsed = text ? JSON.parse(text) : {};
-          throw new Error(JSON.stringify(parsed));
-        }
-
-        const res = await response.json();
+        const res = await userSignup(payload);
         // If API returns tokens, store them and log the user in; else switch to login mode
         if (res?.access) {
           Cookies.set("access_token", res.access, {
@@ -108,10 +85,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
         }
       }
     } catch (err) {
-      let error_message = { error: "Request failed" };
-      try {
-        error_message = JSON.parse(err.message);
-      } catch (e) {}
+      const error_message = JSON.parse(err.message);
       setError(
         error_message?.error ||
           (mode === "login" ? "Login failed. Please try again." : "Signup failed. Please try again.")

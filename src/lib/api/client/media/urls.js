@@ -1,64 +1,52 @@
-import { getAuthToken, endpoint } from "@/lib/api/client/endpoint";
+import { endpoint, getAuthToken, apiFetch } from "@/lib/api/client/endpoint";
+import { rewriteApiUrls } from "@/lib/utils";
 
-export const getMediaLibrary = async () => {
-  const url = endpoint.media_library;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error("Failed to get media library");
-  }
-  return res.json();
-};
-
-export const createMedia = async (formData) => {
-  const url = endpoint.upload_media;
-  const res = await fetch(url, {
+export const userLogin = async (data) => {
+  const url = endpoint.login;
+  const res = await apiFetch(url, {
     method: "POST",
     headers: {
-      Authorization: getAuthToken(),
+      "Content-Type": "application/json",
     },
-    body: formData,
+    body: JSON.stringify(data),
   });
+
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(JSON.stringify(error));
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Failed to Login");
   }
-  return res.json();
+  return rewriteApiUrls(await res.json());
 };
 
-export const updateMedia = async (formData, mediaId) => {
-  const url = endpoint.upload_media + mediaId + "/";
-  const res = await fetch(url, {
+export const userSignup = async (data) => {
+  const url = endpoint.signup;
+  const res = await apiFetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Failed to signup");
+  }
+  return rewriteApiUrls(await res.json());
+};
+
+export const updateSocialLinks = async (data) => {
+  const url = endpoint.current_user;
+  const res = await apiFetch(url, {
     method: "PUT",
     headers: {
+      "Content-Type": "application/json",
       Authorization: getAuthToken(),
     },
-    body: formData,
+    body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    throw new Error("Failed to update media");
-  }
-  return res.json();
-};
 
-export const deleteMedia = async (mediaId) => {
-  const url = endpoint.upload_media + mediaId + "/";
-  const res = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      Authorization: getAuthToken(),
-    },
-  });
   if (!res.ok) {
-    throw new Error("Failed to delete media");
+    throw new Error("Failed to update social links");
   }
-  return res.json();
-};
-
-export const getExternalMediaById = async (mediaId) => {
-  const url = endpoint.external_media + mediaId + "/";
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error("Failed to get external media");
-  }
-  return res.json();
+  return rewriteApiUrls(await res.json());
 };

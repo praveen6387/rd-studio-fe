@@ -1,33 +1,47 @@
 import { endpoint } from "../endpoint";
+import { rewriteApiUrls } from "@/lib/utils";
 
 export const getUsers = async (token) => {
+  const emptyUsers = { users: [] };
+  if (!token) return emptyUsers;
+
   const url = endpoint.users;
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) {
-    return null;
-    throw new Error("Failed to get users");
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
+    if (!res.ok) return emptyUsers;
+
+    return rewriteApiUrls(await res.json());
+  } catch (error) {
+    console.error("Failed to get users:", error);
+    return emptyUsers;
   }
-  return res.json();
 };
 
 export const getCurrentUser = async (token) => {
+  if (!token) return null;
+
   const url = endpoint.current_user;
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) {
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+
+    return rewriteApiUrls(await res.json());
+  } catch (error) {
+    console.error("Failed to get current user:", error);
     return null;
-    throw new Error("Failed to get current user");
   }
-  return res.json();
 };

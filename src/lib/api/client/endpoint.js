@@ -15,7 +15,7 @@ export const endpoint = {
   login: "/rd-api/base/auth/login/",
   signup: "/rd-api/base/auth/signup/",
   current_user: "/rd-api/base/auth/current-user/",
-  media_library: "/rd-api/media-library",
+  media_library: "/rd-api/base/operation/media/",
   upload_media: "/rd-api/base/operation/media/",
   external_media: "/rd-api/base/operation/media/external/",
   create_transaction: "/rd-api/base/payment/create-payment-transaction/",

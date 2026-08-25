@@ -12,15 +12,19 @@ export const getAuthToken = () => {
 };
 
 export const endpoint = {
-  login: "/api/base/auth/login/",
-  signup: "/api/base/auth/signup/",
-  current_user: "/api/base/auth/current-user/",
-  media_library: "/api/media-library",
-  upload_media: "/api/base/operation/media/",
-  external_media: "/api/base/operation/media/external/",
-  create_transaction: "/api/base/payment/create-payment-transaction/",
-  payment_transaction_view: "/api/base/payment/update-payment-transaction/",
+  login: "/rd-api/base/auth/login/",
+  signup: "/rd-api/base/auth/signup/",
+  current_user: "/rd-api/base/auth/current-user/",
+  media_library: "/rd-api/media-library",
+  upload_media: "/rd-api/base/operation/media/",
+  external_media: "/rd-api/base/operation/media/external/",
+  create_transaction: "/rd-api/base/payment/create-payment-transaction/",
+  payment_transaction_view: "/rd-api/base/payment/update-payment-transaction/",
 };
+
+function toRailwayUrl(path) {
+  return `${RAILWAY_API}${path.replace(/^\/rd-api/, "/api")}`;
+}
 
 function shouldFallbackToRailway(res) {
   if (!res) return true;
@@ -40,7 +44,7 @@ export async function apiFetch(path, options) {
   }
 
   try {
-    return await fetch(`${RAILWAY_API}${path}`, options);
+    return await fetch(toRailwayUrl(path), options);
   } catch {
     if (res) return res;
     throw new Error("Failed to reach API");

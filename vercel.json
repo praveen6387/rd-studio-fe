@@ -1,59 +1,55 @@
 {
   "rewrites": [
     {
-      "source": "/api/base/auth/login/",
+      "source": "/rd-api/base/auth/login/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/login/"
     },
     {
-      "source": "/api/base/auth/login",
+      "source": "/rd-api/base/auth/login",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/login/"
     },
     {
-      "source": "/api/base/auth/signup/",
+      "source": "/rd-api/base/auth/signup/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/signup/"
     },
     {
-      "source": "/api/base/auth/signup",
+      "source": "/rd-api/base/auth/signup",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/signup/"
     },
     {
-      "source": "/api/base/auth/current-user/",
+      "source": "/rd-api/base/auth/current-user/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/current-user/"
     },
     {
-      "source": "/api/base/auth/current-user",
+      "source": "/rd-api/base/auth/current-user",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/current-user/"
     },
     {
-      "source": "/api/base/auth/user/",
+      "source": "/rd-api/base/auth/user/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/user/"
     },
     {
-      "source": "/api/base/auth/social-link/update/",
-      "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/social-link/update/"
-    },
-    {
-      "source": "/api/media-library",
+      "source": "/rd-api/media-library",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/media-library"
     },
     {
-      "source": "/api/base/operation/media/",
+      "source": "/rd-api/base/operation/media/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/operation/media/"
     },
     {
-      "source": "/api/base/operation/media/external/:id/",
+      "source": "/rd-api/base/operation/media/external/:id/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/operation/media/external/:id/"
     },
     {
-      "source": "/api/base/operation/media/:id/",
+      "source": "/rd-api/base/operation/media/:id/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/operation/media/:id/"
     },
     {
-      "source": "/api/base/payment/create-payment-transaction/",
+      "source": "/rd-api/base/payment/create-payment-transaction/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/payment/create-payment-transaction/"
     },
     {
-      "source": "/api/base/payment/update-payment-transaction/:id/",
+      "source": "/rd-api/base/payment/update-payment-transaction/:id/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/payment/update-payment-transaction/:id/"
     }
   ]

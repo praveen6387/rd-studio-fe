@@ -6,9 +6,15 @@ const nextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
+        // Django APPEND_SLASH: POSTs 500 if the proxied URL has no trailing slash.
+        // Next.js :path* drops the slash, so restore it on the destination.
+        {
+          source: "/rd-api/:path*/",
+          destination: `${BACKEND}/api/:path*/`,
+        },
         {
           source: "/rd-api/:path*",
-          destination: `${BACKEND}/api/:path*`,
+          destination: `${BACKEND}/api/:path*/`,
         },
         {
           source: "/media/:path*",

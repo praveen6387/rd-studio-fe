@@ -124,3 +124,38 @@ export const formatPercentage = (value) => {
   if (!value && value !== 0) return "0.00%";
   return `${parseFloat(value).toFixed(2)}%`;
 };
+
+const URL_FIELD = /url|image|file|media|thumbnail|src|avatar|photo/i;
+const BACKEND_HOST =
+  /^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\]|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|.*\.up\.railway\.app)$/i;
+
+export function toSameOriginUrl(value) {
+  if (!value || typeof value !== "string") return value;
+  if (value.startsWith("data:") || value.startsWith("blob:") || value.startsWith("/")) return value;
+  try {
+    const parsed = new URL(value);
+    if (BACKEND_HOST.test(parsed.hostname) || parsed.port === "8000" || parsed.port === "9000") {
+      const path = `${parsed.pathname}${parsed.search}`;
+      if (path.startsWith("/api/")) {
+        return `/rd-api${path.slice(4)}`;
+      }
+      return path;
+    }
+  } catch {
+    return value;
+  }
+  return value;
+}
+
+export function rewriteApiUrls(data) {
+  if (typeof data === "string") return toSameOriginUrl(data);
+  if (Array.isArray(data)) return data.map(rewriteApiUrls);
+  if (data && typeof data === "object") {
+    const out = {};
+    for (const [key, val] of Object.entries(data)) {
+      out[key] = typeof val === "string" && URL_FIELD.test(key) ? toSameOriginUrl(val) : rewriteApiUrls(val);
+    }
+    return out;
+  }
+  return data;
+}

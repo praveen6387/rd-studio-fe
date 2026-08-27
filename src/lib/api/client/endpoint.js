@@ -26,27 +26,9 @@ function toRailwayUrl(path) {
   return `${RAILWAY_API}${path.replace(/^\/rd-api/, "/api")}`;
 }
 
-function shouldFallbackToRailway(res) {
-  if (!res) return true;
-  const ct = res.headers.get("content-type") || "";
-  if (ct.includes("text/html")) return true;
-  if (res.status === 404 || res.status >= 500) return true;
-  return false;
-}
-
 export async function apiFetch(path, options) {
-  let res;
-  try {
-    res = await fetch(path, options);
-    if (!shouldFallbackToRailway(res)) return res;
-  } catch {
-    res = undefined;
-  }
-
-  try {
-    return await fetch(toRailwayUrl(path), options);
-  } catch {
-    if (res) return res;
-    throw new Error("Failed to reach API");
-  }
+  // Browser (including Jio) must stay on rd-studio.in. Railway DNS fails on Jio.
+  // Server (Vercel/local Node) can reach Railway directly.
+  const url = typeof window === "undefined" ? toRailwayUrl(path) : path;
+  return fetch(url, options);
 }

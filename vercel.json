@@ -13,6 +13,14 @@
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/operation/media/:id/"
     },
     {
+      "source": "/rd-api/:path*/",
+      "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/:path*/"
+    },
+    {
+      "source": "/rd-api/:path*",
+      "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/:path*/"
+    },
+    {
       "source": "/rd-api/base/auth/login/",
       "destination": "https://rd-studio-be-production-atearna2.up.railway.app/api/base/auth/login/"
     },

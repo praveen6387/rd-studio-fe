@@ -50,3 +50,43 @@ export const updateSocialLinks = async (data) => {
   }
   return rewriteApiUrls(await res.json());
 };
+
+// Create media (multipart/form-data). Expects FormData instance.
+export const createMedia = async (formData) => {
+  const url = endpoint.upload_media;
+  const res = await apiFetch(url, {
+    method: "POST",
+    // Do not set Content-Type; browser will set multipart boundary
+    headers: {
+      Authorization: getAuthToken(),
+    },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Failed to create media");
+  }
+
+  return rewriteApiUrls(await res.json());
+};
+
+// Delete a media by id
+export const deleteMedia = async (mediaId) => {
+  if (!mediaId) throw new Error("Missing media id");
+  const url = endpoint.media_library + mediaId + "/";
+  const res = await apiFetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAuthToken(),
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Failed to delete media");
+  }
+
+  return true;
+};

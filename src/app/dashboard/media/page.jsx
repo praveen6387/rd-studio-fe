@@ -1,17 +1,20 @@
-import CreateMediaIndex from "@/components/dashboard/media/create";
+import MediaIndex from "@/components/dashboard/media";
 import ProtectedRoute from "@/components/utils/ProtectedRoute";
 import { getCurrentUser } from "@/lib/api/server/user/urls";
+import { getMediaLibrary } from "@/lib/api/server/media/urls";
 import { cookies } from "next/headers";
 
-const CreateMediaPage = async () => {
+const MediaListingPage = async () => {
   const cookieStore = await cookies();
-  const token = cookieStore.get("access_token");
-  const current_user = await getCurrentUser(token?.value);
+  const token = cookieStore.get("access_token")?.value;
+  const current_user = await getCurrentUser(token);
+  const mediaLibrary = await getMediaLibrary(token);
+
   return (
     <ProtectedRoute requireAdmin={true}>
-      <CreateMediaIndex current_user={current_user?.user || {}} />
+      <MediaIndex mediaLibrary={mediaLibrary} />
     </ProtectedRoute>
   );
 };
 
-export default CreateMediaPage;
+export default MediaListingPage;

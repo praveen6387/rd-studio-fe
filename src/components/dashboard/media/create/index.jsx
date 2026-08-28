@@ -237,7 +237,6 @@ const optimizeFiles = async (files, setProgress, targetKB = 100) => {
 };
 
 export default function CreateMediaIndex({ current_user }) {
-  console.log(current_user)
   const router = useRouter();
   const [mediaTitle, setMediaTitle] = useState("");
   const [eventDate, setEventDate] = useState("");
